@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= company.name %> - Company Profile</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-actions">
+        <a href="/" class="btn btn-secondary">← Generate Another</a>
+      </div>
+      <h1>🏢 <%= company.name %></h1>
+      <% if company.website %>
+        <p class="subtitle">
+          <a href="<%= company.website %>" target="_blank" rel="noopener"><%= company.website %></a>
+        </p>
+      <% end %>
+    </header>
+
+    <main>
+      <div class="profile-meta">
+        <p>Generated on <%= profile.generated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+        <p><strong><%= profile.sections.count %></strong> sections generated</p>
+      </div>
+
+      <% if profile.sections.empty? %>
+        <div class="alert alert-warning">
+          <strong>Warning:</strong> No profile sections were generated. Please try again.
+        </div>
+      <% else %>
+        <div class="profile-sections">
+          <% profile.sections.each do |section| %>
+            <div class="card section-card" id="section-<%= section.prompt_file %>">
+              <div class="section-header">
+                <h2><%= section.name %></h2>
+                <span class="section-badge"><%= section.prompt_file %></span>
+              </div>
+              <div class="section-content">
+                <%= ProfileGenerator::Services::ContentFormatter.new.format(section.content) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="actions">
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Print Profile</button>
+        <button onclick="copyToClipboard()" class="btn btn-secondary">📋 Copy to Clipboard</button>
+      </div>
+    </main>
+
+    <footer>
+      <p>Powered by Claude (Sonnet 4) | Built with Ruby & Sinatra</p>
+    </footer>
+  </div>
+
+  <script>
+    function copyToClipboard() {
+      const sections = document.querySelectorAll('.section-card');
+      let text = '<%= company.name %> - Company Profile\n\n';
+      
+      sections.forEach(section => {
+        const title = section.querySelector('h2').textContent;
+        const content = section.querySelector('.section-content').textContent.trim();
+        text += `${title}\n${'='.repeat(title.length)}\n${content}\n\n`;
+      });
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Profile copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard');
+      });
+    }
+  </script>
+</body>
+</html>

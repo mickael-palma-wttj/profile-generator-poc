@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+# Test retry logic with various scenarios
+puts "🧪 Testing Retry Logic\n\n"
+
+# Test 1: Successful generation (no retries needed)
+puts "=" * 60
+puts "Test 1: Successful Generation (no retries)"
+puts "=" * 60
+
+company = ProfileGenerator::Models::Company.new(
+  name: "Stripe",
+  website: "https://stripe.com"
+)
+
+generator = ProfileGenerator::Interactors::GenerateProfile.new(
+  max_retries: 3,
+  max_threads: 1
+)
+
+result = generator.generate_section(
+  company: company,
+  section_name: "company_values"
+)
+
+if result.success?
+  puts "✅ Success! Generated #{result.value.content.length} characters"
+  puts "   Retry attempts: #{result.metadata[:retry_attempts] || 0}"
+else
+  puts "❌ Failed: #{result.error}"
+end
+
+# Test 2: Show retry configuration
+puts "\n" + ("=" * 60)
+puts "Test 2: Retry Configuration"
+puts "=" * 60
+
+client = ProfileGenerator::Services::AnthropicClient.new(max_retries: 5, base_delay: 2.0)
+puts "✓ AnthropicClient configured with:"
+puts "  - Max retries: 5"
+puts "  - Base delay: 2.0 seconds"
+puts "  - Exponential backoff with jitter"
+puts "\nDelay progression for retries:"
+5.times do |i|
+  attempt = i + 1
+  base_delay = 2.0
+  exponential_delay = base_delay * (2**(attempt - 1))
+  max_with_jitter = exponential_delay + (base_delay * 0.5)
+  capped = [max_with_jitter, 60.0].min
+  puts "  Attempt #{attempt}: ~#{exponential_delay.round(1)}s - #{capped.round(1)}s"
+end
+
+# Test 3: Environment variable configuration
+puts "\n" + ("=" * 60)
+puts "Test 3: Environment Variable Configuration"
+puts "=" * 60
+
+puts "Available environment variables for retry configuration:"
+puts "  - ANTHROPIC_MAX_RETRIES (default: 3)"
+puts "  - ANTHROPIC_BASE_DELAY (default: 1.0)"
+puts "\nCurrent settings:"
+puts "  - ANTHROPIC_MAX_RETRIES: #{ENV['ANTHROPIC_MAX_RETRIES'] || '3 (default)'}"
+puts "  - ANTHROPIC_BASE_DELAY: #{ENV['ANTHROPIC_BASE_DELAY'] || '1.0 (default)'}"
+
+# Test 4: Show retryable errors
+puts "\n" + ("=" * 60)
+puts "Test 4: Retryable Error Types"
+puts "=" * 60
+
+puts "The following errors will trigger automatic retry:"
+puts "  ✓ Rate limit errors (429)"
+puts "  ✓ Server errors (500, 502, 503, 504)"
+puts "  ✓ Timeout errors"
+puts "  ✓ Connection errors"
+puts "\nNon-retryable errors (fail immediately):"
+puts "  ✗ Invalid API key (401)"
+puts "  ✗ Invalid request (400)"
+puts "  ✗ Not found (404)"
+puts "  ✗ Prompt validation errors"
+
+# Test 5: Parallel generation with retries
+puts "\n" + ("=" * 60)
+puts "Test 5: Parallel Generation with Retry Support"
+puts "=" * 60
+
+puts "Testing parallel generation of 3 sections with retry enabled..."
+start_time = Time.now
+
+result = generator.call(
+  company: company,
+  section_names: %w[company_values remote_policy key_numbers],
+  parallel: true
+)
+
+duration = Time.now - start_time
+
+if result.success?
+  puts "✅ Generated #{result.value.sections.count} sections in #{duration.round(2)}s"
+  puts "   Each section had independent retry capability"
+  puts "   Failed sections are logged but don't block successful ones"
+else
+  puts "❌ Failed: #{result.error}"
+end
+
+puts "\n" + ("=" * 60)
+puts "✅ All retry tests completed!"
+puts "=" * 60
+puts "\nKey Features:"
+puts "  • Exponential backoff with jitter"
+puts "  • Per-section retry logic"
+puts "  • Configurable max retries and delay"
+puts "  • Smart error classification (retryable vs non-retryable)"
+puts "  • Comprehensive logging of retry attempts"
+puts "  • Thread-safe parallel execution with retries"

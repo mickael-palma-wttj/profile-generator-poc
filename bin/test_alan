@@ -1,0 +1,167 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+require "fileutils"
+require "json"
+
+puts "🧪 Testing Profile Generation for Alan\n\n"
+
+# Create debug output directory
+debug_dir = File.join(__dir__, "..", "debug")
+FileUtils.mkdir_p(debug_dir)
+
+company_name = "alan"
+website = "https://alan.com"
+
+puts "=" * 60
+puts "Profile Generation Test"
+puts "=" * 60
+puts "Company: #{company_name}"
+puts "Website: #{website}"
+puts "Debug output: #{debug_dir}"
+puts "=" * 60
+puts ""
+
+# Create company object
+company = ProfileGenerator::Models::Company.new(
+  name: company_name,
+  website: website
+)
+
+# Create API client with debug mode enabled
+api_client = ProfileGenerator::Services::AnthropicClient.new(
+  debug_mode: true,
+  debug_dir: File.join(debug_dir, "api_responses")
+)
+
+# Generate the profile
+puts "🔄 Generating profile with API debug mode enabled...\n"
+puts "📝 Raw API responses will be saved to: #{File.join(debug_dir, 'api_responses')}\n\n"
+start_time = Time.now
+
+result = ProfileGenerator::Interactors::GenerateProfile.new(
+  anthropic_client: api_client,
+  logger: Logger.new($stdout)
+).call(company: company)
+
+end_time = Time.now
+duration = end_time - start_time
+
+if result.success?
+  profile = result.value
+  puts "\n✅ Profile generation successful!"
+  puts "Duration: #{duration.round(2)}s"
+  puts "Sections generated: #{profile.sections.length}"
+
+  # Save the results to debug files
+  timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+
+  # Save full result as JSON
+  result_file = File.join(debug_dir, "alan_result_#{timestamp}.json")
+  File.write(result_file, JSON.pretty_generate({
+                                                 company: company_name,
+                                                 website: website,
+                                                 timestamp: timestamp,
+                                                 duration: duration,
+                                                 sections: profile.sections.map do |section|
+                                                   {
+                                                     name: section.name,
+                                                     content_length: section.content.length,
+                                                     raw_content: section.content
+                                                   }
+                                                 end
+                                               }))
+  puts "📄 Saved result to: #{result_file}"
+
+  # Save each section separately for easier debugging
+  profile.sections.each do |section|
+    section_file = File.join(debug_dir, "alan_#{section.name}_#{timestamp}.txt")
+    File.write(section_file, ("=" * 80) + "\n")
+    File.write(section_file, "Section: #{section.name}\n", mode: "a")
+    File.write(section_file, "Length: #{section.content.length} chars\n", mode: "a")
+    File.write(section_file, ("=" * 80) + "\n\n", mode: "a")
+    File.write(section_file, "RAW CONTENT:\n", mode: "a")
+    File.write(section_file, ("-" * 80) + "\n", mode: "a")
+    File.write(section_file, section.content, mode: "a")
+    File.write(section_file, "\n\n" + ("=" * 80) + "\n\n", mode: "a")
+
+    # Format the content and save formatted version
+    formatter = ProfileGenerator::Services::ContentFormatter.new
+    formatted = formatter.format(section.content)
+    File.write(section_file, "FORMATTED HTML:\n", mode: "a")
+    File.write(section_file, ("-" * 80) + "\n", mode: "a")
+    File.write(section_file, formatted, mode: "a")
+    File.write(section_file, "\n", mode: "a")
+  end
+  puts "📁 Saved individual sections to: #{debug_dir}/alan_*_#{timestamp}.txt"
+
+  # Summary of sections
+  puts "\n" + ("=" * 60)
+  puts "Sections Summary"
+  puts "=" * 60
+  profile.sections.each do |section|
+    # Check for problematic tags
+    has_browse = section.content.include?("<browse>")
+    has_url = section.content.include?("<url>")
+    has_search = section.content.include?("<search>")
+    has_thinking = section.content.include?("<thinking>")
+
+    status = []
+    status << "🔍 browse" if has_browse
+    status << "🔗 url" if has_url
+    status << "🔎 search" if has_search
+    status << "💭 thinking" if has_thinking
+
+    tag_info = status.any? ? " [#{status.join(', ')}]" : " [✓ clean]"
+
+    puts "#{section.name.ljust(25)} #{section.content.length.to_s.rjust(6)} chars#{tag_info}"
+  end
+
+  # Test formatting on funding_parser specifically
+  puts "\n" + ("=" * 60)
+  puts "Testing Funding Parser formatting"
+  puts "=" * 60
+
+  funding_section = profile.sections.find { |s| s.name == "Funding Parser" }
+  if funding_section
+    formatter = ProfileGenerator::Services::ContentFormatter.new
+    formatted = formatter.format(funding_section.content)
+
+    # Check if tags were properly removed
+    if formatted.include?("<browse>") || formatted.include?("<url>")
+      puts "❌ FAILED: Browse/URL tags still present in formatted output"
+      puts "\nFormatted output preview:"
+      puts formatted[0..500]
+    else
+      puts "✅ PASSED: Browse/URL tags properly removed"
+      puts "\nFormatted output preview (first 500 chars):"
+      puts formatted[0..500]
+    end
+
+    # Save formatted funding_parser for inspection
+    funding_formatted_file = File.join(debug_dir, "alan_Funding Parser_formatted_#{timestamp}.html")
+    File.write(funding_formatted_file, formatted)
+    puts "\n📄 Saved formatted Funding Parser to: #{funding_formatted_file}"
+  else
+    puts "⚠️  No Funding Parser section found"
+  end
+
+  puts "\n" + ("=" * 60)
+  puts "🎉 Test Complete!"
+  puts "=" * 60
+  puts "Debug files saved to: #{debug_dir}"
+  puts "You can inspect the raw and formatted content for each section."
+
+else
+  puts "\n❌ Profile generation failed!"
+  puts "Error: #{result.error}" if result.error
+
+  # Save error details
+  timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+  error_file = File.join(debug_dir, "alan_error_#{timestamp}.txt")
+  File.write(error_file, "Error occurred at: #{timestamp}\n")
+  File.write(error_file, "Company: #{company_name}\n", mode: "a")
+  File.write(error_file, "Error: #{result.error}\n", mode: "a")
+  puts "📄 Saved error to: #{error_file}"
+end

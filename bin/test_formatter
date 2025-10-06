@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+# Test ContentFormatter with Markdown content
+puts "🧪 Testing ContentFormatter with Markdown content...\n\n"
+
+markdown_content = <<~MARKDOWN
+  I'll provide a summary of Stripe's benefits.
+
+  # Stripe - Benefits & Perks Summary
+
+  ## Health & Insurance
+  - Comprehensive medical, dental, and vision coverage
+  - Mental health coverage through Modern Health
+  - Life and disability insurance
+  - **Fertility benefits** through Carrot
+
+  ## Work Flexibility
+  - Remote-first company culture
+  - Flexible working hours
+  - Hub offices in [San Francisco](https://stripe.com/jobs)
+
+  ## Financial Benefits
+  - Competitive base salary
+  - Generous equity packages (RSUs)
+  - 401(k) with company match
+  - Annual charitable donation matching up to $20,000
+
+  ### Key Points
+  > Stripe is known for having one of the more competitive benefits packages in the tech industry.
+
+  **Notes:**
+  - Benefits may vary by location
+  - Some benefits might have specific eligibility criteria
+
+  | Benefit Type | Coverage |
+  |--------------|----------|
+  | Health       | Full     |
+  | Dental       | Full     |
+  | Vision       | Full     |
+MARKDOWN
+
+formatter = ProfileGenerator::Services::ContentFormatter.new
+html = formatter.format(markdown_content)
+
+puts "=== ORIGINAL MARKDOWN ==="
+puts markdown_content[0..300] + "..."
+puts "\n=== FORMATTED HTML (first 500 chars) ==="
+puts html[0..500]
+puts "\n✅ Markdown formatting successful!"
+
+# Test with JSON content
+puts "\n\n🧪 Testing ContentFormatter with JSON content...\n\n"
+
+json_content = '{"company": "Stripe", "benefits": ["Health Insurance", "401k Match", "Unlimited PTO"], "rating": 4.5}'
+
+html_json = formatter.format(json_content)
+puts "=== JSON INPUT ==="
+puts json_content
+puts "\n=== FORMATTED HTML ==="
+puts html_json
+puts "\n✅ JSON formatting successful!"

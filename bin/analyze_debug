@@ -1,0 +1,154 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Script to analyze API debug files and generate a report
+require "json"
+require "pathname"
+
+debug_dir = File.join(__dir__, "..", "debug", "api_responses")
+
+unless Dir.exist?(debug_dir)
+  puts "❌ Debug directory not found: #{debug_dir}"
+  puts "Run 'bundle exec ruby bin/test_alan' first to generate debug files."
+  exit 1
+end
+
+files = Dir.glob(File.join(debug_dir, "*.json"))
+
+if files.empty?
+  puts "❌ No debug files found in #{debug_dir}"
+  puts "Run 'bundle exec ruby bin/test_alan' first to generate debug files."
+  exit 1
+end
+
+puts "📊 API Debug Report"
+puts "=" * 80
+puts "Debug directory: #{debug_dir}"
+puts "Files analyzed: #{files.count}"
+puts "=" * 80
+puts ""
+
+# Parse all files
+data = files.map do |file|
+  JSON.parse(File.read(file))
+rescue JSON::ParserError => e
+  puts "⚠️  Warning: Could not parse #{File.basename(file)}: #{e.message}"
+  nil
+end.compact
+
+# Separate successes and errors
+successes = data.reject { |d| d["error"] }
+errors = data.select { |d| d["error"] }
+
+puts "📈 Summary"
+puts "-" * 80
+puts "Total requests: #{data.count}"
+puts "Successful: #{successes.count} (#{(successes.count * 100.0 / data.count).round(1)}%)"
+puts "Failed: #{errors.count} (#{(errors.count * 100.0 / data.count).round(1)}%)"
+puts ""
+
+if successes.any?
+  # Token usage analysis
+  puts "💰 Token Usage"
+  puts "-" * 80
+
+  total_input = successes.sum { |d| d.dig("response", "usage", "input_tokens") || 0 }
+  total_output = successes.sum { |d| d.dig("response", "usage", "output_tokens") || 0 }
+  total_tokens = total_input + total_output
+
+  avg_input = total_input / successes.count
+  avg_output = total_output / successes.count
+
+  puts "Total input tokens: #{total_input.to_s.rjust(10)}"
+  puts "Total output tokens: #{total_output.to_s.rjust(9)}"
+  puts "Total tokens: #{total_tokens.to_s.rjust(15)}"
+  puts ""
+  puts "Average input tokens: #{avg_input.to_s.rjust(8)}"
+  puts "Average output tokens: #{avg_output.to_s.rjust(7)}"
+  puts ""
+
+  # Estimate costs (approximate pricing for Claude 3.5 Sonnet)
+  input_cost = total_input * 3.0 / 1_000_000 # $3 per 1M tokens
+  output_cost = total_output * 15.0 / 1_000_000 # $15 per 1M tokens
+  total_cost = input_cost + output_cost
+
+  puts "Estimated cost:"
+  puts "  Input: $#{format('%.4f', input_cost)}"
+  puts "  Output: $#{format('%.4f', output_cost)}"
+  puts "  Total: $#{format('%.4f', total_cost)}"
+  puts ""
+
+  # Response length analysis
+  puts "📝 Content Length"
+  puts "-" * 80
+
+  lengths = successes.map { |d| d["extracted_content"]&.length || 0 }
+  avg_length = lengths.sum / lengths.count
+  min_length = lengths.min
+  max_length = lengths.max
+
+  puts "Average: #{avg_length} chars"
+  puts "Min: #{min_length} chars"
+  puts "Max: #{max_length} chars"
+  puts ""
+
+  # Section breakdown
+  puts "📋 By Section"
+  puts "-" * 80
+
+  sections = successes.group_by { |d| d.dig("context", "section") }
+  sections.sort_by { |_name, items| -items.count }.each do |section_name, items|
+    section_input = items.sum { |d| d.dig("response", "usage", "input_tokens") || 0 }
+    section_output = items.sum { |d| d.dig("response", "usage", "output_tokens") || 0 }
+    avg_length = items.sum { |d| d["extracted_content"]&.length || 0 } / items.count
+
+    puts "#{section_name.ljust(25)} #{items.count.to_s.rjust(3)} requests | " \
+         "#{section_input.to_s.rjust(5)}+#{section_output.to_s.rjust(5)} tokens | " \
+         "#{avg_length.to_s.rjust(5)} avg chars"
+  end
+  puts ""
+
+  # Retry analysis
+  retries = successes.select { |d| d.dig("context", "retry_attempt").to_i > 0 }
+  if retries.any?
+    puts "🔄 Retries"
+    puts "-" * 80
+    puts "Requests with retries: #{retries.count}"
+    retries.each do |d|
+      puts "  - #{d.dig('context', 'section')} (attempt #{d.dig('context', 'retry_attempt')})"
+    end
+    puts ""
+  end
+end
+
+if errors.any?
+  puts "❌ Errors"
+  puts "-" * 80
+  errors.each do |d|
+    puts "Section: #{d.dig('context', 'section')}"
+    puts "Error: #{d.dig('error', 'message')}"
+    puts "Class: #{d.dig('error', 'class')}"
+    puts ""
+  end
+end
+
+# Company breakdown
+puts "🏢 By Company"
+puts "-" * 80
+
+companies = data.group_by { |d| d.dig("context", "company") }
+companies.sort_by { |_name, items| -items.count }.each do |company_name, items|
+  success_count = items.count { |d| !d["error"] }
+  error_count = items.count { |d| d["error"] }
+  puts "#{company_name.ljust(25)} #{items.count.to_s.rjust(3)} requests " \
+       "(#{success_count} success, #{error_count} errors)"
+end
+puts ""
+
+puts "=" * 80
+puts "✅ Report complete!"
+puts ""
+puts "Tip: Use these commands for more analysis:"
+puts "  jq '.response.usage' debug/api_responses/*.json"
+puts "  jq -r '.extracted_content' debug/api_responses/*.json"
+puts "  jq '.context' debug/api_responses/*.json"

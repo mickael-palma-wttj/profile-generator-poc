@@ -1,0 +1,42 @@
+# Environment variables
+.env
+.env.local
+
+# Ruby
+*.gem
+*.rbc
+.bundle
+.config
+coverage
+InstalledFiles
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+vendor/bundle
+
+# YARD artifacts
+.yardoc
+_yardoc
+doc/
+
+# Mac OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+log/
+
+# Temporary files
+*.tmp
+debug/

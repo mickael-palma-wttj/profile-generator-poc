@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Profile Generator</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏢 Company Profile Generator</h1>
+      <p class="subtitle">Generate comprehensive company profiles using AI</p>
+    </header>
+
+    <main>
+      <% if error %>
+        <div class="alert alert-error">
+          <strong>Error:</strong> <%= error %>
+        </div>
+      <% end %>
+
+      <div class="card">
+        <form action="/generate" method="post" id="generate-form">
+          <div class="form-group">
+            <label for="company_name">Company Name *</label>
+            <input 
+              type="text" 
+              id="company_name" 
+              name="company_name" 
+              placeholder="e.g., Stripe, Shopify, OpenAI"
+              required
+              autofocus
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="website">Website (Optional)</label>
+            <input 
+              type="url" 
+              id="website" 
+              name="website" 
+              placeholder="e.g., https://example.com"
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Generate Profile
+          </button>
+        </form>
+      </div>
+
+      <div class="features">
+        <h2>What gets generated?</h2>
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon">📖</div>
+            <h3>Their Story</h3>
+            <p>Origin story and founding narrative</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💎</div>
+            <h3>Company Values</h3>
+            <p>Core values and cultural principles</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📝</div>
+            <h3>Description</h3>
+            <p>Comprehensive company overview</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">👥</div>
+            <h3>Leadership</h3>
+            <p>Key executives and team information</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <h3>Funding</h3>
+            <p>Investment rounds and financial data</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <h3>Key Numbers</h3>
+            <p>Important metrics and statistics</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🏢</div>
+            <h3>Office Locations</h3>
+            <p>Physical presence and offices</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎁</div>
+            <h3>Perks & Benefits</h3>
+            <p>Employee benefits and perks</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🌍</div>
+            <h3>Remote Policy</h3>
+            <p>Remote work policies and flexibility</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Powered by Claude (Sonnet 4) | Built with Ruby & Sinatra</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('generate-form').addEventListener('submit', function(e) {
+      const button = this.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.innerHTML = '⏳ Generating... (this may take a minute)';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+# RuboCop configuration
+# Following Ruby community standards and best practices
+
+require:
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude:
+    - "vendor/**/*"
+    - "tmp/**/*"
+    - "node_modules/**/*"
+
+# Style preferences
+Style/Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+# Metrics - following Sandi Metz rules where practical
+Metrics/MethodLength:
+  Max: 10
+  Exclude:
+    - "config/**/*"
+
+Metrics/ClassLength:
+  Max: 100
+  Exclude:
+    - "app/application.rb"
+
+Metrics/ParameterLists:
+  Max: 4
+  CountKeywordArgs: false
+
+Metrics/AbcSize:
+  Max: 20
+  Exclude:
+    - "app/application.rb"
+
+Metrics/BlockLength:
+  Exclude:
+    - "Rakefile"
+    - "config.ru"
+    - "spec/**/*"
+
+# Layout
+Layout/LineLength:
+  Max: 100
+  AllowedPatterns:
+    - "# rubocop"
+  Exclude:
+    - "Gemfile"
+
+# Naming
+Naming/FileName:
+  Exclude:
+    - "Gemfile"
+    - "Rakefile"

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Setup script for Profile Generator
+
+set -e
+
+echo "🚀 Setting up Profile Generator..."
+echo ""
+
+# Check Ruby version
+echo "Checking Ruby version..."
+if ! command -v ruby &> /dev/null; then
+    echo "❌ Ruby is not installed. Please install Ruby 3.2 or higher."
+    exit 1
+fi
+
+ruby_version=$(ruby -v | grep -oE '[0-9]+\.[0-9]+' | head -1)
+echo "✓ Ruby $ruby_version found"
+
+# Check Bundler
+echo ""
+echo "Checking Bundler..."
+if ! command -v bundle &> /dev/null; then
+    echo "Installing Bundler..."
+    gem install bundler
+fi
+echo "✓ Bundler found"
+
+# Install dependencies
+echo ""
+echo "Installing dependencies..."
+bundle install
+echo "✓ Dependencies installed"
+
+# Set up .env file
+echo ""
+if [ ! -f .env ]; then
+    echo "Creating .env file..."
+    cp .env.example .env
+    echo "✓ .env file created"
+    echo ""
+    echo "⚠️  IMPORTANT: Edit .env file and add your ANTHROPIC_API_KEY"
+    echo "   Get your API key from: https://console.anthropic.com/"
+else
+    echo "✓ .env file already exists"
+fi
+
+# Check if API key is set
+echo ""
+if grep -q "your_api_key_here" .env 2>/dev/null; then
+    echo "⚠️  WARNING: ANTHROPIC_API_KEY is not set in .env file"
+    echo "   Please edit .env and add your API key before running the app"
+else
+    echo "✓ ANTHROPIC_API_KEY appears to be configured"
+fi
+
+# Success message
+echo ""
+echo "✅ Setup complete!"
+echo ""
+echo "To start the application:"
+echo "  Development mode:  bundle exec rake dev"
+echo "  Production mode:   bundle exec rake server"
+echo ""
+echo "The app will be available at: http://localhost:4567"
+echo ""
+echo "For more information, see README.md"

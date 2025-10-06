@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+# Test parallel profile generation with logging
+company = ProfileGenerator::Models::Company.new(
+  name: "Stripe",
+  website: "https://stripe.com"
+)
+
+puts "\n🧪 Testing PARALLEL generation (3 threads)..."
+puts "=" * 60
+
+generator = ProfileGenerator::Interactors::GenerateProfile.new(max_threads: 3)
+
+result = generator.call(
+  company: company,
+  section_names: %w[company_values remote_policy key_numbers],
+  parallel: true
+)
+
+if result.success?
+  puts "\n✅ Profile generated successfully!"
+  puts "Duration: #{result.metadata[:duration_seconds]}s"
+  puts "Sections: #{result.metadata[:sections_generated]}/#{result.metadata[:sections_requested]}"
+
+  result.value.sections.each do |section|
+    puts "\n📄 #{section.name}: #{section.content.length} characters"
+  end
+else
+  puts "❌ Error: #{result.error}"
+end
+
+puts "\n" + ("=" * 60)
+puts "\n🧪 Testing SEQUENTIAL generation (for comparison)..."
+puts "=" * 60
+
+result2 = generator.call(
+  company: company,
+  section_names: %w[company_values remote_policy key_numbers],
+  parallel: false
+)
+
+if result2.success?
+  puts "\n✅ Profile generated successfully!"
+  puts "Duration: #{result2.metadata[:duration_seconds]}s"
+  puts "Sections: #{result2.metadata[:sections_generated]}/#{result2.metadata[:sections_requested]}"
+else
+  puts "❌ Error: #{result2.error}"
+end
+
+puts "\n" + ("=" * 60)
+puts "⚡ Speedup: #{(result2.metadata[:duration_seconds] / result.metadata[:duration_seconds]).round(2)}x faster with parallel"
+puts "=" * 60

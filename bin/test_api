@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "dotenv/load"
+require "ruby/anthropic"
+
+# Test the Anthropic API connection
+puts "Testing Anthropic API..."
+puts "API Key: #{ENV['ANTHROPIC_API_KEY']&.slice(0, 10)}..." if ENV["ANTHROPIC_API_KEY"]
+
+client = Anthropic::Client.new(access_token: ENV.fetch("ANTHROPIC_API_KEY", nil))
+
+# Try with Claude 3.5 Sonnet
+model = "claude-3-5-sonnet-20241022"
+puts "\nTesting with model: #{model}"
+
+begin
+  response = client.messages(
+    parameters: {
+      model: model,
+      max_tokens: 100,
+      messages: [
+        { role: "user", content: "Say 'Hello World' and nothing else." }
+      ]
+    }
+  )
+
+  content = response.dig("content", 0, "text")
+  puts "\n✅ Success!"
+  puts "Response: #{content}"
+rescue StandardError => e
+  puts "\n❌ Error: #{e.class}"
+  puts "Message: #{e.message}"
+  puts "\nTrying alternative model names..."
+
+  # Try other model names
+  ["claude-3-5-sonnet-latest", "claude-3-5-sonnet-20240620",
+   "claude-3-sonnet-20240229"].each do |alt_model|
+    puts "\nTrying: #{alt_model}"
+    begin
+      response = client.messages(
+        parameters: {
+          model: alt_model,
+          max_tokens: 100,
+          messages: [
+            { role: "user", content: "Say 'Hello World' and nothing else." }
+          ]
+        }
+      )
+
+      content = response.dig("content", 0, "text")
+      puts "✅ SUCCESS with #{alt_model}!"
+      puts "Response: #{content}"
+      puts "\n⚠️  Update your .env file to use: ANTHROPIC_MODEL=#{alt_model}"
+      break
+    rescue StandardError => e2
+      puts "❌ Failed: #{e2.message}"
+    end
+  end
+end
