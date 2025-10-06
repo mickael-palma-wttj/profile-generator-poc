@@ -19,7 +19,7 @@ Databases (cross-check): Crunchbase, Dealroom, PitchBook, CB Insights, Tracxn (r
 Filings: SEC EDGAR (US Form D, 10-K/10-Q/8-K), Companies House (UK), BODACC & Infogreffe (FR), Registro Comercial (PT), SEDAR+ (CA), Bundesanzeiger (DE), etc.
 FX rates: ECB, IRS yearly rates, OFX, X-Rates, or other reputable historical FX.
 ## Output quality checklist (must pass before you answer)
-[ ] Validates against the JSON Schema below.
+[ ] Validates against the output JSON Schema below.
 [ ] Every amount and valuation has at least one sources URL.
 [ ] Rounds ordered by date descending.
 [ ] currency_native is the currency in which the round was announced/closed.
@@ -27,7 +27,7 @@ FX rates: ECB, IRS yearly rates, OFX, X-Rates, or other reputable historical FX.
 [ ] inconsistencies explains any conflicts.
 [ ] No marketing fluff; numbers only.
 
-## JSON Schema
+## Output JSON Schema
 ```json
 {
   "type": "object",

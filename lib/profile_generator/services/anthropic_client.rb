@@ -11,7 +11,7 @@ module ProfileGenerator
       class APIError < StandardError; end
       class ConfigurationError < StandardError; end
 
-      DEFAULT_MODEL = "claude-3-5-sonnet-20241022"
+      DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
       DEFAULT_MAX_TOKENS = 4096
       DEFAULT_TEMPERATURE = 0.7
       DEFAULT_MAX_RETRIES = 3
@@ -97,22 +97,25 @@ module ProfileGenerator
           raise unless attempt <= max_retries && retryable_error?(e)
 
           delay = calculate_delay(attempt)
+          warn "[Retry #{attempt}/#{max_retries}] API error (#{e.message}). Retrying in #{delay.round(2)}s..."
           sleep(delay)
           retry
         end
       end
 
-      # Check if error is retryable (rate limit, server error, timeout)
+      # Check if error is retryable (rate limit, server error, timeout, overloaded)
       def retryable_error?(error)
         error_message = error.message.downcase
         error_message.include?("rate limit") ||
-          error_message.include?("429") ||
-          error_message.include?("500") ||
-          error_message.include?("502") ||
-          error_message.include?("503") ||
-          error_message.include?("504") ||
+          error_message.include?("429") ||  # Too Many Requests
+          error_message.include?("500") ||  # Internal Server Error
+          error_message.include?("502") ||  # Bad Gateway
+          error_message.include?("503") ||  # Service Unavailable
+          error_message.include?("504") ||  # Gateway Timeout
+          error_message.include?("529") ||  # Overloaded (Anthropic specific)
           error_message.include?("timeout") ||
-          error_message.include?("connection")
+          error_message.include?("connection") ||
+          error_message.include?("overloaded")
       end
 
       # Calculate delay with exponential backoff and jitter

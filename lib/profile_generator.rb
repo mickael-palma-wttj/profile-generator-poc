@@ -12,9 +12,9 @@ module ProfileGenerator
 
     def initialize
       @anthropic_api_key = ENV.fetch("ANTHROPIC_API_KEY", nil)
-      @anthropic_model = ENV.fetch("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
-      @anthropic_max_tokens = ENV.fetch("ANTHROPIC_MAX_TOKENS", "4096").to_i
-      @anthropic_temperature = ENV.fetch("ANTHROPIC_TEMPERATURE", "0.7").to_f
+      @anthropic_model = ENV.fetch("ANTHROPIC_MODEL", nil)
+      @anthropic_max_tokens = ENV.fetch("ANTHROPIC_MAX_TOKENS", nil).to_i
+      @anthropic_temperature = ENV.fetch("ANTHROPIC_TEMPERATURE", nil).to_f
     end
   end
 

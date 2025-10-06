@@ -14,13 +14,15 @@ module ProfileGenerator
         prompt_loader: nil,
         logger: nil,
         max_threads: 5,
-        max_retries: 3
+        max_retries: 3,
+        progress_callback: nil
       )
         @anthropic_client = anthropic_client || Services::AnthropicClient.new(max_retries: max_retries)
         @prompt_loader = prompt_loader || Services::PromptLoader.new
         @logger = logger || default_logger
         @max_threads = max_threads
         @max_retries = max_retries
+        @progress_callback = progress_callback
       end
 
       # Generate a complete profile for a company
@@ -142,11 +144,24 @@ module ProfileGenerator
       def generate_sections_parallel(company, section_names)
         @logger.info("Generating #{section_names.count} sections in parallel (max #{@max_threads} threads)")
 
+        # Notify start of each section
+        section_names.each do |section_name|
+          notify_progress(section_name, :pending, nil)
+        end
+
         pool = Concurrent::FixedThreadPool.new(@max_threads)
         futures = section_names.map do |section_name|
           Concurrent::Future.execute(executor: pool) do
+            notify_progress(section_name, :in_progress, nil)
             result = generate_section(company: company, section_name: section_name)
-            result.success? ? result.value : nil
+
+            if result.success?
+              notify_progress(section_name, :completed, result.value)
+              result.value
+            else
+              notify_progress(section_name, :failed, nil, error: result.error)
+              nil
+            end
           end
         end
 
@@ -255,6 +270,18 @@ module ProfileGenerator
           .split
           .map(&:capitalize)
           .join(" ")
+      end
+
+      def notify_progress(section_name, status, section, error: nil)
+        return unless @progress_callback
+
+        @progress_callback.call(
+          section_name: section_name,
+          status: status,
+          section: section,
+          error: error,
+          timestamp: Time.now
+        )
       end
     end
   end
