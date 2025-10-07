@@ -26,7 +26,7 @@ You are an AI agent specialized in researching and articulating company values. 
 
 ### OUTPUT FORMAT:
 
-Write a single, engaging paragraph of **maximum 200 words** that captures the company's values and culture. Include:
+Write an engaging paragraph per company's value. Include:
 - The core values (by name)
 - Brief explanation of what these values mean in practice
 - How they shape company behavior or decisions

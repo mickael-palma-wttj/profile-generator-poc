@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require "redcarpet"
-require "json"
-require "base64"
 
 module ProfileGenerator
   module Services
     # Service for formatting LLM content (Markdown/JSON) to HTML
     # Handles both Markdown and JSON responses from Claude
+    # Delegates JSON formatting to JsonFormatter service
     class ContentFormatter
-      def initialize
+      def initialize(json_formatter: nil)
+        @json_formatter = json_formatter || JsonFormatter.new
         @markdown = Redcarpet::Markdown.new(
           Redcarpet::Render::HTML.new(
             hard_wrap: true,
@@ -52,11 +52,8 @@ module ProfileGenerator
       end
 
       def format_json(content)
-        parsed = JSON.parse(content)
-        json_to_html(parsed)
-      rescue JSON::ParserError
-        # If JSON parsing fails, fall back to Markdown
-        format_markdown(content)
+        html = @json_formatter.format(content)
+        html || format_markdown(content)
       end
 
       def format_markdown(content)
@@ -77,54 +74,33 @@ module ProfileGenerator
         # First, handle complete ```json code blocks (with closing ```)
         processed = content.gsub(/```json\s*\n(.*?)\n```/m) do
           json_content = Regexp.last_match(1)
-          begin
-            parsed = JSON.parse(json_content)
-            # Replace with HTML comment placeholder that we'll process later
-            "<!-- JSON_BLOCK:#{Base64.strict_encode64(json_to_html(parsed))} -->"
-          rescue JSON::ParserError
-            # If parsing fails, keep the original code block
-            "```json\n#{json_content}\n```"
-          end
+          placeholder = @json_formatter.format_as_placeholder(json_content)
+          placeholder || "```json\n#{json_content}\n```"
         end
 
         # Handle incomplete/truncated ```json blocks (no closing ```)
-        # This happens when the response hits max_tokens
         if processed.include?("```json")
           processed = processed.gsub(/```json\s*\n(\{.*)/m) do
             json_content = Regexp.last_match(1)
-            # Try to extract whatever valid JSON we can
             formatted = format_incomplete_json(json_content)
             formatted || "```json\n#{json_content}"
           end
         end
 
-        # Then, detect unwrapped JSON blocks (content between ``` markers or standalone JSON)
+        # Then, detect unwrapped JSON blocks (content between ``` markers)
         processed = processed.gsub(/```\s*\n(\{.*?\})\s*\n?```/m) do
           json_content = Regexp.last_match(1)
-          begin
-            parsed = JSON.parse(json_content)
-            "<!-- JSON_BLOCK:#{Base64.strict_encode64(json_to_html(parsed))} -->"
-          rescue JSON::ParserError
-            # Keep original if not valid JSON
-            "```\n#{json_content}\n```"
-          end
+          placeholder = @json_formatter.format_as_placeholder(json_content)
+          placeholder || "```\n#{json_content}\n```"
         end
 
-        # Finally, detect standalone JSON objects that aren't in code blocks
-        # Only match if there's a clear JSON structure with proper formatting
+        # Finally, detect standalone JSON objects (multiline only)
         processed.gsub(/^(\{\s*\n.*?^\})/m) do
           json_content = Regexp.last_match(1)
-          # Try to parse it to confirm it's valid JSON
-          begin
-            parsed = JSON.parse(json_content)
-            # Only format if it's a substantial JSON object (not a small inline one)
-            if json_content.lines.count > 3
-              "\n\n<!-- JSON_BLOCK:#{Base64.strict_encode64(json_to_html(parsed))} -->\n\n"
-            else
-              json_content
-            end
-          rescue JSON::ParserError
-            # Keep original if not valid JSON
+          if json_content.lines.count > 3
+            placeholder = @json_formatter.format_as_placeholder(json_content)
+            placeholder ? "\n\n#{placeholder}\n\n" : json_content
+          else
             json_content
           end
         end
@@ -132,45 +108,15 @@ module ProfileGenerator
 
       # Try to format incomplete/truncated JSON
       def format_incomplete_json(json_content)
-        # First, try to parse as-is (might be complete despite missing closing ```)
-        begin
-          parsed = JSON.parse(json_content)
-          return "<!-- JSON_BLOCK:#{Base64.strict_encode64(json_to_html(parsed))} -->"
-        rescue JSON::ParserError
-          # If it fails, try to find the last complete object/array
-          # Look for the last properly closed structure
-          last_complete_close = json_content.rindex(/\}(?=\s*(?:,\s*\{|\s*\]|\s*$))/m)
-
-          if last_complete_close
-            # Try to extract up to the last complete structure
-            truncated = json_content[0..last_complete_close]
-
-            # Try to close any open structures
-            open_braces = truncated.count("{") - truncated.count("}")
-            open_brackets = truncated.count("[") - truncated.count("]")
-
-            # Add closing braces/brackets
-            if open_braces.positive? || open_brackets.positive?
-              truncated += "\n#{'  ]' * open_brackets}#{"\n}" * open_braces}"
-            end
-
-            begin
-              parsed = JSON.parse(truncated)
-              truncation_note = '<div class="json-truncation-warning" style="background: #fff3cd; ' \
-                                "border-left: 4px solid #ffc107; padding: 12px; margin: 10px 0; " \
-                                'border-radius: 4px;"><strong>⚠️ Note:</strong> ' \
-                                "This JSON response was truncated due to API token limits. " \
-                                "Showing partial data.</div>"
-              formatted = truncation_note + json_to_html(parsed)
-              return "<!-- JSON_BLOCK:#{Base64.strict_encode64(formatted)} -->"
-            rescue JSON::ParserError
-              # Still can't parse, give up and show as code
-              nil
-            end
-          end
-        end
+        html = @json_formatter.format_with_truncation_warning(json_content)
+        return "<!-- JSON_BLOCK:#{encode_html(html)} -->" if html
 
         nil
+      end
+
+      def encode_html(html)
+        require "base64"
+        Base64.strict_encode64(html)
       end
 
       def clean_content(content)
@@ -207,52 +153,26 @@ module ProfileGenerator
       end
 
       def post_process_html(html)
-        processed = html
-                    .gsub("<h1>", '<h1 class="content-h1">')
-                    .gsub("<h2>", '<h2 class="content-h2">')
-                    .gsub("<h3>", '<h3 class="content-h3">')
-                    .gsub("<ul>", '<ul class="content-list">')
-                    .gsub("<ol>", '<ol class="content-list-ordered">')
-                    .gsub("<blockquote>", '<blockquote class="content-quote">')
-                    .gsub("<code>", '<code class="content-code">')
-                    .gsub("<pre>", '<pre class="content-pre">')
-                    .gsub("<table>", '<table class="content-table">')
-
-        # Replace JSON block placeholders with actual HTML
-        processed.gsub(/<!-- JSON_BLOCK:(.*?) -->/) do
-          Base64.strict_decode64(Regexp.last_match(1))
-        end
+        processed = add_css_classes(html)
+        decode_json_placeholders(processed)
       end
 
-      def json_to_html(obj, depth = 0)
-        case obj
-        when Hash
-          html = '<div class="json-object">'
-          obj.each do |key, value|
-            html += "<div class='json-key-value'>"
-            html += "<strong class='json-key'>#{escape_html(key.to_s)}:</strong> "
-            html += json_to_html(value, depth + 1)
-            html += "</div>"
-          end
-          "#{html}</div>"
-        when Array
-          html = '<ul class="json-array">'
-          obj.each do |item|
-            html += "<li>#{json_to_html(item, depth + 1)}</li>"
-          end
-          "#{html}</ul>"
-        else
-          "<span class='json-value'>#{escape_html(obj.to_s)}</span>"
-        end
+      def add_css_classes(html)
+        html.gsub("<h1>", '<h1 class="content-h1">')
+            .gsub("<h2>", '<h2 class="content-h2">')
+            .gsub("<h3>", '<h3 class="content-h3">')
+            .gsub("<ul>", '<ul class="content-list">')
+            .gsub("<ol>", '<ol class="content-list-ordered">')
+            .gsub("<blockquote>", '<blockquote class="content-quote">')
+            .gsub("<code>", '<code class="content-code">')
+            .gsub("<pre>", '<pre class="content-pre">')
+            .gsub("<table>", '<table class="content-table">')
       end
 
-      def escape_html(text)
-        text
-          .gsub("&", "&amp;")
-          .gsub("<", "&lt;")
-          .gsub(">", "&gt;")
-          .gsub('"', "&quot;")
-          .gsub("'", "&#39;")
+      def decode_json_placeholders(html)
+        html.gsub(/<!-- JSON_BLOCK:(.*?) -->/) do
+          @json_formatter.decode_placeholder(Regexp.last_match(1))
+        end
       end
     end
   end
