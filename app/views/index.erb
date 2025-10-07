@@ -86,6 +86,9 @@
         </div>
 
         <div class="actions">
+          <button class="btn btn-secondary" onclick="toggleAllSections()">
+            📂 Toggle All Sections
+          </button>
           <button class="btn btn-primary" onclick="window.location.reload()">
             Generate Another Profile
           </button>
@@ -340,11 +343,14 @@
       sectionCard.className = 'card section-card';
       sectionCard.id = `result-section-${sectionName}`;
       sectionCard.innerHTML = `
-        <div class="section-header">
+        <div class="section-header section-header-toggle" onclick="toggleSection('${sectionName}')">
           <h2>${humanizedName || humanizeSectionName(sectionName)}</h2>
-          <span class="section-badge">${sectionName}</span>
+          <div class="section-header-right">
+            <span class="section-badge">${sectionName}</span>
+            <span class="section-toggle-icon" id="toggle-icon-${sectionName}">▼</span>
+          </div>
         </div>
-        <div class="section-content">
+        <div class="section-content" id="content-${sectionName}">
           ${content}
         </div>
       `;
@@ -389,6 +395,40 @@
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+    }
+
+    function toggleSection(sectionName) {
+      const content = document.getElementById(`content-${sectionName}`);
+      const icon = document.getElementById(`toggle-icon-${sectionName}`);
+      
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.textContent = '▼';
+        icon.classList.remove('collapsed');
+      } else {
+        content.style.display = 'none';
+        icon.textContent = '▶';
+        icon.classList.add('collapsed');
+      }
+    }
+
+    function toggleAllSections() {
+      const allContents = document.querySelectorAll('.section-content');
+      const allIcons = document.querySelectorAll('.section-toggle-icon');
+      const anyExpanded = Array.from(allContents).some(content => content.style.display !== 'none');
+      
+      allContents.forEach(content => {
+        content.style.display = anyExpanded ? 'none' : 'block';
+      });
+      
+      allIcons.forEach(icon => {
+        icon.textContent = anyExpanded ? '▶' : '▼';
+        if (anyExpanded) {
+          icon.classList.add('collapsed');
+        } else {
+          icon.classList.remove('collapsed');
+        }
+      });
     }
   </script>
 </body>

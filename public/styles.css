@@ -241,9 +241,45 @@ header h1 {
     border-bottom: 2px solid var(--border-color);
 }
 
+.section-header-toggle {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    margin: -1rem -1rem 1rem -1rem;
+    padding: 1rem 1rem 1rem 1rem;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header-toggle:hover {
+    background-color: var(--background);
+}
+
+.section-header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-toggle-icon {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    min-width: 24px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.section-toggle-icon.collapsed {
+    transform: rotate(0deg);
+}
+
 .section-header h2 {
     font-size: 1.5rem;
     color: var(--text-primary);
+    margin: 0;
 }
 
 .section-badge {

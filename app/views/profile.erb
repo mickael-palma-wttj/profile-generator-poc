@@ -34,11 +34,14 @@
         <div class="profile-sections">
           <% profile.sections.each do |section| %>
             <div class="card section-card" id="section-<%= section.prompt_file %>">
-              <div class="section-header">
+              <div class="section-header section-header-toggle" onclick="toggleSection('<%= section.prompt_file %>')">
                 <h2><%= section.name %></h2>
-                <span class="section-badge"><%= section.prompt_file %></span>
+                <div class="section-header-right">
+                  <span class="section-badge"><%= section.prompt_file %></span>
+                  <span class="section-toggle-icon" id="toggle-icon-<%= section.prompt_file %>">▼</span>
+                </div>
               </div>
-              <div class="section-content">
+              <div class="section-content" id="content-<%= section.prompt_file %>">
                 <%= ProfileGenerator::Services::ContentFormatter.new.format(section.content) %>
               </div>
             </div>
@@ -47,6 +50,7 @@
       <% end %>
 
       <div class="actions">
+        <button onclick="toggleAllSections()" class="btn btn-secondary">📂 Toggle All Sections</button>
         <button onclick="window.print()" class="btn btn-primary">🖨️ Print Profile</button>
         <button onclick="copyToClipboard()" class="btn btn-secondary">📋 Copy to Clipboard</button>
       </div>
@@ -58,6 +62,40 @@
   </div>
 
   <script>
+    function toggleSection(sectionName) {
+      const content = document.getElementById(`content-${sectionName}`);
+      const icon = document.getElementById(`toggle-icon-${sectionName}`);
+      
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.textContent = '▼';
+        icon.classList.remove('collapsed');
+      } else {
+        content.style.display = 'none';
+        icon.textContent = '▶';
+        icon.classList.add('collapsed');
+      }
+    }
+
+    function toggleAllSections() {
+      const allContents = document.querySelectorAll('.section-content');
+      const allIcons = document.querySelectorAll('.section-toggle-icon');
+      const anyExpanded = Array.from(allContents).some(content => content.style.display !== 'none');
+      
+      allContents.forEach(content => {
+        content.style.display = anyExpanded ? 'none' : 'block';
+      });
+      
+      allIcons.forEach(icon => {
+        icon.textContent = anyExpanded ? '▶' : '▼';
+        if (anyExpanded) {
+          icon.classList.add('collapsed');
+        } else {
+          icon.classList.remove('collapsed');
+        }
+      });
+    }
+
     function copyToClipboard() {
       const sections = document.querySelectorAll('.section-card');
       let text = '<%= company.name %> - Company Profile\n\n';
