@@ -46,7 +46,7 @@ formatter = ProfileGenerator::Services::ContentFormatter.new
 html = formatter.format(markdown_content)
 
 puts "=== ORIGINAL MARKDOWN ==="
-puts markdown_content[0..300] + "..."
+puts "#{markdown_content[0..300]}..."
 puts "\n=== FORMATTED HTML (first 500 chars) ==="
 puts html[0..500]
 puts "\n✅ Markdown formatting successful!"

@@ -47,7 +47,7 @@ else
 end
 
 # Test 2: JSON Code Block
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Test 2: JSON Code Block Formatting"
 puts "=" * 60
 
@@ -78,7 +78,7 @@ puts "Output preview:"
 puts html2[0..400]
 
 # Test 3: Plain JSON
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Test 3: Plain JSON Detection"
 puts "=" * 60
 
@@ -95,7 +95,7 @@ puts "Output preview:"
 puts html3[0..200]
 
 # Test 4: Regular Markdown (Should Work Normally)
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Test 4: Regular Markdown"
 puts "=" * 60
 
@@ -124,7 +124,7 @@ puts "Output preview:"
 puts html4[0..400]
 
 # Test 5: Browse and URL Tags
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Test 5: Browse and URL Tags Removal"
 puts "=" * 60
 
@@ -159,7 +159,7 @@ else
 end
 
 # Test 6: Real LLM Response
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Test 6: Simulated Real LLM Response"
 puts "=" * 60
 
@@ -204,7 +204,7 @@ html6 = formatter.format(test6)
 puts "\nInput: Realistic LLM response with multiple tags and preambles"
 has_tags = html6.include?("<search>") || html6.include?("<thinking>")
 has_preamble = html6.include?("I'll analyze")
-has_separator = html6.include?("<hr>") || html6.match?(/^---+/)
+html6.include?("<hr>") || html6.match?(/^---+/)
 
 if !has_tags && !has_preamble
   puts "✅ PASSED: All LLM artifacts removed"
@@ -218,7 +218,7 @@ puts "\nOutput preview:"
 puts html6[0..500]
 
 # Summary
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Test Summary"
 puts "=" * 60
 puts "All tests completed!"

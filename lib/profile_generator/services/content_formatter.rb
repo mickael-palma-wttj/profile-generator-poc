@@ -150,8 +150,8 @@ module ProfileGenerator
             open_brackets = truncated.count("[") - truncated.count("]")
 
             # Add closing braces/brackets
-            if open_braces > 0 || open_brackets > 0
-              truncated += "\n" + ("  ]" * open_brackets) + ("\n}" * open_braces)
+            if open_braces.positive? || open_brackets.positive?
+              truncated += "\n#{'  ]' * open_brackets}#{"\n}" * open_braces}"
             end
 
             begin
@@ -230,13 +230,13 @@ module ProfileGenerator
             html += json_to_html(value, depth + 1)
             html += "</div>"
           end
-          html + "</div>"
+          "#{html}</div>"
         when Array
           html = '<ul class="json-array">'
           obj.each do |item|
             html += "<li>#{json_to_html(item, depth + 1)}</li>"
           end
-          html + "</ul>"
+          "#{html}</ul>"
         else
           "<span class='json-value'>#{escape_html(obj.to_s)}</span>"
         end

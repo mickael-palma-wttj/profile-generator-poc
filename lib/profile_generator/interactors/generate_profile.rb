@@ -166,7 +166,7 @@ module ProfileGenerator
         end
 
         # Wait for all futures to complete and collect results
-        sections = futures.map(&:value).compact
+        sections = futures.filter_map(&:value)
         pool.shutdown
         pool.wait_for_termination
 
@@ -193,14 +193,14 @@ module ProfileGenerator
       def default_logger
         logger = Logger.new($stdout)
         logger.level = ENV["LOG_LEVEL"]&.upcase&.to_sym || Logger::INFO
-        logger.formatter = proc do |severity, datetime, progname, msg|
+        logger.formatter = proc do |severity, datetime, _progname, msg|
           "[#{datetime.strftime('%Y-%m-%d %H:%M:%S')}] #{severity}: #{msg}\n"
         end
         logger
       end
 
       def log_section_start(section_name, company, retry_attempt)
-        if retry_attempt > 0
+        if retry_attempt.positive?
           @logger.warn("Retrying section: #{section_name} (attempt #{retry_attempt + 1}/#{@max_retries + 1})")
         else
           @logger.info("Starting generation for section: #{section_name} (company: #{company.name})")
@@ -208,7 +208,7 @@ module ProfileGenerator
       end
 
       def log_section_complete(section_name, duration, content_length, retry_attempt)
-        retry_info = retry_attempt > 0 ? " (after #{retry_attempt} retries)" : ""
+        retry_info = retry_attempt.positive? ? " (after #{retry_attempt} retries)" : ""
         @logger.info("Completed section: #{section_name} in #{duration.round(2)}s (#{content_length} chars)#{retry_info}")
       end
 

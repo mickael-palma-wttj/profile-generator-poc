@@ -65,7 +65,7 @@ module ProfileGenerator
       # @param prompt [String] The prompt to send to Claude
       # @param system_prompt [String, nil] Optional system prompt
       # @yield [String] Yields chunks of generated content
-      def generate_stream(prompt:, system_prompt: nil, &block)
+      def generate_stream(prompt:, system_prompt: nil)
         validate_prompt!(prompt)
 
         client.messages(

@@ -29,12 +29,12 @@ puts "=" * 80
 puts ""
 
 # Parse all files
-data = files.map do |file|
+data = files.filter_map do |file|
   JSON.parse(File.read(file))
 rescue JSON::ParserError => e
   puts "⚠️  Warning: Could not parse #{File.basename(file)}: #{e.message}"
   nil
-end.compact
+end
 
 # Separate successes and errors
 successes = data.reject { |d| d["error"] }
@@ -109,7 +109,7 @@ if successes.any?
   puts ""
 
   # Retry analysis
-  retries = successes.select { |d| d.dig("context", "retry_attempt").to_i > 0 }
+  retries = successes.select { |d| d.dig("context", "retry_attempt").to_i.positive? }
   if retries.any?
     puts "🔄 Retries"
     puts "-" * 80

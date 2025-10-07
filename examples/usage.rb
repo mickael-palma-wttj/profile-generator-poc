@@ -6,7 +6,7 @@
 require_relative "../config/boot"
 
 def print_separator
-  puts "\n" + ("=" * 80) + "\n"
+  puts "\n#{'=' * 80}\n"
 end
 
 def example_basic_usage
@@ -37,7 +37,7 @@ def example_basic_usage
     if first_section
       puts "\nFirst section: #{first_section.name}"
       puts "-" * 40
-      puts first_section.content[0..200] + "..."
+      puts "#{first_section.content[0..200]}..."
     end
   else
     puts "\n✗ Error: #{result.error}"

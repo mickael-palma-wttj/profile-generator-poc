@@ -77,27 +77,27 @@ if result.success?
   # Save each section separately for easier debugging
   profile.sections.each do |section|
     section_file = File.join(debug_dir, "alan_#{section.name}_#{timestamp}.txt")
-    File.write(section_file, ("=" * 80) + "\n")
+    File.write(section_file, "#{'=' * 80}\n")
     File.write(section_file, "Section: #{section.name}\n", mode: "a")
     File.write(section_file, "Length: #{section.content.length} chars\n", mode: "a")
-    File.write(section_file, ("=" * 80) + "\n\n", mode: "a")
+    File.write(section_file, "#{'=' * 80}\n\n", mode: "a")
     File.write(section_file, "RAW CONTENT:\n", mode: "a")
-    File.write(section_file, ("-" * 80) + "\n", mode: "a")
+    File.write(section_file, "#{'-' * 80}\n", mode: "a")
     File.write(section_file, section.content, mode: "a")
-    File.write(section_file, "\n\n" + ("=" * 80) + "\n\n", mode: "a")
+    File.write(section_file, "\n\n#{'=' * 80}\n\n", mode: "a")
 
     # Format the content and save formatted version
     formatter = ProfileGenerator::Services::ContentFormatter.new
     formatted = formatter.format(section.content)
     File.write(section_file, "FORMATTED HTML:\n", mode: "a")
-    File.write(section_file, ("-" * 80) + "\n", mode: "a")
+    File.write(section_file, "#{'-' * 80}\n", mode: "a")
     File.write(section_file, formatted, mode: "a")
     File.write(section_file, "\n", mode: "a")
   end
   puts "📁 Saved individual sections to: #{debug_dir}/alan_*_#{timestamp}.txt"
 
   # Summary of sections
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "Sections Summary"
   puts "=" * 60
   profile.sections.each do |section|
@@ -119,7 +119,7 @@ if result.success?
   end
 
   # Test formatting on funding_parser specifically
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "Testing Funding Parser formatting"
   puts "=" * 60
 
@@ -132,12 +132,11 @@ if result.success?
     if formatted.include?("<browse>") || formatted.include?("<url>")
       puts "❌ FAILED: Browse/URL tags still present in formatted output"
       puts "\nFormatted output preview:"
-      puts formatted[0..500]
     else
       puts "✅ PASSED: Browse/URL tags properly removed"
       puts "\nFormatted output preview (first 500 chars):"
-      puts formatted[0..500]
     end
+    puts formatted[0..500]
 
     # Save formatted funding_parser for inspection
     funding_formatted_file = File.join(debug_dir, "alan_Funding Parser_formatted_#{timestamp}.html")
@@ -147,7 +146,7 @@ if result.success?
     puts "⚠️  No Funding Parser section found"
   end
 
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "🎉 Test Complete!"
   puts "=" * 60
   puts "Debug files saved to: #{debug_dir}"

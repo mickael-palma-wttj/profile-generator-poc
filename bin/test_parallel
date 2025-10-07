@@ -32,7 +32,7 @@ else
   puts "❌ Error: #{result.error}"
 end
 
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "\n🧪 Testing SEQUENTIAL generation (for comparison)..."
 puts "=" * 60
 
@@ -50,6 +50,6 @@ else
   puts "❌ Error: #{result2.error}"
 end
 
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "⚡ Speedup: #{(result2.metadata[:duration_seconds] / result.metadata[:duration_seconds]).round(2)}x faster with parallel"
 puts "=" * 60
