@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+
+# Docker
+.docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Development
+.devcontainer
+.vscode
+.idea
+
+# Dependencies
+vendor/bundle
+node_modules
+
+# Logs
+log
+*.log
+tmp
+
+# Environment
+.env.local
+.env.*.local
+
+# Cache
+.bundle
+.cache
+
+# Test
+coverage
+spec/reports
+test/tmp
+test/version_tmp
+
+# Mac
+.DS_Store
+
+# Debug files
+debug/

@@ -1,0 +1,61 @@
+{
+    "name": "Profile Generator Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    },
+    // Configure container
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    // Forward ports
+    "forwardPorts": [
+        4567
+    ],
+    "portsAttributes": {
+        "4567": {
+            "label": "Web Server",
+            "onAutoForward": "notify"
+        }
+    },
+    // Load environment variables from .env file
+    "runArgs": [
+        "--env-file=${localWorkspaceFolder}/.env"
+    ],
+    // Install VS Code extensions
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "Shopify.ruby-lsp",
+                "testdouble.vscode-standard-ruby"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "ruby.useBundler": true,
+                "ruby.useLanguageServer": true,
+                "ruby.lint": {
+                    "rubocop": true
+                },
+                "ruby.format": "rubocop",
+                "[ruby]": {
+                    "editor.formatOnSave": false,
+                    "editor.tabSize": 2,
+                    "editor.insertSpaces": true
+                }
+            }
+        }
+    },
+    // Run commands after container is created
+    "postCreateCommand": "bundle install",
+    // Keep container running
+    "postStartCommand": "echo 'Container ready! Run tasks from the Command Palette (Cmd+Shift+P) or Terminal menu.'",
+    // Use the non-root user
+    "remoteUser": "vscode",
+    // Mount additional volumes for better performance
+    "mounts": [
+        "source=profile-generator-gems,target=/usr/local/bundle,type=volume"
+    ],
+    // Features to add
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    }
+}
