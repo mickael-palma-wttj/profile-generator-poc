@@ -84,7 +84,7 @@ lib/profile_generator/
    Edit `.env` and add your Anthropic API key:
    ```env
    ANTHROPIC_API_KEY=your_api_key_here
-   ANTHROPIC_MODEL=claude-sonnet-4-20250514
+   ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
    ANTHROPIC_MAX_TOKENS=4096
    ANTHROPIC_TEMPERATURE=0.7
    ```
@@ -240,7 +240,7 @@ profile_generator/
 
 Edit your `.env` file:
 ```env
-ANTHROPIC_MODEL=claude-sonnet-4-20250514
+ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
 ANTHROPIC_MAX_TOKENS=4096        # Increase for longer responses
 ANTHROPIC_TEMPERATURE=0.7        # 0.0-1.0 (lower = more focused)
 ```
@@ -252,7 +252,7 @@ All configuration is managed through environment variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ANTHROPIC_API_KEY` | Anthropic API key | (required) |
-| `ANTHROPIC_MODEL` | Claude model to use | `claude-sonnet-4-20250514` |
+| `ANTHROPIC_MODEL` | Claude model to use | `claude-sonnet-4-5-20250929` |
 | `ANTHROPIC_MAX_TOKENS` | Max tokens per request | `4096` |
 | `ANTHROPIC_TEMPERATURE` | Creativity (0.0-1.0) | `0.7` |
 | `RACK_ENV` | Environment | `development` |

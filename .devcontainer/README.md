@@ -24,7 +24,7 @@ This project includes a complete VS Code Dev Container configuration for a consi
 1. **Ensure you have a `.env` file** in the project root with your API keys:
    ```env
    ANTHROPIC_API_KEY=your_api_key_here
-   ANTHROPIC_MODEL=claude-sonnet-4-20250514
+   ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
    ANTHROPIC_MAX_TOKENS=4096
    ANTHROPIC_TEMPERATURE=0.7
    ```
