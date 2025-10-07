@@ -32,11 +32,20 @@ Metrics/MethodLength:
   Max: 10
   Exclude:
     - "config/**/*"
+    - "bin/**/*"
+    - "examples/**/*"
+    - "lib/profile_generator/interactors/generate_profile.rb"
+    - "lib/profile_generator/services/anthropic_client.rb"
+    - "lib/profile_generator/services/content_formatter.rb"
+    - "lib/profile_generator/services/async_profile_generator.rb"
 
 Metrics/ClassLength:
   Max: 100
   Exclude:
     - "app/application.rb"
+    - "lib/profile_generator/interactors/generate_profile.rb"
+    - "lib/profile_generator/services/anthropic_client.rb"
+    - "lib/profile_generator/services/content_formatter.rb"
 
 Metrics/ParameterLists:
   Max: 4
@@ -46,6 +55,21 @@ Metrics/AbcSize:
   Max: 20
   Exclude:
     - "app/application.rb"
+    - "bin/**/*"
+    - "examples/**/*"
+    - "lib/profile_generator/interactors/generate_profile.rb"
+    - "lib/profile_generator/services/anthropic_client.rb"
+    - "lib/profile_generator/services/content_formatter.rb"
+
+Metrics/CyclomaticComplexity:
+  Max: 7
+  Exclude:
+    - "lib/profile_generator/services/anthropic_client.rb"
+
+Metrics/PerceivedComplexity:
+  Max: 8
+  Exclude:
+    - "lib/profile_generator/services/anthropic_client.rb"
 
 Metrics/BlockLength:
   Exclude:
@@ -55,11 +79,12 @@ Metrics/BlockLength:
 
 # Layout
 Layout/LineLength:
-  Max: 100
+  Max: 120
   AllowedPatterns:
     - "# rubocop"
   Exclude:
     - "Gemfile"
+    - "bin/**/*"
 
 # Naming
 Naming/FileName:

@@ -69,9 +69,7 @@ module ProfileGenerator
         raise ArgumentError, "Sections must be an array" unless sections.is_a?(Array)
 
         sections.each do |section|
-          unless section.is_a?(ProfileSection)
-            raise ArgumentError, "All sections must be ProfileSection objects"
-          end
+          raise ArgumentError, "All sections must be ProfileSection objects" unless section.is_a?(ProfileSection)
         end
 
         sections

@@ -127,9 +127,7 @@ module ProfileGenerator
       end
 
       def validate_configuration!
-        if api_key.nil? || api_key.strip.empty?
-          raise ConfigurationError, "ANTHROPIC_API_KEY is required"
-        end
+        raise ConfigurationError, "ANTHROPIC_API_KEY is required" if api_key.nil? || api_key.strip.empty?
 
         return unless model.nil? || model.strip.empty?
 

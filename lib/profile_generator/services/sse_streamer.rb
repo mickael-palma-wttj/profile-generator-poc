@@ -21,7 +21,7 @@ module ProfileGenerator
 
           stream_section_updates(output_stream, session_data, last_update)
 
-          break if stream_completion_event(output_stream, session_data)
+          break if completed_or_failed?(output_stream, session_data)
 
           sleep POLL_INTERVAL
         end
@@ -61,7 +61,7 @@ module ProfileGenerator
         }
       end
 
-      def stream_completion_event(output_stream, session_data)
+      def completed_or_failed?(output_stream, session_data)
         case session_data[:status]
         when "completed"
           send_completion_event(output_stream, session_data)

@@ -209,7 +209,9 @@ module ProfileGenerator
 
       def log_section_complete(section_name, duration, content_length, retry_attempt)
         retry_info = retry_attempt.positive? ? " (after #{retry_attempt} retries)" : ""
-        @logger.info("Completed section: #{section_name} in #{duration.round(2)}s (#{content_length} chars)#{retry_info}")
+        message = "Completed section: #{section_name} in #{duration.round(2)}s " \
+                  "(#{content_length} chars)#{retry_info}"
+        @logger.info(message)
       end
 
       def handle_section_error(error, company, section_name, retry_attempt)
@@ -223,7 +225,9 @@ module ProfileGenerator
           )
         end
 
-        @logger.error("Failed to generate section '#{section_name}' after #{retry_attempt + 1} attempts: #{error.message}")
+        message = "Failed to generate section '#{section_name}' after " \
+                  "#{retry_attempt + 1} attempts: #{error.message}"
+        @logger.error(message)
         Result.failure(
           error.message,
           section_name: section_name,

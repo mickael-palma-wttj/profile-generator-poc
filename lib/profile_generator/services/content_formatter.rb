@@ -156,7 +156,11 @@ module ProfileGenerator
 
             begin
               parsed = JSON.parse(truncated)
-              truncation_note = '<div class="json-truncation-warning" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 10px 0; border-radius: 4px;"><strong>⚠️ Note:</strong> This JSON response was truncated due to API token limits. Showing partial data.</div>'
+              truncation_note = '<div class="json-truncation-warning" style="background: #fff3cd; ' \
+                                "border-left: 4px solid #ffc107; padding: 12px; margin: 10px 0; " \
+                                'border-radius: 4px;"><strong>⚠️ Note:</strong> ' \
+                                "This JSON response was truncated due to API token limits. " \
+                                "Showing partial data.</div>"
               formatted = truncation_note + json_to_html(parsed)
               return "<!-- JSON_BLOCK:#{Base64.strict_encode64(formatted)} -->"
             rescue JSON::ParserError
