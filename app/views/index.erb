@@ -188,6 +188,15 @@
       document.querySelector('.progress-company-name').textContent = companyName;
       document.querySelector('.features').style.display = 'none';
 
+      // Show results container and populate metadata immediately
+      resultsContainer.style.display = 'block';
+      document.getElementById('result-company-name').textContent = companyName;
+      if (website) {
+        document.getElementById('result-website').innerHTML = ` | <a href="${website}" target="_blank">${website}</a>`;
+      } else {
+        document.getElementById('result-website').innerHTML = '';
+      }
+
       // Reset state
       sectionsProgress.innerHTML = '';
       profileSections.innerHTML = '';
@@ -366,13 +375,8 @@
     function handleComplete(companyName, website) {
       progressStatus.textContent = 'Profile generation complete!';
       
-      // Update result header
-      document.getElementById('result-company-name').textContent = companyName;
-      if (website) {
-        document.getElementById('result-website').innerHTML = ` | <a href="${website}" target="_blank">${website}</a>`;
-      }
-
-      // Scroll to results
+      // Metadata is already set at the beginning
+      // Just scroll to results
       setTimeout(() => {
         resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 500);
