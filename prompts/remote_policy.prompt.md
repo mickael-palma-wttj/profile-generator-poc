@@ -55,22 +55,11 @@ When given a company name, you will:
 - [Home office setup budgets]
 - [Internet/utility stipends]
 
-### 📞 **Communication & Collaboration**
-- [Required tools and platforms]
-- [Meeting expectations and schedules]
-- [Response time requirements]
-- [Async vs. sync communication preferences]
-
 ### ⏰ **Work Schedule & Expectations**
 - [Work hours flexibility]
 - [Time zone requirements]
 - [Performance measurement methods]
 - [Productivity expectations]
-
-### 🏖️ **Time Off & Benefits**
-- [PTO policies specific to remote workers]
-- [Additional remote work benefits]
-- [Sabbatical or extended leave options]
 
 ### 🤝 **Team Connection & Culture**
 - [In-person meeting requirements]
