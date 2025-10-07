@@ -3,8 +3,10 @@
 # RuboCop configuration
 # Following Ruby community standards and best practices
 
-require:
+plugins:
   - rubocop-performance
+  - rubocop-rake
+  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 3.2
