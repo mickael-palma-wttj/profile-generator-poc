@@ -12,13 +12,16 @@ module ProfileGenerator
       def initialize(
         anthropic_client: nil,
         prompt_loader: nil,
+        prompt_manager: nil,
         generation_logger: nil,
         max_threads: 5,
         max_retries: 3,
         progress_callback: nil
       )
         @anthropic_client = anthropic_client || build_anthropic_client(max_retries)
-        @prompt_loader = prompt_loader || Services::PromptLoader.new
+        # Support both legacy prompt_loader and new prompt_manager
+        # prompt_manager takes precedence for flexibility
+        @prompt_loader = prompt_manager || prompt_loader || build_default_prompt_loader
         @generation_logger = generation_logger || Services::GenerationLogger.new
         @max_threads = max_threads
         @max_retries = max_retries
@@ -94,6 +97,15 @@ module ProfileGenerator
         Services::AnthropicClient.new(max_retries: max_retries)
       end
 
+      def build_default_prompt_loader
+        # Default to Langfuse if configured, otherwise use file-based
+        prompt_source = ENV.fetch("PROMPT_SOURCE", "langfuse").to_sym
+        Services::PromptManager.new(source: prompt_source)
+      rescue Services::LangfuseClient::ConfigurationError
+        # Fall back to file-based if Langfuse not configured
+        Services::PromptManager.new(source: :file)
+      end
+
       def validate_company!(company)
         return if company.is_a?(Models::Company)
 
@@ -108,7 +120,11 @@ module ProfileGenerator
       end
 
       def determine_sections(section_names)
-        return prompt_loader.available_prompts if section_names.nil? || section_names.empty?
+        if section_names.nil? || section_names.empty?
+          # Return all available prompts based on source
+          # For Langfuse, use the local file names for consistency
+          return Services::PromptNameMapper.all_file_names
+        end
 
         section_names
       end

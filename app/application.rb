@@ -16,10 +16,22 @@ module ProfileGenerator
       set :public_folder, File.join(settings.root, "public")
       set :show_exceptions, development?
 
+      # Initialize prompt manager based on environment configuration
+      prompt_source = ENV.fetch("PROMPT_SOURCE", "langfuse").to_sym
+      begin
+        set :prompt_manager, Services::PromptManager.new(source: prompt_source)
+        puts "📋 Using #{prompt_source} prompt source"
+      rescue Services::LangfuseClient::ConfigurationError => e
+        puts "⚠️  Langfuse not configured: #{e.message}"
+        puts "📋 Falling back to file-based prompts"
+        set :prompt_manager, Services::PromptManager.new(source: :file)
+      end
+
       # Initialize services (dependency injection)
       set :session_manager, Services::SessionManager.new
       set :async_generator, Services::AsyncProfileGenerator.new(
-        session_manager: settings.session_manager
+        session_manager: settings.session_manager,
+        prompt_manager: settings.prompt_manager
       )
       set :sse_streamer, Services::SseStreamer.new(
         session_manager: settings.session_manager
@@ -106,7 +118,9 @@ module ProfileGenerator
 
     # Helper: Generate profile using interactor
     def generate_profile(company)
-      generator = Interactors::GenerateProfile.new
+      generator = Interactors::GenerateProfile.new(
+        prompt_manager: settings.prompt_manager
+      )
       generator.call(company: company)
     end
 

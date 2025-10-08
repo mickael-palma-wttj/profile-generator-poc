@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+require "net/http"
+require "uri"
+require "json"
+require "base64"
+
+# Get credentials
+public_key = ENV.fetch("LANGFUSE_PUBLIC_KEY", nil)
+secret_key = ENV.fetch("LANGFUSE_SECRET_KEY", nil)
+base_url = "https://cloud.langfuse.com"
+
+puts "Testing Langfuse API directly..."
+puts ""
+
+# Test 1: No parameters (should return latest)
+puts "Test 1: GET /api/public/v2/prompts/TheirStory (no parameters)"
+uri = URI("#{base_url}/api/public/v2/prompts/TheirStory")
+puts "URI: #{uri}"
+
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+request = Net::HTTP::Get.new(uri)
+request["Authorization"] = "Basic " + Base64.strict_encode64("#{public_key}:#{secret_key}")
+
+response = http.request(request)
+puts "Response code: #{response.code}"
+if response.code == "200"
+  data = JSON.parse(response.body)
+  puts "✅ Success! Version: #{data['version']}, Labels: #{data['labels']}"
+else
+  puts "❌ Failed: #{response.body}"
+end
+
+puts ""
+puts "=" * 60
+puts ""
+
+# Test 2: With label=latest
+puts "Test 2: GET /api/public/v2/prompts/TheirStory?label=latest"
+uri = URI("#{base_url}/api/public/v2/prompts/TheirStory?label=latest")
+puts "URI: #{uri}"
+
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+request = Net::HTTP::Get.new(uri)
+request["Authorization"] = "Basic " + Base64.strict_encode64("#{public_key}:#{secret_key}")
+
+response = http.request(request)
+puts "Response code: #{response.code}"
+if response.code == "200"
+  data = JSON.parse(response.body)
+  puts "✅ Success! Version: #{data['version']}, Labels: #{data['labels']}"
+else
+  puts "❌ Failed: #{response.body}"
+end

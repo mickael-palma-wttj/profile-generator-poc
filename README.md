@@ -76,18 +76,25 @@ lib/profile_generator/
    ```
 
 3. **Set up environment variables**:
-   Create a `.env` file in the project root:
+   Create a `.env` file from the example:
    ```bash
    cp .env.example .env
    ```
    
-   Edit `.env` and add your Anthropic API key:
+   Edit `.env` and add your credentials:
    ```env
+   # Required
    ANTHROPIC_API_KEY=your_api_key_here
-   ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
-   ANTHROPIC_MAX_TOKENS=4096
-   ANTHROPIC_TEMPERATURE=0.7
+   
+   # Prompt source (langfuse or file)
+   PROMPT_SOURCE=langfuse
+   
+   # Langfuse credentials (if using langfuse)
+   LANGFUSE_PUBLIC_KEY=your_langfuse_public_key
+   LANGFUSE_SECRET_KEY=your_langfuse_secret_key
    ```
+   
+   See [`.env.example`](.env.example) for all available configuration options.
 
 ## Usage
 
@@ -247,16 +254,25 @@ ANTHROPIC_TEMPERATURE=0.7        # 0.0-1.0 (lower = more focused)
 
 ## Configuration
 
-All configuration is managed through environment variables:
+All configuration is managed through environment variables. See [`.env.example`](.env.example) for a complete list of available settings.
+
+### Key Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ANTHROPIC_API_KEY` | Anthropic API key | (required) |
-| `ANTHROPIC_MODEL` | Claude model to use | `claude-sonnet-4-5-20250929` |
+| `ANTHROPIC_MODEL` | Claude model to use | `claude-sonnet-4-20250514` |
 | `ANTHROPIC_MAX_TOKENS` | Max tokens per request | `4096` |
 | `ANTHROPIC_TEMPERATURE` | Creativity (0.0-1.0) | `0.7` |
+| `PROMPT_SOURCE` | Prompt source (`langfuse` or `file`) | `langfuse` |
+| `LANGFUSE_PUBLIC_KEY` | Langfuse public key (if using Langfuse) | - |
+| `LANGFUSE_SECRET_KEY` | Langfuse secret key (if using Langfuse) | - |
 | `RACK_ENV` | Environment | `development` |
 | `PORT` | Server port | `4567` |
+| `MAX_THREADS` | Parallel threads for generation | `5` |
+| `MAX_RETRIES` | Retries for failed API calls | `3` |
+
+For a complete list of all environment variables with descriptions and examples, see [`.env.example`](.env.example).
 
 ## Deployment
 

@@ -1,0 +1,155 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+puts "🧪 Testing Langfuse Integration\n\n"
+
+def test_langfuse_client
+  puts "=" * 60
+  puts "Test 1: Langfuse Client"
+  puts "=" * 60
+
+  begin
+    client = ProfileGenerator::Services::LangfuseClient.new
+    puts "✅ Langfuse client initialized"
+    puts "Base URL: #{client.base_url}"
+    puts "Public Key: #{client.public_key[0..10]}..." if client.public_key
+
+    # Test listing prompts
+    puts "\n📋 Fetching prompts list..."
+    response = client.list_prompts(limit: 5)
+
+    if response["data"]&.any?
+      puts "✅ Found #{response['data'].length} prompts:"
+      response["data"].each do |prompt|
+        puts "  - #{prompt['name']} (versions: #{prompt['versions'].join(', ')})"
+      end
+    else
+      puts "⚠️  No prompts found in Langfuse"
+    end
+  rescue ProfileGenerator::Services::LangfuseClient::ConfigurationError => e
+    puts "❌ Configuration Error: #{e.message}"
+    puts "\n💡 To configure Langfuse, add to your .env file:"
+    puts "   LANGFUSE_PUBLIC_KEY=your_public_key"
+    puts "   LANGFUSE_SECRET_KEY=your_secret_key"
+    puts "   LANGFUSE_BASE_URL=https://cloud.langfuse.com  # optional"
+  rescue ProfileGenerator::Services::LangfuseClient::APIError => e
+    puts "❌ API Error: #{e.message}"
+  rescue StandardError => e
+    puts "❌ Error: #{e.class} - #{e.message}"
+  end
+end
+
+def test_get_specific_prompt
+  puts "\n" + ("=" * 60)
+  puts "Test 2: Get Specific Prompt"
+  puts "=" * 60
+
+  begin
+    client = ProfileGenerator::Services::LangfuseClient.new
+
+    # First, show available prompts
+    puts "\n📋 Available prompts in your Langfuse project:"
+    response = client.list_prompts(limit: 20)
+
+    if response["data"]&.any?
+      response["data"].each_with_index do |prompt, idx|
+        labels = prompt["labels"].any? ? prompt["labels"].join(", ") : "no labels"
+        puts "  #{idx + 1}. #{prompt['name']} (#{labels})"
+      end
+    else
+      puts "  ⚠️  No prompts found in Langfuse"
+      return
+    end
+
+    # Prompt the user for a prompt name
+    print "\nEnter prompt name to fetch (or press Enter to skip): "
+    prompt_name = $stdin.gets.chomp
+
+    return if prompt_name.empty?
+
+    puts "\n📝 Fetching prompt '#{prompt_name}'..."
+
+    # Try with production label first, then without label
+    begin
+      response = client.get_prompt(prompt_name, label: "production")
+    rescue ProfileGenerator::Services::LangfuseClient::PromptNotFoundError
+      puts "⚠️  Not found with 'production' label, trying without label..."
+      response = client.get_prompt(prompt_name)
+    end
+
+    puts "✅ Successfully fetched prompt"
+    puts "\nPrompt Details:"
+    puts "  Name: #{response['name']}"
+    puts "  Version: #{response['version']}"
+    puts "  Type: #{response['type']}"
+    puts "  Labels: #{response['labels'].join(', ')}"
+    puts "  Tags: #{response['tags'].join(', ')}" if response["tags"]&.any?
+
+    puts "\nPrompt Content:"
+    puts "-" * 60
+    case response["type"]
+    when "text"
+      puts response["prompt"]
+    when "chat"
+      response["prompt"].each do |msg|
+        puts "[#{msg['role'].upcase}]"
+        puts msg["content"]
+        puts ""
+      end
+    end
+    puts "-" * 60
+  rescue ProfileGenerator::Services::LangfuseClient::PromptNotFoundError => e
+    puts "❌ Prompt not found: #{e.message}"
+  rescue ProfileGenerator::Services::LangfuseClient::ConfigurationError => e
+    puts "❌ Configuration Error: #{e.message}"
+  rescue ProfileGenerator::Services::LangfuseClient::APIError => e
+    puts "❌ API Error: #{e.message}"
+  rescue StandardError => e
+    puts "❌ Error: #{e.class} - #{e.message}"
+  end
+end
+
+def test_prompt_manager
+  puts "\n" + ("=" * 60)
+  puts "Test 3: Prompt Manager (Unified Interface)"
+  puts "=" * 60
+
+  begin
+    # Test with file source (default)
+    puts "\n📁 Testing with file source..."
+    file_manager = ProfileGenerator::Services::PromptManager.new(source: :file)
+    puts "✅ File-based prompt manager initialized"
+
+    available = file_manager.available_prompts
+    puts "Available prompts: #{available.length}"
+    available.first(3).each { |name| puts "  - #{name}" }
+
+    # Test with Langfuse source
+    puts "\n☁️  Testing with Langfuse source..."
+    langfuse_manager = ProfileGenerator::Services::PromptManager.new(source: :langfuse)
+    puts "✅ Langfuse prompt manager initialized"
+
+    available_langfuse = langfuse_manager.available_prompts
+    if available_langfuse.any?
+      puts "Available prompts: #{available_langfuse.length}"
+      available_langfuse.first(3).each { |name| puts "  - #{name}" }
+    else
+      puts "⚠️  No prompts found in Langfuse"
+    end
+  rescue ProfileGenerator::Services::LangfuseClient::ConfigurationError => e
+    puts "❌ Langfuse not configured: #{e.message}"
+  rescue StandardError => e
+    puts "❌ Error: #{e.class} - #{e.message}"
+  end
+end
+
+# Run all tests
+test_langfuse_client
+test_get_specific_prompt
+test_prompt_manager
+
+puts "\n" + ("=" * 60)
+puts "Tests Complete"
+puts "=" * 60

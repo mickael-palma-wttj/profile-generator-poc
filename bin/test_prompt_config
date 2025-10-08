@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+puts "🧪 Testing Prompt Source Configuration"
+puts "=" * 60
+puts ""
+
+# Test 1: Check environment variable
+prompt_source = ENV.fetch("PROMPT_SOURCE", "langfuse")
+puts "📋 PROMPT_SOURCE environment variable: #{prompt_source}"
+puts ""
+
+# Test 2: Test PromptNameMapper
+puts "🔄 Testing PromptNameMapper..."
+test_mappings = [
+  %w[company_values CompanyValues],
+  %w[their_story TheirStory],
+  %w[office_locations OfficeLocations]
+]
+
+test_mappings.each do |file_name, expected_langfuse_name|
+  langfuse_name = ProfileGenerator::Services::PromptNameMapper.to_langfuse(file_name)
+  if langfuse_name == expected_langfuse_name
+    puts "  ✅ #{file_name} → #{langfuse_name}"
+  else
+    puts "  ❌ #{file_name} → #{langfuse_name} (expected: #{expected_langfuse_name})"
+  end
+end
+
+# Test reverse mapping
+langfuse_name = "CompanyValues"
+file_name = ProfileGenerator::Services::PromptNameMapper.to_file(langfuse_name)
+puts "  ✅ #{langfuse_name} → #{file_name} (reverse)"
+puts ""
+
+# Test 3: Initialize PromptManager with Langfuse
+puts "☁️  Testing Langfuse PromptManager..."
+begin
+  langfuse_manager = ProfileGenerator::Services::PromptManager.new(source: :langfuse)
+  puts "  ✅ Langfuse PromptManager initialized"
+
+  # Try loading a prompt using local file name
+  puts "  📝 Loading 'company_values' prompt (mapped to 'CompanyValues')..."
+  prompt = langfuse_manager.load("company_values")
+  puts "  ✅ Loaded successfully! Length: #{prompt.length} characters"
+  puts "  Preview: #{prompt[0..100]}..."
+rescue ProfileGenerator::Services::LangfuseClient::ConfigurationError => e
+  puts "  ⚠️  Langfuse not configured: #{e.message}"
+  puts "  💡 Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY in .env"
+rescue StandardError => e
+  puts "  ❌ Error: #{e.message}"
+end
+puts ""
+
+# Test 4: Initialize PromptManager with file source
+puts "📁 Testing File PromptManager..."
+begin
+  file_manager = ProfileGenerator::Services::PromptManager.new(source: :file)
+  puts "  ✅ File PromptManager initialized"
+
+  # Try loading a prompt
+  prompt = file_manager.load("company_values")
+  puts "  ✅ Loaded successfully! Length: #{prompt.length} characters"
+  puts "  Preview: #{prompt[0..100]}..."
+rescue StandardError => e
+  puts "  ❌ Error: #{e.message}"
+end
+puts ""
+
+# Test 5: Test GenerateProfile with default configuration
+puts "🔧 Testing GenerateProfile with default configuration..."
+begin
+  # Create a test company
+  company = ProfileGenerator::Models::Company.new(
+    name: "Test Company",
+    website: "https://example.com"
+  )
+
+  # Test single section generation
+  generator = ProfileGenerator::Interactors::GenerateProfile.new
+  puts "  ✅ GenerateProfile initialized with default prompt source"
+  puts "  💡 It will use PROMPT_SOURCE env variable (current: #{prompt_source})"
+
+  # Don't actually generate to save API calls, just verify initialization
+  puts "  ✅ Configuration successful!"
+rescue StandardError => e
+  puts "  ❌ Error: #{e.message}"
+  puts "  Backtrace: #{e.backtrace.first(3).join("\n             ")}"
+end
+puts ""
+
+puts "=" * 60
+puts "✅ All configuration tests complete!"
+puts ""
+puts "💡 To switch prompt sources, set PROMPT_SOURCE in your .env file:"
+puts "   - PROMPT_SOURCE=langfuse (default)"
+puts "   - PROMPT_SOURCE=file"

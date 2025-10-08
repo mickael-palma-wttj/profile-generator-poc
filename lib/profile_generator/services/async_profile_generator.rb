@@ -5,9 +5,10 @@ module ProfileGenerator
     # Handles async profile generation in background thread
     # Follows SRP - only responsible for orchestrating async generation
     class AsyncProfileGenerator
-      def initialize(session_manager:, formatter: nil)
+      def initialize(session_manager:, formatter: nil, prompt_manager: nil)
         @session_manager = session_manager
         @formatter = formatter || ContentFormatter.new
+        @prompt_manager = prompt_manager
       end
 
       def generate(session_id, company)
@@ -20,11 +21,14 @@ module ProfileGenerator
 
       private
 
-      attr_reader :session_manager, :formatter
+      attr_reader :session_manager, :formatter, :prompt_manager
 
       def execute_generation(session_id, company)
         progress_callback = build_progress_callback(session_id)
-        generator = Interactors::GenerateProfile.new(progress_callback: progress_callback)
+        generator = Interactors::GenerateProfile.new(
+          progress_callback: progress_callback,
+          prompt_manager: prompt_manager
+        )
         result = generator.call(company: company)
 
         session_manager.complete_session(session_id, result)

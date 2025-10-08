@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+puts "🧪 End-to-End Profile Generation Test"
+puts "=" * 60
+puts ""
+
+# Check configuration
+prompt_source = ENV.fetch("PROMPT_SOURCE", "langfuse")
+puts "📋 Prompt source: #{prompt_source}"
+puts ""
+
+# Create a test company
+company = ProfileGenerator::Models::Company.new(
+  name: "Example Corp",
+  website: "https://example.com"
+)
+
+puts "🏢 Test company: #{company.name}"
+puts "🌐 Website: #{company.website}"
+puts ""
+
+# Test single section generation (fast test)
+puts "📝 Testing single section generation (company_values)..."
+puts "   This will make an actual API call to Claude..."
+puts ""
+
+begin
+  generator = ProfileGenerator::Interactors::GenerateProfile.new
+
+  result = generator.generate_section(
+    company: company,
+    section_name: "company_values"
+  )
+
+  if result.success?
+    section = result.value
+    puts "✅ Success!"
+    puts ""
+    puts "Section: #{section.name}"
+    puts "Prompt file: #{section.prompt_file}"
+    puts "Content length: #{section.content.length} characters"
+    puts ""
+    puts "Content preview:"
+    puts "-" * 60
+    puts section.content[0..300]
+    puts "..."
+    puts "-" * 60
+    puts ""
+    puts "✅ Full integration test PASSED!"
+  else
+    puts "❌ Error: #{result.error}"
+  end
+rescue StandardError => e
+  puts "❌ Error: #{e.message}"
+  puts "   #{e.class.name}"
+  puts ""
+  puts "Backtrace:"
+  puts e.backtrace.first(5).map { |line| "  #{line}" }.join("\n")
+end
+
+puts ""
+puts "=" * 60
+puts "💡 To test with different prompt source:"
+puts "   PROMPT_SOURCE=file ./bin/test_e2e"
+puts "   PROMPT_SOURCE=langfuse ./bin/test_e2e"

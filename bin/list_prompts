@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+puts "📋 Listing all prompts in your Langfuse project\n\n"
+
+begin
+  client = ProfileGenerator::Services::LangfuseClient.new
+
+  puts "Fetching prompts..."
+  response = client.list_prompts(limit: 100)
+
+  if response["data"]&.any?
+    puts "\n✅ Found #{response['data'].length} prompt(s):\n\n"
+
+    response["data"].each_with_index do |prompt, idx|
+      puts "#{idx + 1}. Name: '#{prompt['name']}'"
+      puts "   Versions: #{prompt['versions'].join(', ')}"
+      puts "   Labels: #{prompt['labels'].any? ? prompt['labels'].join(', ') : '(no labels)'}"
+      puts "   Tags: #{prompt['tags'].any? ? prompt['tags'].join(', ') : '(no tags)'}" if prompt["tags"]
+      puts ""
+    end
+
+    puts "=" * 60
+    puts "💡 To fetch a prompt, use the exact name shown above"
+    puts "   Example: client.get_prompt('#{response['data'].first['name']}')"
+    puts "=" * 60
+  else
+    puts "\n⚠️  No prompts found in your Langfuse project"
+    puts "\n💡 To add prompts:"
+    puts "   1. Go to https://cloud.langfuse.com"
+    puts "   2. Navigate to your project"
+    puts "   3. Click 'Prompts' → 'Create Prompt'"
+    puts "   4. Add your prompt content"
+  end
+rescue ProfileGenerator::Services::LangfuseClient::ConfigurationError => e
+  puts "❌ Configuration Error: #{e.message}"
+  puts "\n💡 Add to your .env file:"
+  puts "   LANGFUSE_PUBLIC_KEY=pk-lf-your-key"
+  puts "   LANGFUSE_SECRET_KEY=sk-lf-your-key"
+rescue ProfileGenerator::Services::LangfuseClient::APIError => e
+  puts "❌ API Error: #{e.message}"
+rescue StandardError => e
+  puts "❌ Error: #{e.class} - #{e.message}"
+  puts "\nBacktrace:"
+  puts(e.backtrace.first(5).map { |line| "  #{line}" })
+end

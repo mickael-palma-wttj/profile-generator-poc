@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "dotenv/load"
+
+puts "🔍 Environment Variable Check\n\n"
+
+def check_env_var(name, required: false)
+  value = ENV.fetch(name, nil)
+  if value.nil? || value.empty?
+    status = required ? "❌ MISSING (required)" : "⚠️  NOT SET (optional)"
+    puts "#{name}: #{status}"
+    false
+  else
+    masked_value = value.length > 20 ? "#{value[0..19]}..." : value[0..10] + "..."
+    puts "#{name}: ✅ SET (#{masked_value})"
+    true
+  end
+end
+
+puts "=" * 60
+puts "Anthropic Configuration"
+puts "=" * 60
+check_env_var("ANTHROPIC_API_KEY", required: true)
+check_env_var("ANTHROPIC_MODEL")
+check_env_var("ANTHROPIC_MAX_TOKENS")
+check_env_var("ANTHROPIC_TEMPERATURE")
+
+puts "\n" + ("=" * 60)
+puts "Langfuse Configuration"
+puts "=" * 60
+langfuse_public = check_env_var("LANGFUSE_PUBLIC_KEY", required: true)
+langfuse_secret = check_env_var("LANGFUSE_SECRET_KEY", required: true)
+check_env_var("LANGFUSE_BASE_URL")
+
+puts "\n" + ("=" * 60)
+puts "Summary"
+puts "=" * 60
+
+if langfuse_public && langfuse_secret
+  puts "✅ Langfuse is configured correctly"
+  puts "\nYou can now run: ./bin/test_langfuse"
+else
+  puts "❌ Langfuse configuration incomplete"
+  puts "\n📝 Please add to your .env file:"
+  puts "   LANGFUSE_PUBLIC_KEY=pk-lf-your-public-key"
+  puts "   LANGFUSE_SECRET_KEY=sk-lf-your-secret-key"
+  puts "   LANGFUSE_BASE_URL=https://cloud.langfuse.com  # optional"
+  puts "\n💡 Get your keys from: https://cloud.langfuse.com"
+end
