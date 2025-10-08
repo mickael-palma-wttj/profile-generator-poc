@@ -61,58 +61,6 @@
     </footer>
   </div>
 
-  <script>
-    function toggleSection(sectionName) {
-      const content = document.getElementById(`content-${sectionName}`);
-      const icon = document.getElementById(`toggle-icon-${sectionName}`);
-      
-      if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.textContent = '▼';
-        icon.classList.remove('collapsed');
-      } else {
-        content.style.display = 'none';
-        icon.textContent = '▶';
-        icon.classList.add('collapsed');
-      }
-    }
-
-    function toggleAllSections() {
-      const allContents = document.querySelectorAll('.section-content');
-      const allIcons = document.querySelectorAll('.section-toggle-icon');
-      const anyExpanded = Array.from(allContents).some(content => content.style.display !== 'none');
-      
-      allContents.forEach(content => {
-        content.style.display = anyExpanded ? 'none' : 'block';
-      });
-      
-      allIcons.forEach(icon => {
-        icon.textContent = anyExpanded ? '▶' : '▼';
-        if (anyExpanded) {
-          icon.classList.add('collapsed');
-        } else {
-          icon.classList.remove('collapsed');
-        }
-      });
-    }
-
-    function copyToClipboard() {
-      const sections = document.querySelectorAll('.section-card');
-      let text = '<%= company.name %> - Company Profile\n\n';
-      
-      sections.forEach(section => {
-        const title = section.querySelector('h2').textContent;
-        const content = section.querySelector('.section-content').textContent.trim();
-        text += `${title}\n${'='.repeat(title.length)}\n${content}\n\n`;
-      });
-      
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Profile copied to clipboard!');
-      }).catch(err => {
-        console.error('Failed to copy:', err);
-        alert('Failed to copy to clipboard');
-      });
-    }
-  </script>
+  <script src="/app.js"></script>
 </body>
 </html>

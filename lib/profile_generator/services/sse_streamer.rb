@@ -56,6 +56,7 @@ module ProfileGenerator
           status: safe_utf8_string(section_data[:status]),
           error: safe_utf8_string(section_data[:error]),
           content: safe_utf8_string(section_data[:section]&.content),
+          raw_content: safe_utf8_string(section_data[:raw_content]),
           humanized_name: safe_utf8_string(section_data[:section]&.name),
           timestamp: section_data[:timestamp]&.iso8601
         }

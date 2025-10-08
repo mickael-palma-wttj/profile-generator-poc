@@ -72,6 +72,21 @@
         </div>
       </div>
 
+      <!-- Sticky Navigation Bar -->
+      <div id="sticky-nav" class="sticky-nav" style="display: none;">
+        <div class="sticky-nav-content">
+          <div class="sticky-nav-header">
+            <span class="sticky-nav-title">Quick Navigation</span>
+            <button class="sticky-nav-toggle" onclick="window.profileGenerator.toggleStickyNav()">
+              <span id="sticky-nav-toggle-icon">▼</span>
+            </button>
+          </div>
+          <div class="sticky-nav-items" id="sticky-nav-items">
+            <!-- Navigation items will be inserted here -->
+          </div>
+        </div>
+      </div>
+
       <!-- Profile Results Container -->
       <div id="results-container" style="display: none;">
         <div class="card">
@@ -88,6 +103,9 @@
         <div class="actions">
           <button class="btn btn-secondary" onclick="toggleAllSections()">
             📂 Toggle All Sections
+          </button>
+          <button class="btn btn-secondary" onclick="copyAllContent()" id="copy-all-btn">
+            📋 Copy All Content
           </button>
           <button class="btn btn-primary" onclick="window.location.reload()">
             Generate Another Profile
@@ -152,288 +170,6 @@
     </footer>
   </div>
 
-  <script>
-    const form = document.getElementById('generate-form');
-    const progressContainer = document.getElementById('progress-container');
-    const resultsContainer = document.getElementById('results-container');
-    const sectionsProgress = document.getElementById('sections-progress');
-    const profileSections = document.getElementById('profile-sections');
-    const progressBarFill = document.getElementById('progress-bar-fill');
-    const progressPercentage = document.getElementById('progress-percentage');
-    const progressStatus = document.getElementById('progress-status');
-
-    const sectionOrder = [
-      'their_story', 'company_values', 'company_description',
-      'leadership', 'funding_parser', 'key_numbers',
-      'office_locations', 'perks_and_benefits', 'remote_policy'
-    ];
-
-    let sectionsData = {};
-    let totalSections = 0;
-
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const companyName = document.getElementById('company_name').value.trim();
-      const website = document.getElementById('website').value.trim();
-
-      if (!companyName) {
-        alert('Company name is required');
-        return;
-      }
-
-      // Hide form, show progress
-      form.parentElement.style.display = 'none';
-      progressContainer.style.display = 'block';
-      document.querySelector('.progress-company-name').textContent = companyName;
-      document.querySelector('.features').style.display = 'none';
-
-      // Show results container and populate metadata immediately
-      resultsContainer.style.display = 'block';
-      document.getElementById('result-company-name').textContent = companyName;
-      if (website) {
-        document.getElementById('result-website').innerHTML = ` | <a href="${website}" target="_blank">${website}</a>`;
-      } else {
-        document.getElementById('result-website').innerHTML = '';
-      }
-
-      // Reset state
-      sectionsProgress.innerHTML = '';
-      profileSections.innerHTML = '';
-      sectionsData = {};
-      totalSections = sectionOrder.length;
-
-      // Initialize section progress items
-      sectionOrder.forEach(section => {
-        const sectionDiv = createSectionProgressItem(section);
-        sectionsProgress.appendChild(sectionDiv);
-      });
-
-      try {
-        // Start async generation
-        const response = await fetch('/generate/async', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            company_name: companyName,
-            website: website
-          })
-        });
-
-        const data = await response.json();
-        
-        if (!data.success) {
-          throw new Error(data.error || 'Failed to start generation');
-        }
-
-        // Connect to SSE stream
-        const eventSource = new EventSource(`/generate/stream/${data.session_id}`);
-
-        eventSource.addEventListener('section_update', (e) => {
-          const update = JSON.parse(e.data);
-          handleSectionUpdate(update);
-        });
-
-        eventSource.addEventListener('complete', (e) => {
-          const result = JSON.parse(e.data);
-          handleComplete(companyName, website);
-          eventSource.close();
-        });
-
-        eventSource.addEventListener('error', (e) => {
-          let error = 'An error occurred during generation';
-          try {
-            const errorData = JSON.parse(e.data);
-            error = errorData.error || error;
-          } catch {}
-          handleError(error);
-          eventSource.close();
-        });
-
-        eventSource.onerror = () => {
-          // Connection error
-          handleError('Connection lost. Please try again.');
-          eventSource.close();
-        };
-
-      } catch (error) {
-        handleError(error.message);
-      }
-    });
-
-    function createSectionProgressItem(sectionName) {
-      const div = document.createElement('div');
-      div.className = 'section-progress-item';
-      div.id = `section-${sectionName}`;
-      div.innerHTML = `
-        <div class="section-status-icon">⏳</div>
-        <div class="section-info">
-          <div class="section-name">${humanizeSectionName(sectionName)}</div>
-          <div class="section-status">Pending...</div>
-        </div>
-      `;
-      return div;
-    }
-
-    function handleSectionUpdate(update) {
-      const { section_name, status, content, humanized_name, error } = update;
-      
-      sectionsData[section_name] = { status, content, humanized_name, error };
-
-      const sectionDiv = document.getElementById(`section-${section_name}`);
-      if (!sectionDiv) return;
-
-      const icon = sectionDiv.querySelector('.section-status-icon');
-      const statusText = sectionDiv.querySelector('.section-status');
-
-      // Update icon and status
-      switch (status) {
-        case 'pending':
-          icon.textContent = '⏳';
-          statusText.textContent = 'Pending...';
-          sectionDiv.classList.remove('in-progress', 'completed', 'failed');
-          sectionDiv.classList.add('pending');
-          break;
-        case 'in_progress':
-          icon.textContent = '🔄';
-          statusText.textContent = 'Generating...';
-          sectionDiv.classList.remove('pending', 'completed', 'failed');
-          sectionDiv.classList.add('in-progress');
-          break;
-        case 'completed':
-          icon.textContent = '✅';
-          statusText.textContent = 'Completed';
-          sectionDiv.classList.remove('pending', 'in-progress', 'failed');
-          sectionDiv.classList.add('completed');
-          
-          // Add section to results (only if we have content)
-          if (content) {
-            addSectionToResults(section_name, humanized_name, content);
-          }
-          break;
-        case 'failed':
-          icon.textContent = '❌';
-          statusText.textContent = `Failed: ${error || 'Unknown error'}`;
-          sectionDiv.classList.remove('pending', 'in-progress', 'completed');
-          sectionDiv.classList.add('failed');
-          break;
-      }
-
-      updateProgress();
-    }
-
-    function updateProgress() {
-      const completed = Object.values(sectionsData).filter(s => s.status === 'completed').length;
-      const failed = Object.values(sectionsData).filter(s => s.status === 'failed').length;
-      const inProgress = Object.values(sectionsData).filter(s => s.status === 'in_progress').length;
-      
-      const percentage = Math.round((completed / totalSections) * 100);
-      progressBarFill.style.width = `${percentage}%`;
-      progressPercentage.textContent = `${percentage}%`;
-
-      if (inProgress > 0) {
-        progressStatus.textContent = `${completed}/${totalSections} sections completed`;
-      } else if (completed === totalSections) {
-        progressStatus.textContent = 'All sections completed!';
-      } else {
-        progressStatus.textContent = `${completed}/${totalSections} completed, ${failed} failed`;
-      }
-    }
-
-    function addSectionToResults(sectionName, humanizedName, content) {
-      // Check if section already exists
-      if (document.getElementById(`result-section-${sectionName}`)) {
-        return;
-      }
-
-      const sectionCard = document.createElement('div');
-      sectionCard.className = 'card section-card';
-      sectionCard.id = `result-section-${sectionName}`;
-      sectionCard.innerHTML = `
-        <div class="section-header section-header-toggle" onclick="toggleSection('${sectionName}')">
-          <h2>${humanizedName || humanizeSectionName(sectionName)}</h2>
-          <div class="section-header-right">
-            <span class="section-badge">${sectionName}</span>
-            <span class="section-toggle-icon" id="toggle-icon-${sectionName}">▼</span>
-          </div>
-        </div>
-        <div class="section-content" id="content-${sectionName}">
-          ${content}
-        </div>
-      `;
-      
-      profileSections.appendChild(sectionCard);
-      
-      // Show results container if hidden
-      if (resultsContainer.style.display === 'none') {
-        resultsContainer.style.display = 'block';
-      }
-    }
-
-    function handleComplete(companyName, website) {
-      progressStatus.textContent = 'Profile generation complete!';
-      
-      // Metadata is already set at the beginning
-      // Just scroll to results
-      setTimeout(() => {
-        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 500);
-    }
-
-    function handleError(error) {
-      progressContainer.innerHTML = `
-        <div class="alert alert-error">
-          <strong>Error:</strong> ${error}
-        </div>
-        <button class="btn btn-primary" onclick="window.location.reload()">
-          Try Again
-        </button>
-      `;
-    }
-
-    function humanizeSectionName(sectionName) {
-      return sectionName
-        .replace(/_/g, ' ')
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    }
-
-    function toggleSection(sectionName) {
-      const content = document.getElementById(`content-${sectionName}`);
-      const icon = document.getElementById(`toggle-icon-${sectionName}`);
-      
-      if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.textContent = '▼';
-        icon.classList.remove('collapsed');
-      } else {
-        content.style.display = 'none';
-        icon.textContent = '▶';
-        icon.classList.add('collapsed');
-      }
-    }
-
-    function toggleAllSections() {
-      const allContents = document.querySelectorAll('.section-content');
-      const allIcons = document.querySelectorAll('.section-toggle-icon');
-      const anyExpanded = Array.from(allContents).some(content => content.style.display !== 'none');
-      
-      allContents.forEach(content => {
-        content.style.display = anyExpanded ? 'none' : 'block';
-      });
-      
-      allIcons.forEach(icon => {
-        icon.textContent = anyExpanded ? '▶' : '▼';
-        if (anyExpanded) {
-          icon.classList.add('collapsed');
-        } else {
-          icon.classList.remove('collapsed');
-        }
-      });
-    }
-  </script>
+  <script src="/app.js"></script>
 </body>
 </html>

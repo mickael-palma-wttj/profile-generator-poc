@@ -39,9 +39,14 @@ module ProfileGenerator
 
       def format_section_data(data)
         formatted_section = data[:section]
+        raw_content = nil
 
         if data[:status] == :completed && data[:section]
-          formatted_content = formatter.format(data[:section].content)
+          # Preserve the original raw content
+          raw_content = data[:section].content
+
+          # Create formatted content for display
+          formatted_content = formatter.format(raw_content)
           formatted_section = Models::ProfileSection.new(
             name: data[:section].name,
             content: formatted_content,
@@ -52,6 +57,7 @@ module ProfileGenerator
         {
           status: data[:status].to_s,
           section: formatted_section,
+          raw_content: raw_content,
           error: data[:error],
           timestamp: data[:timestamp]
         }

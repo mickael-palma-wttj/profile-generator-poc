@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Test script to verify raw content is preserved in async generation
+require_relative "../lib/profile_generator"
+
+puts "🧪 Testing Raw Content Preservation in Async Generation"
+puts "=" * 60
+
+# Create a test company
+company = ProfileGenerator::Models::Company.new(
+  name: "Test Company",
+  website: "https://test.com"
+)
+
+# Create session manager and async generator
+session_manager = ProfileGenerator::Services::SessionManager.new
+async_generator = ProfileGenerator::Services::AsyncProfileGenerator.new(
+  session_manager: session_manager
+)
+
+# Start async generation
+session_id = session_manager.create_session(company)
+puts "📝 Created session: #{session_id}"
+
+# Generate one section to test
+async_generator.generate(session_id, company)
+
+puts "⏳ Waiting for generation to complete..."
+
+# Poll for results
+10.times do
+  sleep 2
+  session_data = session_manager.get_session(session_id)
+
+  if session_data
+    puts "📊 Session status: #{session_data[:status]}"
+
+    # Check if any section has completed
+    completed_sections = session_data[:sections].select { |_, data| data[:status] == "completed" }
+
+    if completed_sections.any?
+      completed_sections.each do |section_name, section_data|
+        puts "\n✅ Section completed: #{section_name}"
+        puts "   Status: #{section_data[:status]}"
+        puts "   Has raw_content: #{!section_data[:raw_content].nil?}"
+        puts "   Has section content: #{!section_data[:section]&.content.nil?}"
+
+        if section_data[:raw_content]
+          puts "   Raw content length: #{section_data[:raw_content].length} chars"
+          puts "   Raw content preview: #{section_data[:raw_content][0..100]}..."
+        end
+
+        if section_data[:section]&.content
+          puts "   Formatted content length: #{section_data[:section].content.length} chars"
+          puts "   Formatted content preview: #{section_data[:section].content[0..100]}..."
+        end
+
+        puts "   Content differs: #{section_data[:raw_content] != section_data[:section]&.content}"
+      end
+      break
+    end
+  else
+    puts "❌ Session not found"
+    break
+  end
+end
+
+puts "\n🏁 Test completed"

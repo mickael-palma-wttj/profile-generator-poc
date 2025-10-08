@@ -229,7 +229,8 @@ header h1 {
 }
 
 .section-card {
-    scroll-margin-top: 2rem;
+    scroll-margin-top: 120px;
+    /* Account for sticky nav height + padding */
 }
 
 .section-header {
@@ -291,6 +292,29 @@ header h1 {
     font-family: monospace;
 }
 
+.btn-copy {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+    min-width: 40px;
+    text-align: center;
+}
+
+.btn-copy:hover {
+    background: var(--background);
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.btn-copy:active {
+    transform: scale(0.95);
+}
+
 .section-content {
     color: var(--text-primary);
     line-height: 1.8;
@@ -310,6 +334,7 @@ header h1 {
     gap: 1rem;
     justify-content: center;
     margin-top: 3rem;
+    flex-wrap: wrap;
 }
 
 /* Footer */
@@ -648,6 +673,17 @@ footer {
     border-radius: 8px;
     border: 2px solid var(--border-color);
     transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.section-progress-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.section-progress-item:active {
+    transform: translateY(0);
 }
 
 .section-progress-item.pending {
@@ -793,4 +829,138 @@ footer {
         align-items: flex-start;
         gap: 0.5rem;
     }
+
+    .sticky-nav {
+        left: 0;
+        right: 0;
+    }
+
+    .sticky-nav-items {
+        max-height: 300px;
+    }
+}
+
+/* ============================================
+   Sticky Navigation Bar
+   ============================================ */
+
+.sticky-nav {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1200px;
+    width: 90%;
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.sticky-nav.collapsed .sticky-nav-items {
+    display: none;
+}
+
+.sticky-nav-content {
+    padding: 0;
+}
+
+.sticky-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), #1e40af);
+    color: white;
+    border-radius: 0 0 10px 10px;
+    cursor: pointer;
+}
+
+.sticky-nav-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.sticky-nav-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.sticky-nav-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.sticky-nav-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--background);
+}
+
+.sticky-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.sticky-nav-item:hover {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.sticky-nav-item.active {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+
+.sticky-nav-item-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.sticky-nav-item-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sticky-nav-item.pending {
+    opacity: 0.6;
+}
+
+.sticky-nav-item.in-progress {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: var(--primary-color);
+}
+
+.sticky-nav-item.completed {
+    background: rgba(34, 197, 94, 0.05);
+}
+
+.sticky-nav-item.failed {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.3);
 }
