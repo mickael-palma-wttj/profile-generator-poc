@@ -242,6 +242,13 @@ header h1 {
     border-bottom: 2px solid var(--border-color);
 }
 
+/* Remove border when section content is hidden */
+.section-header:has(+ .section-content[style*="display: none"]) {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
 .section-header-toggle {
     cursor: pointer;
     user-select: none;
