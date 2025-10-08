@@ -333,7 +333,8 @@ header h1 {
     display: flex;
     gap: 1rem;
     justify-content: center;
-    margin-top: 3rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
     flex-wrap: wrap;
 }
 
