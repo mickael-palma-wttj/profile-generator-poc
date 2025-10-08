@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Bundle Wrapper Script
+# Automatically detects environment and uses appropriate Ruby/bundler setup
+# Usage: ./bin/bundle_wrapper [bundle command and args...]
+# Examples: 
+#   ./bin/bundle_wrapper install
+#   ./bin/bundle_wrapper exec rake dev
+#   ./bin/bundle_wrapper exec rake test
+
+set -e
+
+# Function to detect environment and get the correct bundle command
+get_bundle_command() {
+    # Check if we're in a remote container/codespace
+    if [[ -n "$REMOTE_CONTAINERS" || -n "$CODESPACES" || -n "$VSCODE_REMOTE_CONTAINERS_SESSION" ]]; then
+        echo "bundle"
+        return
+    fi
+    
+    # Check if asdf shims are available (local development with asdf)
+    if [[ -f "$HOME/.asdf/shims/bundle" ]]; then
+        echo "$HOME/.asdf/shims/bundle"
+        return
+    fi
+    
+    # Check if rbenv is available
+    if command -v rbenv >/dev/null 2>&1 && [[ -n "$(rbenv version-name 2>/dev/null)" ]]; then
+        echo "bundle"
+        return
+    fi
+    
+    # Check if rvm is available
+    if [[ -n "$rvm_path" ]] && command -v rvm >/dev/null 2>&1; then
+        echo "bundle"
+        return
+    fi
+    
+    # Fall back to system bundle
+    echo "bundle"
+}
+
+# Get the appropriate bundle command
+BUNDLE_CMD=$(get_bundle_command)
+
+# Debug output (can be enabled by setting DEBUG=1)
+if [[ "$DEBUG" == "1" ]]; then
+    echo "Environment detection:"
+    echo "  REMOTE_CONTAINERS: ${REMOTE_CONTAINERS:-<not set>}"
+    echo "  CODESPACES: ${CODESPACES:-<not set>}"
+    echo "  VSCODE_REMOTE_CONTAINERS_SESSION: ${VSCODE_REMOTE_CONTAINERS_SESSION:-<not set>}"
+    echo "  asdf shims available: $(test -f "$HOME/.asdf/shims/bundle" && echo "yes" || echo "no")"
+    echo "  Using bundle command: $BUNDLE_CMD"
+    echo "  Full command: $BUNDLE_CMD $*"
+    echo ""
+fi
+
+# Execute the bundle command with all passed arguments
+exec "$BUNDLE_CMD" "$@"

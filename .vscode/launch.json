@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Server",
+      "type": "ruby",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${workspaceRoot}/config.ru",
+      "args": [
+        "-p",
+        "4567"
+      ],
+      "useBundler": true,
+      "pathToBundler": "/usr/local/bin/bundle"
+    },
+    {
+      "name": "Debug Tests",
+      "type": "ruby",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${workspaceRoot}/bin/rspec",
+      "args": [
+        "${file}"
+      ],
+      "useBundler": true,
+      "pathToBundler": "/usr/local/bin/bundle"
+    },
+    {
+      "name": "Debug Current File",
+      "type": "ruby",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "program": "${file}",
+      "useBundler": true,
+      "pathToBundler": "/usr/local/bin/bundle"
+    }
+  ]
+}

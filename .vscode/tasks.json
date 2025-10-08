@@ -1,0 +1,215 @@
+{
+  "version": "2.0.0",
+  // Tasks use bin/bundle_wrapper script for automatic environment detection:
+  // - Local (asdf/rbenv/rvm): Uses appropriate version manager
+  // - Container/Remote/Codespaces: Uses system bundle
+  // - Script handles all detection logic and provides debug mode
+  "tasks": [
+    {
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "install"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Server (Development)",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "exec",
+        "rake",
+        "dev"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Listening on.*",
+          "endsPattern": "^.*Use Ctrl-C to stop.*"
+        }
+      }
+    },
+    {
+      "label": "Start Server (Production)",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "exec",
+        "rake",
+        "server"
+      ],
+      "group": "build",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "exec",
+        "rake",
+        "test"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Console",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "exec",
+        "rake",
+        "console"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run RuboCop",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "exec",
+        "rake",
+        "rubocop"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": {
+        "owner": "rubocop",
+        "source": "rubocop",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      }
+    },
+    {
+      "label": "Run RuboCop (Auto-fix)",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "exec",
+        "rake",
+        "rubocop_fix"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": {
+        "owner": "rubocop",
+        "source": "rubocop",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^([^:]+):(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      }
+    },
+    {
+      "label": "Check Health",
+      "type": "shell",
+      "command": "curl -s http://localhost:4567/health | jq",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "View Logs",
+      "type": "shell",
+      "command": "tail -f log/development.log",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Debug Bundle Environment",
+      "type": "shell",
+      "command": "./bin/bundle_wrapper",
+      "args": [
+        "--version"
+      ],
+      "options": {
+        "env": {
+          "DEBUG": "1"
+        }
+      },
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
