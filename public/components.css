@@ -1099,6 +1099,23 @@
     background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
 }
 
+.policy-text-section {
+    margin-bottom: 1.5rem;
+}
+
+.policy-text-section h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.policy-text-section p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
 .culture-block p {
     margin: 0.75rem 0;
     line-height: 1.7;

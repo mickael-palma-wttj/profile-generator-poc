@@ -1,0 +1,651 @@
+/* ============================================================================
+   Print Styles for Profile Generator
+   ============================================================================ */
+
+@media print {
+    /* ========================================================================
+       Global Print Settings
+       ======================================================================== */
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    @page {
+        margin: 1.5cm;
+        size: A4 portrait;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 10pt;
+        line-height: 1.4;
+        color: #000;
+        background: white;
+    }
+
+    /* ========================================================================
+       Hide UI Elements
+       ======================================================================== */
+
+    .container>h1,
+    .input-section,
+    .loading,
+    .error-message,
+    .section-header-right,
+    .section-toggle-icon,
+    .btn-copy,
+    .section-badge,
+    button,
+    nav,
+    header,
+    footer {
+        display: none !important;
+    }
+
+    /* ========================================================================
+       Page Structure
+       ======================================================================== */
+
+    .profile-sections {
+        display: block !important;
+    }
+
+    .section-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+        background: white;
+    }
+
+    .section-header {
+        padding: 0.5rem 0;
+        margin-bottom: 0.75rem;
+        border-bottom: 2pt solid #3498db;
+        background: none;
+        cursor: default;
+    }
+
+    .section-header h2 {
+        font-size: 14pt;
+        color: #2c3e50;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .section-content {
+        display: block !important;
+        padding: 0;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* ========================================================================
+       Typography
+       ======================================================================== */
+
+    h1 {
+        font-size: 18pt;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+
+    h2 {
+        font-size: 14pt;
+        margin-bottom: 0.75rem;
+        color: #2c3e50;
+    }
+
+    h3 {
+        font-size: 12pt;
+        margin-bottom: 0.5rem;
+        color: #34495e;
+    }
+
+    h4 {
+        font-size: 10pt;
+        margin-bottom: 0.4rem;
+        color: #34495e;
+        font-weight: 600;
+    }
+
+    p {
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* ========================================================================
+       Timeline Components (Milestones & Funding)
+       ======================================================================== */
+
+    .timeline {
+        position: relative;
+        padding-left: 0;
+    }
+
+    .timeline::before {
+        display: none;
+    }
+
+    .milestone-item {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        position: relative;
+        padding-left: 0;
+    }
+
+    .milestone-item::before {
+        display: none;
+    }
+
+    .milestone-year {
+        font-weight: 700;
+        color: #3498db;
+        margin-bottom: 0.25rem;
+        font-size: 10pt;
+    }
+
+    .milestone-content h4 {
+        margin-top: 0;
+        font-size: 10pt;
+    }
+
+    .milestone-content p {
+        font-size: 9pt;
+        color: #555;
+    }
+
+    /* ========================================================================
+       Stats Grid (Key Numbers)
+       ======================================================================== */
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-card {
+        page-break-inside: avoid;
+        border: 1pt solid #ddd;
+        padding: 0.5rem;
+        border-radius: 4pt;
+        text-align: center;
+    }
+
+    .stat-icon {
+        font-size: 14pt;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 12pt;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 8pt;
+        color: #7f8c8d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5pt;
+    }
+
+    .stat-context {
+        font-size: 8pt;
+        color: #95a5a6;
+        margin-top: 0.25rem;
+        line-height: 1.3;
+    }
+
+    /* ========================================================================
+       Values Grid
+       ======================================================================== */
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .value-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        border-left: 2pt solid #3498db;
+        padding-left: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .value-header {
+        margin-bottom: 0.5rem;
+    }
+
+    .value-icon {
+        font-size: 12pt;
+        margin-right: 0.5rem;
+    }
+
+    .value-header h3 {
+        display: inline;
+        font-size: 11pt;
+        margin: 0;
+    }
+
+    .value-tagline {
+        font-style: italic;
+        color: #7f8c8d;
+        font-size: 9pt;
+        margin-bottom: 0.5rem;
+    }
+
+    .value-description {
+        font-size: 9pt;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    .value-examples {
+        font-size: 8pt;
+        margin-top: 0.5rem;
+    }
+
+    .value-examples ul {
+        margin: 0.25rem 0 0 1rem;
+        padding: 0;
+    }
+
+    .value-examples li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* ========================================================================
+       Leadership Section
+       ======================================================================== */
+
+    .leaders-grid {
+        display: block;
+    }
+
+    .leader-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        border-left: 2pt solid #3498db;
+        padding-left: 0.75rem;
+    }
+
+    .leader-name {
+        font-weight: 700;
+        font-size: 11pt;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+
+    .leader-title {
+        font-size: 9pt;
+        color: #7f8c8d;
+        margin-bottom: 0.5rem;
+    }
+
+    .leader-background {
+        font-size: 9pt;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+    }
+
+    .leader-achievements {
+        margin-top: 0.5rem;
+    }
+
+    .leader-achievements ul {
+        margin: 0.25rem 0 0 1rem;
+        padding: 0;
+        font-size: 8pt;
+    }
+
+    .leader-achievements li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* ========================================================================
+       Funding Section
+       ======================================================================== */
+
+    .funding-overview {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1pt solid #ddd;
+    }
+
+    .funding-stat {
+        text-align: center;
+    }
+
+    .funding-stat-label {
+        font-size: 8pt;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .funding-stat-value {
+        font-size: 12pt;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .investors-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .investor-card {
+        page-break-inside: avoid;
+        border: 1pt solid #ddd;
+        padding: 0.5rem;
+        border-radius: 4pt;
+    }
+
+    .investor-name {
+        font-weight: 700;
+        font-size: 10pt;
+        margin-bottom: 0.25rem;
+    }
+
+    .investor-type {
+        font-size: 8pt;
+        color: #7f8c8d;
+        margin-bottom: 0.25rem;
+    }
+
+    /* ========================================================================
+       Benefits Section
+       ======================================================================== */
+
+    .standout-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .standout-benefit {
+        page-break-inside: avoid;
+        border: 1pt solid #ddd;
+        padding: 0.5rem;
+        border-radius: 4pt;
+    }
+
+    .benefit-icon {
+        font-size: 12pt;
+        margin-bottom: 0.25rem;
+    }
+
+    .benefit-content h4 {
+        font-size: 10pt;
+        margin-bottom: 0.25rem;
+    }
+
+    .benefit-content p {
+        font-size: 8pt;
+        line-height: 1.4;
+    }
+
+    .benefits-categories {
+        margin-top: 1rem;
+    }
+
+    .benefit-category {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+
+    .category-header {
+        margin-bottom: 0.5rem;
+    }
+
+    .category-icon {
+        font-size: 11pt;
+        margin-right: 0.5rem;
+    }
+
+    .benefits-list {
+        margin-left: 1rem;
+    }
+
+    .benefit-item {
+        margin-bottom: 0.5rem;
+        font-size: 9pt;
+    }
+
+    .benefit-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .benefit-description {
+        color: #555;
+        line-height: 1.4;
+    }
+
+    /* ========================================================================
+       Remote Policy Section
+       ======================================================================== */
+
+    .policy-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1pt solid #ddd;
+    }
+
+    .policy-model {
+        font-size: 11pt;
+        font-weight: 700;
+        color: #3498db;
+        margin-bottom: 0.5rem;
+    }
+
+    .policy-summary {
+        font-size: 9pt;
+        line-height: 1.5;
+    }
+
+    .policy-block {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border: 1pt solid #ddd;
+        border-radius: 4pt;
+    }
+
+    .policy-block h3 {
+        font-size: 11pt;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+
+    .policy-text-section {
+        margin-bottom: 0.75rem;
+    }
+
+    .policy-text-section h4 {
+        font-size: 9pt;
+        color: #3498db;
+        margin-bottom: 0.25rem;
+    }
+
+    .policy-text-section p {
+        font-size: 8pt;
+        line-height: 1.5;
+        color: #555;
+    }
+
+    /* ========================================================================
+       Story Section
+       ======================================================================== */
+
+    .story-section {
+        page-break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+
+    .story-section h3 {
+        font-size: 11pt;
+        margin-bottom: 0.5rem;
+    }
+
+    .story-section p {
+        font-size: 9pt;
+        line-height: 1.5;
+    }
+
+    .founders-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .founder-card {
+        page-break-inside: avoid;
+        border-left: 2pt solid #3498db;
+        padding-left: 0.75rem;
+    }
+
+    .founder-name {
+        font-weight: 700;
+        font-size: 10pt;
+        margin-bottom: 0.25rem;
+    }
+
+    .founder-role {
+        font-size: 8pt;
+        color: #7f8c8d;
+        margin-bottom: 0.25rem;
+    }
+
+    .founder-background {
+        font-size: 8pt;
+        line-height: 1.4;
+    }
+
+    .aha-moment {
+        page-break-inside: avoid;
+        background: #f8f9fa;
+        border: 1pt solid #ddd;
+        padding: 0.75rem;
+        border-radius: 4pt;
+        margin-bottom: 1rem;
+    }
+
+    .aha-icon {
+        font-size: 16pt;
+        margin-bottom: 0.5rem;
+    }
+
+    .aha-content h3 {
+        font-size: 11pt;
+        margin-bottom: 0.5rem;
+    }
+
+    .aha-content p {
+        font-size: 9pt;
+        line-height: 1.5;
+    }
+
+    /* ========================================================================
+       Company Description
+       ======================================================================== */
+
+    .company-overview {
+        margin-bottom: 1rem;
+        font-size: 9pt;
+        line-height: 1.5;
+    }
+
+    .company-quick-facts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 4pt;
+    }
+
+    .quick-fact {
+        font-size: 8pt;
+    }
+
+    .quick-fact-label {
+        font-weight: 600;
+        color: #7f8c8d;
+        margin-bottom: 0.25rem;
+    }
+
+    .quick-fact-value {
+        color: #2c3e50;
+    }
+
+    /* ========================================================================
+       Utilities
+       ======================================================================== */
+
+    .page-break {
+        page-break-before: always;
+        break-before: always;
+    }
+
+    /* Prevent orphans and widows */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    /* Ensure links show URLs */
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 8pt;
+        color: #7f8c8d;
+    }
+
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+
+    /* Hide web component shadows for print */
+    company-description-section,
+    their-story-section,
+    company-values-section,
+    key-numbers-section,
+    funding-section,
+    leadership-section,
+    office-locations-section,
+    perks-benefits-section,
+    remote-policy-section {
+        display: block;
+    }
+}

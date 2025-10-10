@@ -631,52 +631,48 @@
                     ${schedule ? `
                         <div class="policy-block">
                             <h3>⏰ Schedule & Hours</h3>
-                            <div class="policy-details">
-                                ${schedule.flexibility ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Flexibility:</span>
-                                        <span class="policy-value">${schedule.flexibility}</span>
-                                    </div>
-                                ` : ''}
-                                ${schedule.coreHours ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Core Hours:</span>
-                                        <span class="policy-value">${schedule.coreHours}</span>
-                                    </div>
-                                ` : ''}
-                                ${schedule.asynchronous ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Async Work:</span>
-                                        <span class="policy-value">${schedule.asynchronous}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
+                            ${schedule.flexibility ? `
+                                <div class="policy-text-section">
+                                    <h4>Flexibility:</h4>
+                                    <p>${schedule.flexibility}</p>
+                                </div>
+                            ` : ''}
+                            ${schedule.coreHours ? `
+                                <div class="policy-text-section">
+                                    <h4>Core Hours:</h4>
+                                    <p>${schedule.coreHours}</p>
+                                </div>
+                            ` : ''}
+                            ${schedule.asynchronous ? `
+                                <div class="policy-text-section">
+                                    <h4>Async Work:</h4>
+                                    <p>${schedule.asynchronous}</p>
+                                </div>
+                            ` : ''}
                         </div>
                     ` : ''}
 
                     ${tools ? `
                         <div class="policy-block">
                             <h3>🛠️ Tools & Collaboration</h3>
-                            <div class="policy-details">
-                                ${tools.communication ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Communication:</span>
-                                        <span class="policy-value">${tools.communication}</span>
-                                    </div>
-                                ` : ''}
-                                ${tools.collaboration ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Collaboration:</span>
-                                        <span class="policy-value">${tools.collaboration}</span>
-                                    </div>
-                                ` : ''}
-                                ${tools.socializing ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Socializing:</span>
-                                        <span class="policy-value">${tools.socializing}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
+                            ${tools.communication ? `
+                                <div class="policy-text-section">
+                                    <h4>Communication:</h4>
+                                    <p>${tools.communication}</p>
+                                </div>
+                            ` : ''}
+                            ${tools.collaboration ? `
+                                <div class="policy-text-section">
+                                    <h4>Collaboration:</h4>
+                                    <p>${tools.collaboration}</p>
+                                </div>
+                            ` : ''}
+                            ${tools.socializing ? `
+                                <div class="policy-text-section">
+                                    <h4>Socializing:</h4>
+                                    <p>${tools.socializing}</p>
+                                </div>
+                            ` : ''}
                         </div>
                     ` : ''}
 
