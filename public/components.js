@@ -1,15 +1,157 @@
 /**
  * Profile Section Web Components
  * Custom elements for rendering structured profile sections
+ * 
+ * @file components.js
+ * @version 2.0.0 - Refactored for better maintainability
  */
 
 (function () {
     'use strict';
 
     // ============================================================================
+    // Constants
+    // ============================================================================
+
+    const DEFAULT_ICONS = {
+        industry: '🏭',
+        founded: '📅',
+        headquarters: '🏢',
+        size: '👥',
+        website: '🌐',
+        value: '💎',
+        ahaMoment: '💡'
+    };
+
+    // ============================================================================
+    // Template Utilities
+    // ============================================================================
+
+    /**
+     * Utility class for common HTML template patterns
+     */
+    class TemplateUtils {
+        /**
+         * Conditionally render content if value exists
+         * @param {*} value - Value to check
+         * @param {Function} renderer - Function that returns HTML string
+         * @returns {string} Rendered HTML or empty string
+         */
+        static renderIf(value, renderer) {
+            return value ? renderer(value) : '';
+        }
+
+        /**
+         * Render an array of items with a template
+         * @param {Array} items - Array of items to render
+         * @param {Function} itemRenderer - Function that renders each item
+         * @param {string} emptyContent - Content to show if array is empty
+         * @returns {string} Rendered HTML
+         */
+        static renderList(items, itemRenderer, emptyContent = '') {
+            if (!items || items.length === 0) return emptyContent;
+            return items.map(itemRenderer).join('');
+        }
+
+        /**
+         * Escape HTML to prevent XSS
+         * @param {string} text - Text to escape
+         * @returns {string} Escaped text
+         */
+        static escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Render a section with heading and content
+         * @param {string} title - Section title
+         * @param {string} content - Section content
+         * @param {string} className - Optional CSS class
+         * @returns {string} Rendered section HTML
+         */
+        static renderSection(title, content, className = 'info-section') {
+            return `
+                <div class="${className}">
+                    <h3>${title}</h3>
+                    ${content}
+                </div>
+            `;
+        }
+
+        /**
+         * Render a fact item (icon, label, value)
+         * @param {string} icon - Icon emoji
+         * @param {string} label - Fact label
+         * @param {string} value - Fact value
+         * @param {boolean} isLink - Whether value is a link
+         * @returns {string} Rendered fact HTML
+         */
+        static renderFact(icon, label, value, isLink = false) {
+            const valueContent = isLink
+                ? `<a href="${value}" target="_blank" rel="noopener noreferrer">${value}</a>`
+                : value;
+
+            return `
+                <div class="fact-item">
+                    <span class="fact-icon">${icon}</span>
+                    <div>
+                        <div class="fact-label">${label}</div>
+                        <div class="fact-value">${valueContent}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Render a timeline item
+         * @param {string} year - Timeline year
+         * @param {string} title - Item title
+         * @param {string} description - Item description
+         * @param {string} extraContent - Additional content to show
+         * @returns {string} Rendered timeline item HTML
+         */
+        static renderTimelineItem(year, title, description, extraContent = '') {
+            return `
+                <div class="milestone-item">
+                    <div class="milestone-year">${year}</div>
+                    <div class="milestone-content">
+                        <h4>${title}</h4>
+                        ${extraContent}
+                        <p>${description}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Render a card with optional icon
+         * @param {string} title - Card title
+         * @param {string} content - Card content
+         * @param {string} icon - Optional icon
+         * @param {string} className - Card CSS class
+         * @returns {string} Rendered card HTML
+         */
+        static renderCard(title, content, icon = '', className = 'card') {
+            return `
+                <div class="${className}">
+                    ${icon ? `<div class="card-icon">${icon}</div>` : ''}
+                    <h4>${title}</h4>
+                    ${content}
+                </div>
+            `;
+        }
+    }
+
+    // ============================================================================
     // Base Component Class
     // ============================================================================
 
+    /**
+     * Base class for all profile section components
+     * Handles data parsing, error handling, and provides utility methods
+     */
     class ProfileSectionComponent extends HTMLElement {
         constructor() {
             super();
@@ -18,40 +160,67 @@
 
         connectedCallback() {
             const dataAttr = this.getAttribute('data');
-            if (dataAttr) {
-                try {
-                    const parsed = JSON.parse(dataAttr);
-                    // Extract the actual data from { type: "...", data: {...} } structure
-                    this.data = parsed.data || parsed;
-                    this.render();
-                } catch (e) {
-                    console.error('[Component] Failed to parse section data:', e);
-                    console.error('[Component] Data was:', dataAttr.substring(0, 500));
-                    this.renderError();
-                }
-            } else {
-                console.warn('[Component] No data attribute found');
+
+            if (!dataAttr) {
+                console.warn('[Component] No data attribute found for', this.constructor.name);
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(dataAttr);
+                // Extract the actual data from { type: "...", data: {...} } structure
+                this.data = parsed.data || parsed;
+                this.validateData();
+                this.render();
+            } catch (e) {
+                console.error('[Component] Failed to parse section data:', e);
+                console.error('[Component] Component:', this.constructor.name);
+                console.error('[Component] Data preview:', dataAttr.substring(0, 200));
+                this.renderError(e.message);
             }
         }
 
-        render() {
-            // Override in subclasses
-            this.innerHTML = '<p>No renderer defined</p>';
+        /**
+         * Validate component data (override in subclasses if needed)
+         * @throws {Error} If data is invalid
+         */
+        validateData() {
+            if (!this.data) {
+                throw new Error('No data provided to component');
+            }
         }
 
-        renderError() {
+        /**
+         * Render the component (must be overridden in subclasses)
+         */
+        render() {
+            console.warn('[Component] No render method defined for', this.constructor.name);
+            this.innerHTML = '<p class="component-warning">No renderer defined</p>';
+        }
+
+        /**
+         * Render an error state
+         * @param {string} message - Error message to display
+         */
+        renderError(message = 'Failed to render section') {
             this.innerHTML = `
                 <div class="alert alert-error">
-                    <strong>Error:</strong> Failed to render section
+                    <strong>Error:</strong> ${TemplateUtils.escapeHtml(message)}
                 </div>
             `;
         }
 
-        // Utility method to create element from HTML string
-        createFromHTML(html) {
-            const template = document.createElement('template');
-            template.innerHTML = html.trim();
-            return template.content.firstChild;
+        /**
+         * Safely get a nested property from data
+         * @param {string} path - Dot-separated path (e.g., 'user.profile.name')
+         * @param {*} defaultValue - Default value if path not found
+         * @returns {*} Property value or default
+         */
+        get(path, defaultValue = null) {
+            return path.split('.').reduce((obj, key) =>
+                (obj && obj[key] !== undefined) ? obj[key] : defaultValue,
+                this.data
+            );
         }
     }
 
@@ -61,97 +230,70 @@
 
     class CompanyDescriptionSection extends ProfileSectionComponent {
         render() {
-            const { tagline, overview, industry, founded, headquarters, companySize, website, keyProducts, targetMarket, businessModel } = this.data;
+            const {
+                tagline,
+                overview,
+                industry,
+                founded,
+                headquarters,
+                companySize,
+                website,
+                keyProducts,
+                targetMarket,
+                businessModel
+            } = this.data;
 
             this.innerHTML = `
                 <div class="company-description-section">
-                    ${tagline ? `<div class="tagline">${tagline}</div>` : ''}
+                    ${TemplateUtils.renderIf(tagline, t => `<div class="tagline">${t}</div>`)}
                     
-                    <div class="company-overview">
-                        <p>${overview}</p>
-                    </div>
+                    ${TemplateUtils.renderIf(overview, o => `
+                        <div class="company-overview">
+                            <p>${o}</p>
+                        </div>
+                    `)}
 
                     <div class="company-quick-facts">
-                        ${industry ? `
-                            <div class="fact-item">
-                                <span class="fact-icon">🏭</span>
-                                <div>
-                                    <div class="fact-label">Industry</div>
-                                    <div class="fact-value">${industry}</div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${founded ? `
-                            <div class="fact-item">
-                                <span class="fact-icon">📅</span>
-                                <div>
-                                    <div class="fact-label">Founded</div>
-                                    <div class="fact-value">${founded}</div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${headquarters ? `
-                            <div class="fact-item">
-                                <span class="fact-icon">🏢</span>
-                                <div>
-                                    <div class="fact-label">Headquarters</div>
-                                    <div class="fact-value">${headquarters}</div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${companySize ? `
-                            <div class="fact-item">
-                                <span class="fact-icon">👥</span>
-                                <div>
-                                    <div class="fact-label">Company Size</div>
-                                    <div class="fact-value">${companySize}</div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${website ? `
-                            <div class="fact-item">
-                                <span class="fact-icon">🌐</span>
-                                <div>
-                                    <div class="fact-label">Website</div>
-                                    <div class="fact-value">
-                                        <a href="${website}" target="_blank" rel="noopener noreferrer">${website}</a>
-                                    </div>
-                                </div>
-                            </div>
-                        ` : ''}
+                        ${this.renderQuickFacts({ industry, founded, headquarters, companySize, website })}
                     </div>
 
-                    ${keyProducts && keyProducts.length > 0 ? `
-                        <div class="key-products">
-                            <h3>Key Products & Services</h3>
-                            <div class="products-grid">
-                                ${keyProducts.map(product => `
-                                    <div class="product-card">
-                                        <h4>${product.name}</h4>
-                                        <p>${product.description}</p>
-                                    </div>
-                                `).join('')}
+                    ${this.renderKeyProducts(keyProducts)}
+                    ${TemplateUtils.renderIf(targetMarket, tm =>
+                TemplateUtils.renderSection('Target Market', `<p>${tm}</p>`)
+            )}
+                    ${TemplateUtils.renderIf(businessModel, bm =>
+                TemplateUtils.renderSection('Business Model', `<p>${bm}</p>`)
+            )}
+                </div>
+            `;
+        }
+
+        renderQuickFacts({ industry, founded, headquarters, companySize, website }) {
+            const facts = [
+                industry && TemplateUtils.renderFact(DEFAULT_ICONS.industry, 'Industry', industry),
+                founded && TemplateUtils.renderFact(DEFAULT_ICONS.founded, 'Founded', founded),
+                headquarters && TemplateUtils.renderFact(DEFAULT_ICONS.headquarters, 'Headquarters', headquarters),
+                companySize && TemplateUtils.renderFact(DEFAULT_ICONS.size, 'Company Size', companySize),
+                website && TemplateUtils.renderFact(DEFAULT_ICONS.website, 'Website', website, true)
+            ].filter(Boolean);
+
+            return facts.join('');
+        }
+
+        renderKeyProducts(products) {
+            if (!products || products.length === 0) return '';
+
+            return `
+                <div class="key-products">
+                    <h3>Key Products & Services</h3>
+                    <div class="products-grid">
+                        ${TemplateUtils.renderList(products, p => `
+                            <div class="product-card">
+                                <h4>${p.name}</h4>
+                                <p>${p.description}</p>
                             </div>
-                        </div>
-                    ` : ''}
-
-                    ${targetMarket ? `
-                        <div class="info-section">
-                            <h3>Target Market</h3>
-                            <p>${targetMarket}</p>
-                        </div>
-                    ` : ''}
-
-                    ${businessModel ? `
-                        <div class="info-section">
-                            <h3>Business Model</h3>
-                            <p>${businessModel}</p>
-                        </div>
-                    ` : ''}
+                        `)}
+                    </div>
                 </div>
             `;
         }
@@ -167,54 +309,68 @@
 
             this.innerHTML = `
                 <div class="their-story-section">
-                    ${foundingStory ? `
-                        <div class="story-section">
-                            <h3>The Founding Story</h3>
-                            <p>${foundingStory}</p>
-                        </div>
-                    ` : ''}
-                    
-                    ${founders && founders.length > 0 ? `
-                        <div class="founders-section">
-                            <h3>The Founders</h3>
-                            <div class="founders-grid">
-                                ${founders.map(founder => `
-                                    <div class="founder-card">
-                                        <div class="founder-name">${founder.name}</div>
-                                        ${founder.role ? `<div class="founder-role">${founder.role}</div>` : ''}
-                                        <p class="founder-background">${founder.background}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
+                    ${this.renderFoundingStory(foundingStory)}
+                    ${this.renderFounders(founders)}
+                    ${this.renderAhaMoment(ahaMoment)}
+                    ${this.renderMilestones(milestones)}
+                </div>
+            `;
+        }
 
-                    ${ahaMoment ? `
-                        <div class="aha-moment">
-                            <div class="aha-icon">${ahaMoment.icon || '💡'}</div>
-                            <div class="aha-content">
-                                <h3>${ahaMoment.title || 'The "Aha!" Moment'}</h3>
-                                <p>${ahaMoment.description || ahaMoment}</p>
-                            </div>
-                        </div>
-                    ` : ''}
+        renderFoundingStory(story) {
+            return TemplateUtils.renderIf(story, s =>
+                TemplateUtils.renderSection('The Founding Story', `<p>${s}</p>`, 'story-section')
+            );
+        }
 
-                    ${milestones && milestones.length > 0 ? `
-                        <div class="milestones-section">
-                            <h3>Key Milestones</h3>
-                            <div class="timeline">
-                                ${milestones.map(milestone => `
-                                    <div class="milestone-item">
-                                        <div class="milestone-year">${milestone.year}</div>
-                                        <div class="milestone-content">
-                                            <h4>${milestone.title}</h4>
-                                            <p>${milestone.description}</p>
-                                        </div>
-                                    </div>
-                                `).join('')}
+        renderFounders(founders) {
+            if (!founders || founders.length === 0) return '';
+
+            return `
+                <div class="founders-section">
+                    <h3>The Founders</h3>
+                    <div class="founders-grid">
+                        ${TemplateUtils.renderList(founders, f => `
+                            <div class="founder-card">
+                                <div class="founder-name">${f.name}</div>
+                                ${TemplateUtils.renderIf(f.role, r => `<div class="founder-role">${r}</div>`)}
+                                <p class="founder-background">${f.background}</p>
                             </div>
-                        </div>
-                    ` : ''}
+                        `)}
+                    </div>
+                </div>
+            `;
+        }
+
+        renderAhaMoment(moment) {
+            if (!moment) return '';
+
+            const icon = typeof moment === 'object' ? (moment.icon || DEFAULT_ICONS.ahaMoment) : DEFAULT_ICONS.ahaMoment;
+            const title = typeof moment === 'object' ? (moment.title || 'The "Aha!" Moment') : 'The "Aha!" Moment';
+            const description = typeof moment === 'object' ? moment.description : moment;
+
+            return `
+                <div class="aha-moment">
+                    <div class="aha-icon">${icon}</div>
+                    <div class="aha-content">
+                        <h3>${title}</h3>
+                        <p>${description}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        renderMilestones(milestones) {
+            if (!milestones || milestones.length === 0) return '';
+
+            return `
+                <div class="milestones-section">
+                    <h3>Key Milestones</h3>
+                    <div class="timeline">
+                        ${TemplateUtils.renderList(milestones, m =>
+                TemplateUtils.renderTimelineItem(m.year, m.title, m.description)
+            )}
+                    </div>
                 </div>
             `;
         }
@@ -230,30 +386,39 @@
 
             this.innerHTML = `
                 <div class="company-values-section">
-                    ${introduction ? `<p class="values-intro">${introduction}</p>` : ''}
-                    
+                    ${TemplateUtils.renderIf(introduction, i => `<p class="values-intro">${i}</p>`)}
                     <div class="values-grid">
-                        ${values.map(value => `
-                            <div class="value-card">
-                                <div class="value-header">
-                                    <span class="value-icon">${value.icon || '💎'}</span>
-                                    <h3>${value.title}</h3>
-                                </div>
-                                ${value.tagline ? `<div class="value-tagline">${value.tagline}</div>` : ''}
-                                <div class="value-description">
-                                    <p>${value.description}</p>
-                                </div>
-                                ${value.examples && value.examples.length > 0 ? `
-                                    <div class="value-examples">
-                                        <strong>In practice:</strong>
-                                        <ul>
-                                            ${value.examples.map(ex => `<li>${ex}</li>`).join('')}
-                                        </ul>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `).join('')}
+                        ${TemplateUtils.renderList(values, v => this.renderValue(v))}
                     </div>
+                </div>
+            `;
+        }
+
+        renderValue(value) {
+            return `
+                <div class="value-card">
+                    <div class="value-header">
+                        <span class="value-icon">${value.icon || DEFAULT_ICONS.value}</span>
+                        <h3>${value.title}</h3>
+                    </div>
+                    ${TemplateUtils.renderIf(value.tagline, t => `<div class="value-tagline">${t}</div>`)}
+                    <div class="value-description">
+                        <p>${value.description}</p>
+                    </div>
+                    ${this.renderExamples(value.examples)}
+                </div>
+            `;
+        }
+
+        renderExamples(examples) {
+            if (!examples || examples.length === 0) return '';
+
+            return `
+                <div class="value-examples">
+                    <strong>In practice:</strong>
+                    <ul>
+                        ${TemplateUtils.renderList(examples, ex => `<li>${ex}</li>`)}
+                    </ul>
                 </div>
             `;
         }
@@ -270,27 +435,29 @@
             this.innerHTML = `
                 <div class="key-numbers-section">
                     <div class="stats-grid">
-                        ${(stats || []).map(stat => `
-                            <div class="stat-card">
-                                ${stat.icon ? `<div class="stat-icon">${stat.icon}</div>` : ''}
-                                <div class="stat-value">${stat.value}</div>
-                                <div class="stat-label">${stat.label}</div>
-                                ${stat.context ? `<div class="stat-context">${stat.context}</div>` : ''}
-                            </div>
-                        `).join('')}
+                        ${TemplateUtils.renderList(stats, s => this.renderStat(s))}
                     </div>
-                    
-                    ${context ? `
+                    ${TemplateUtils.renderIf(context, c => `
                         <div class="numbers-context">
-                            <p>${context}</p>
+                            <p>${c}</p>
                         </div>
-                    ` : ''}
-                    
-                    ${lastUpdated ? `
+                    `)}
+                    ${TemplateUtils.renderIf(lastUpdated, u => `
                         <div class="last-updated">
-                            <small>Last updated: ${lastUpdated}</small>
+                            <small>Last updated: ${u}</small>
                         </div>
-                    ` : ''}
+                    `)}
+                </div>
+            `;
+        }
+
+        renderStat(stat) {
+            return `
+                <div class="stat-card">
+                    ${TemplateUtils.renderIf(stat.icon, i => `<div class="stat-icon">${i}</div>`)}
+                    <div class="stat-value">${stat.value}</div>
+                    <div class="stat-label">${stat.label}</div>
+                    ${TemplateUtils.renderIf(stat.context, c => `<div class="stat-context">${c}</div>`)}
                 </div>
             `;
         }
@@ -306,78 +473,73 @@
 
             this.innerHTML = `
                 <div class="funding-section">
-                    <div class="funding-overview">
-                        ${totalRaised ? `
-                            <div class="funding-stat">
-                                <div class="funding-stat-label">Total Raised</div>
-                                <div class="funding-stat-value">${totalRaised}</div>
-                            </div>
-                        ` : ''}
-                        
-                        ${latestRound ? `
-                            <div class="funding-stat">
-                                <div class="funding-stat-label">Latest Round</div>
-                                <div class="funding-stat-value">${latestRound.amount}</div>
-                                ${latestRound.date ? `<div class="funding-stat-date">${latestRound.date}</div>` : ''}
-                            </div>
-                        ` : ''}
-                        
-                        ${valuation ? `
-                            <div class="funding-stat">
-                                <div class="funding-stat-label">Valuation</div>
-                                <div class="funding-stat-value">${valuation}</div>
-                            </div>
-                        ` : ''}
-                        
-                        ${status ? `
-                            <div class="funding-stat">
-                                <div class="funding-stat-label">Status</div>
-                                <div class="funding-stat-value">${status}</div>
-                            </div>
-                        ` : ''}
+                    ${this.renderFundingSummary({ totalRaised, latestRound, valuation, status })}
+                    ${this.renderFundingRounds(rounds)}
+                    ${this.renderKeyInvestors(keyInvestors)}
+                </div>
+            `;
+        }
+
+        renderFundingSummary({ totalRaised, latestRound, valuation, status }) {
+            const summaryItems = [
+                totalRaised && { label: 'Total Raised', value: totalRaised, icon: '💰' },
+                latestRound && { label: 'Latest Round', value: latestRound, icon: '🎯' },
+                valuation && { label: 'Valuation', value: valuation, icon: '📈' },
+                status && { label: 'Status', value: status, icon: '📊' }
+            ].filter(Boolean);
+
+            if (summaryItems.length === 0) return '';
+
+            return `
+                <div class="funding-summary">
+                    ${summaryItems.map(item => `
+                        <div class="funding-stat">
+                            <div class="funding-icon">${item.icon}</div>
+                            <div class="funding-label">${item.label}</div>
+                            <div class="funding-value">${item.value}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        renderFundingRounds(rounds) {
+            if (!rounds || rounds.length === 0) return '';
+
+            return `
+                <div class="funding-rounds">
+                    <h3>Funding History</h3>
+                    <div class="timeline">
+                        ${TemplateUtils.renderList(rounds, r => this.renderRound(r))}
                     </div>
+                </div>
+            `;
+        }
 
-                    ${rounds && rounds.length > 0 ? `
-                        <div class="funding-rounds">
-                            <h3>Funding Rounds</h3>
-                            <div class="timeline">
-                                ${rounds.map(round => {
-                // Extract year from date (handles formats like "July 2017", "2017", "March 2020")
-                const year = round.date.match(/\d{4}/)?.[0] || round.date;
-                return `
-                                    <div class="milestone-item">
-                                        <div class="milestone-year">${year}</div>
-                                        <div class="milestone-content">
-                                            <h4>${round.series} - ${round.amount}</h4>
-                                            ${round.date !== year ? `<div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">${round.date}</div>` : ''}
-                                            ${round.valuation ? `<div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Valuation: ${round.valuation}</div>` : ''}
-                                            ${round.leadInvestors && round.leadInvestors.length > 0 ? `
-                                                <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                                    <strong>Lead:</strong> ${round.leadInvestors.join(', ')}
-                                                </div>
-                                            ` : ''}
-                                            ${round.description ? `<p>${round.description}</p>` : ''}
-                                        </div>
-                                    </div>
-                                `}).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
+        renderRound(round) {
+            const year = round.date.match(/\d{4}/)?.[0] || round.date;
+            const showFullDate = round.date !== year;
+            const extraContent = showFullDate ? `<div class="round-date">${round.date}</div>` : '';
 
-                    ${keyInvestors && keyInvestors.length > 0 ? `
-                        <div class="key-investors">
-                            <h3>Key Investors</h3>
-                            <div class="investors-grid">
-                                ${keyInvestors.map(investor => `
-                                    <div class="investor-card">
-                                        <div class="investor-name">${investor.name}</div>
-                                        <div class="investor-type">${investor.type}</div>
-                                        ${investor.description ? `<p>${investor.description}</p>` : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
+            return TemplateUtils.renderTimelineItem(
+                year,
+                `${round.series} - ${round.amount}`,
+                round.description || '',
+                extraContent
+            );
+        }
+
+        renderKeyInvestors(investors) {
+            if (!investors || investors.length === 0) return '';
+
+            return `
+                <div class="key-investors">
+                    <h3>Key Investors</h3>
+                    <div class="investors-list">
+                        ${TemplateUtils.renderList(investors, inv => `
+                            <div class="investor-tag">${inv}</div>
+                        `)}
+                    </div>
                 </div>
             `;
         }
@@ -389,74 +551,69 @@
 
     class LeadershipSection extends ProfileSectionComponent {
         render() {
-            const { introduction, leaders, boardMembers } = this.data;
+            const { introduction, leaders, organizationStructure } = this.data;
 
             this.innerHTML = `
                 <div class="leadership-section">
-                    ${introduction ? `<p class="leadership-intro">${introduction}</p>` : ''}
-                    
-                    ${leaders && leaders.length > 0 ? `
-                        <div class="leaders-grid">
-                            ${leaders.map(leader => `
-                                <div class="leader-card">
-                                    <div class="leader-header">
-                                        <div class="leader-avatar">${this.getInitials(leader.name)}</div>
-                                        <div class="leader-info">
-                                            <h3 class="leader-name">${leader.name}</h3>
-                                            <div class="leader-title">${leader.title}</div>
-                                            ${leader.tenure ? `<div class="leader-tenure">${leader.tenure}</div>` : ''}
-                                        </div>
-                                    </div>
-                                    ${leader.background ? `<p class="leader-background">${leader.background}</p>` : ''}
-                                    ${leader.achievements && leader.achievements.length > 0 ? `
-                                        <div class="leader-achievements">
-                                            <strong>Key Achievements:</strong>
-                                            <ul>
-                                                ${leader.achievements.map(ach => `<li>${ach}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    ` : ''}
-                                    ${leader.quote ? `
-                                        <div class="leader-quote">
-                                            <span class="quote-icon">"</span>
-                                            <p>${leader.quote}</p>
-                                        </div>
-                                    ` : ''}
-                                    ${leader.linkedin ? `
-                                        <a href="${leader.linkedin}" target="_blank" rel="noopener noreferrer" class="leader-linkedin">
-                                            🔗 LinkedIn Profile
-                                        </a>
-                                    ` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-
-                    ${boardMembers && boardMembers.length > 0 ? `
-                        <div class="board-members">
-                            <h3>Board Members</h3>
-                            <div class="board-grid">
-                                ${boardMembers.map(member => `
-                                    <div class="board-member">
-                                        <div class="board-member-name">${member.name}</div>
-                                        <div class="board-member-role">${member.role}</div>
-                                        ${member.affiliation ? `<div class="board-member-affiliation">${member.affiliation}</div>` : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
+                    ${TemplateUtils.renderIf(introduction, i => `<p class="leadership-intro">${i}</p>`)}
+                    ${this.renderLeaders(leaders)}
+                    ${TemplateUtils.renderIf(organizationStructure, s =>
+                TemplateUtils.renderSection('Organization Structure', `<p>${s}</p>`)
+            )}
                 </div>
             `;
         }
 
-        getInitials(name) {
-            return name
-                .split(' ')
-                .map(part => part[0])
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
+        renderLeaders(leaders) {
+            if (!leaders || leaders.length === 0) return '';
+
+            return `
+                <div class="leaders-grid">
+                    ${TemplateUtils.renderList(leaders, l => this.renderLeader(l))}
+                </div>
+            `;
+        }
+
+        renderLeader(leader) {
+            return `
+                <div class="leader-card">
+                    <div class="leader-header">
+                        <div class="leader-name">${leader.name}</div>
+                        <div class="leader-title">${leader.title}</div>
+                    </div>
+                    ${TemplateUtils.renderIf(leader.background, b => `
+                        <p class="leader-background">${b}</p>
+                    `)}
+                    ${this.renderLeaderHighlights(leader.keyContributions)}
+                    ${this.renderSocialLinks(leader.linkedin, leader.twitter)}
+                </div>
+            `;
+        }
+
+        renderLeaderHighlights(contributions) {
+            if (!contributions || contributions.length === 0) return '';
+
+            return `
+                <div class="leader-highlights">
+                    <strong>Key Contributions:</strong>
+                    <ul>
+                        ${TemplateUtils.renderList(contributions, c => `<li>${c}</li>`)}
+                    </ul>
+                </div>
+            `;
+        }
+
+        renderSocialLinks(linkedin, twitter) {
+            const links = [];
+
+            if (linkedin) {
+                links.push(`<a href="${linkedin}" target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn</a>`);
+            }
+            if (twitter) {
+                links.push(`<a href="${twitter}" target="_blank" rel="noopener noreferrer" class="social-link">Twitter</a>`);
+            }
+
+            return links.length > 0 ? `<div class="leader-social">${links.join(' • ')}</div>` : '';
         }
     }
 
@@ -466,42 +623,50 @@
 
     class OfficeLocationsSection extends ProfileSectionComponent {
         render() {
-            const { headquarters, offices, remotePresence } = this.data;
+            const { headquarters, offices } = this.data;
 
             this.innerHTML = `
                 <div class="office-locations-section">
-                    ${headquarters ? `
-                        <div class="headquarters-card">
-                            <div class="location-badge">🏢 Headquarters</div>
-                            <h3 class="location-city">${headquarters.city}, ${headquarters.country}</h3>
-                            ${headquarters.address ? `<p class="location-address">${headquarters.address}</p>` : ''}
-                            ${headquarters.size ? `<div class="location-size">👥 ${headquarters.size}</div>` : ''}
-                            ${headquarters.description ? `<p class="location-description">${headquarters.description}</p>` : ''}
-                        </div>
-                    ` : ''}
+                    ${this.renderHeadquarters(headquarters)}
+                    ${this.renderOffices(offices)}
+                </div>
+            `;
+        }
 
-                    ${offices && offices.length > 0 ? `
-                        <div class="offices-grid">
-                            ${offices.map(office => `
-                                <div class="office-card">
-                                    <div class="location-header">
-                                        <h4 class="location-city">${office.city}, ${office.country}</h4>
-                                        ${office.type ? `<span class="location-type-badge">${office.type}</span>` : ''}
-                                    </div>
-                                    ${office.address ? `<p class="location-address">${office.address}</p>` : ''}
-                                    ${office.size ? `<div class="location-size">👥 ${office.size}</div>` : ''}
-                                    ${office.description ? `<p class="location-description">${office.description}</p>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
+        renderHeadquarters(hq) {
+            if (!hq) return '';
 
-                    ${remotePresence ? `
-                        <div class="remote-presence">
-                            <h3>🌍 Remote Work</h3>
-                            <p>${remotePresence}</p>
-                        </div>
-                    ` : ''}
+            return `
+                <div class="headquarters-card">
+                    <div class="location-badge">🏢 Headquarters</div>
+                    <h3 class="location-city">${hq.city}, ${hq.country}</h3>
+                    ${TemplateUtils.renderIf(hq.address, a => `<p class="location-address">${a}</p>`)}
+                    ${TemplateUtils.renderIf(hq.size, s => `<div class="location-size">👥 ${s}</div>`)}
+                    ${TemplateUtils.renderIf(hq.description, d => `<p class="location-description">${d}</p>`)}
+                </div>
+            `;
+        }
+
+        renderOffices(offices) {
+            if (!offices || offices.length === 0) return '';
+
+            return `
+                <div class="offices-grid">
+                    ${TemplateUtils.renderList(offices, o => this.renderOffice(o))}
+                </div>
+            `;
+        }
+
+        renderOffice(office) {
+            return `
+                <div class="office-card">
+                    <div class="location-header">
+                        <h4 class="location-city">${office.city}, ${office.country}</h4>
+                        ${TemplateUtils.renderIf(office.type, t => `<span class="location-type-badge">${t}</span>`)}
+                    </div>
+                    ${TemplateUtils.renderIf(office.address, a => `<p class="location-address">${a}</p>`)}
+                    ${TemplateUtils.renderIf(office.size, s => `<div class="location-size">👥 ${s}</div>`)}
+                    ${TemplateUtils.renderIf(office.description, d => `<p class="location-description">${d}</p>`)}
                 </div>
             `;
         }
@@ -513,49 +678,55 @@
 
     class PerksBenefitsSection extends ProfileSectionComponent {
         render() {
-            const { introduction, categories, standoutBenefits } = this.data;
+            const { introduction, standoutBenefits, categories } = this.data;
 
             this.innerHTML = `
                 <div class="perks-benefits-section">
-                    ${introduction ? `<p class="perks-intro">${introduction}</p>` : ''}
-                    
-                    ${standoutBenefits && standoutBenefits.length > 0 ? `
-                        <div class="standout-benefits">
-                            <h3>✨ Standout Benefits</h3>
-                            <div class="standout-grid">
-                                ${standoutBenefits.map(benefit => `
-                                    <div class="standout-benefit">
-                                        <div class="benefit-icon">${benefit.icon || '🌟'}</div>
-                                        <div class="benefit-content">
-                                            <h4>${benefit.name}</h4>
-                                            <p>${benefit.description}</p>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
+                    ${TemplateUtils.renderIf(introduction, i => `<p class="benefits-intro">${i}</p>`)}
+                    ${this.renderStandoutBenefits(standoutBenefits)}
+                    ${this.renderCategories(categories)}
+                </div>
+            `;
+        }
 
-                    ${categories && categories.length > 0 ? `
-                        <div class="benefits-categories">
-                            ${categories.map(category => `
-                                <div class="benefit-category">
-                                    <div class="category-header">
-                                        <span class="category-icon">${category.icon || '📦'}</span>
-                                        <h3>${category.category}</h3>
-                                    </div>
-                                    <div class="benefits-list">
-                                        ${category.benefits.map(benefit => `
-                                            <div class="benefit-item ${benefit.highlight ? 'highlight' : ''}">
-                                                <div class="benefit-name">${benefit.name}</div>
-                                                <div class="benefit-description">${benefit.description}</div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
+        renderStandoutBenefits(benefits) {
+            if (!benefits || benefits.length === 0) return '';
+
+            return `
+                <div class="standout-benefits">
+                    <h3>✨ Standout Benefits</h3>
+                    <div class="benefits-highlight-grid">
+                        ${TemplateUtils.renderList(benefits, b => `
+                            <div class="benefit-highlight">
+                                ${TemplateUtils.renderIf(b.icon, i => `<div class="benefit-icon">${i}</div>`)}
+                                <h4>${b.name}</h4>
+                                ${TemplateUtils.renderIf(b.description, d => `<p>${d}</p>`)}
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            `;
+        }
+
+        renderCategories(categories) {
+            if (!categories || categories.length === 0) return '';
+
+            return `
+                <div class="benefits-categories">
+                    ${TemplateUtils.renderList(categories, c => this.renderCategory(c))}
+                </div>
+            `;
+        }
+
+        renderCategory(category) {
+            return `
+                <div class="benefit-category">
+                    <h4 class="category-header">
+                        ${TemplateUtils.renderIf(category.icon, i => `${i} `)}${category.category}
+                    </h4>
+                    <ul class="benefits-list">
+                        ${TemplateUtils.renderList(category.items, item => `<li>${item}</li>`)}
+                    </ul>
                 </div>
             `;
         }
@@ -567,130 +738,96 @@
 
     class RemotePolicySection extends ProfileSectionComponent {
         render() {
-            const { model, summary, workLocation, equipment, schedule, tools, culture } = this.data;
+            const { workLocation, equipment, schedule, tools, culture } = this.data;
 
             this.innerHTML = `
                 <div class="remote-policy-section">
-                    <div class="policy-header">
-                        ${model ? `<div class="policy-model">${model} Model</div>` : ''}
-                        ${summary ? `<p class="policy-summary">${summary}</p>` : ''}
-                    </div>
-
-                    ${workLocation ? `
-                        <div class="policy-block">
-                            <h3>📍 Work Location</h3>
-                            <div class="policy-details">
-                                ${workLocation.policy ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Policy:</span>
-                                        <span class="policy-value">${workLocation.policy}</span>
-                                    </div>
-                                ` : ''}
-                                ${workLocation.officeExpectation ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Office Expectation:</span>
-                                        <span class="policy-value">${workLocation.officeExpectation}</span>
-                                    </div>
-                                ` : ''}
-                                ${workLocation.workFromAnywhere ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Work from Anywhere:</span>
-                                        <span class="policy-value">${workLocation.workFromAnywhere}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${equipment ? `
-                        <div class="policy-block">
-                            <h3>💻 Equipment & Setup</h3>
-                            <div class="policy-details">
-                                ${equipment.budget ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Budget:</span>
-                                        <span class="policy-value">${equipment.budget}</span>
-                                    </div>
-                                ` : ''}
-                                ${equipment.provided ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Provided:</span>
-                                        <span class="policy-value">${equipment.provided}</span>
-                                    </div>
-                                ` : ''}
-                                ${equipment.support ? `
-                                    <div class="policy-item">
-                                        <span class="policy-label">Support:</span>
-                                        <span class="policy-value">${equipment.support}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${schedule ? `
-                        <div class="policy-block">
-                            <h3>⏰ Schedule & Hours</h3>
-                            ${schedule.flexibility ? `
-                                <div class="policy-text-section">
-                                    <h4>Flexibility:</h4>
-                                    <p>${schedule.flexibility}</p>
-                                </div>
-                            ` : ''}
-                            ${schedule.coreHours ? `
-                                <div class="policy-text-section">
-                                    <h4>Core Hours:</h4>
-                                    <p>${schedule.coreHours}</p>
-                                </div>
-                            ` : ''}
-                            ${schedule.asynchronous ? `
-                                <div class="policy-text-section">
-                                    <h4>Async Work:</h4>
-                                    <p>${schedule.asynchronous}</p>
-                                </div>
-                            ` : ''}
-                        </div>
-                    ` : ''}
-
-                    ${tools ? `
-                        <div class="policy-block">
-                            <h3>🛠️ Tools & Collaboration</h3>
-                            ${tools.communication ? `
-                                <div class="policy-text-section">
-                                    <h4>Communication:</h4>
-                                    <p>${tools.communication}</p>
-                                </div>
-                            ` : ''}
-                            ${tools.collaboration ? `
-                                <div class="policy-text-section">
-                                    <h4>Collaboration:</h4>
-                                    <p>${tools.collaboration}</p>
-                                </div>
-                            ` : ''}
-                            ${tools.socializing ? `
-                                <div class="policy-text-section">
-                                    <h4>Socializing:</h4>
-                                    <p>${tools.socializing}</p>
-                                </div>
-                            ` : ''}
-                        </div>
-                    ` : ''}
-
-                    ${culture ? `
-                        <div class="policy-block culture-block">
-                            <h3>🤝 Culture & Connection</h3>
-                            ${culture.inPerson ? `<p><strong>In-Person:</strong> ${culture.inPerson}</p>` : ''}
-                            ${culture.remoteCulture ? `<p><strong>Remote Culture:</strong> ${culture.remoteCulture}</p>` : ''}
-                            ${culture.inclusion ? `<p><strong>Inclusion:</strong> ${culture.inclusion}</p>` : ''}
-                        </div>
-                    ` : ''}
+                    ${this.renderWorkLocation(workLocation)}
+                    ${this.renderEquipment(equipment)}
+                    ${this.renderSchedule(schedule)}
+                    ${this.renderTools(tools)}
+                    ${this.renderCulture(culture)}
                 </div>
             `;
+        }
+
+        renderWorkLocation(location) {
+            if (!location) return '';
+
+            return `
+                <div class="policy-block">
+                    <h3>📍 Work Location Policy</h3>
+                    ${this.renderTextField('Policy', location.policy)}
+                    ${this.renderTextField('Office Expectation', location.officeExpectation)}
+                    ${this.renderTextField('Work From Anywhere', location.workFromAnywhere)}
+                </div>
+            `;
+        }
+
+        renderEquipment(equipment) {
+            if (!equipment) return '';
+
+            return `
+                <div class="policy-block">
+                    <h3>💻 Equipment & Setup</h3>
+                    ${this.renderTextField('Budget', equipment.budget)}
+                    ${this.renderTextField('Provided Equipment', equipment.provided)}
+                    ${this.renderTextField('Support', equipment.support)}
+                </div>
+            `;
+        }
+
+        renderSchedule(schedule) {
+            if (!schedule) return '';
+
+            return `
+                <div class="policy-block">
+                    <h3>⏰ Schedule & Hours</h3>
+                    ${this.renderTextField('Flexibility', schedule.flexibility)}
+                    ${this.renderTextField('Core Hours', schedule.coreHours)}
+                    ${this.renderTextField('Asynchronous Work', schedule.asynchronous)}
+                </div>
+            `;
+        }
+
+        renderTools(tools) {
+            if (!tools) return '';
+
+            return `
+                <div class="policy-block">
+                    <h3>🛠️ Tools & Technology</h3>
+                    ${this.renderTextField('Communication', tools.communication)}
+                    ${this.renderTextField('Collaboration', tools.collaboration)}
+                    ${this.renderTextField('Socializing', tools.socializing)}
+                </div>
+            `;
+        }
+
+        renderCulture(culture) {
+            if (!culture) return '';
+
+            return `
+                <div class="policy-block">
+                    <h3>🌟 Remote Culture</h3>
+                    ${this.renderTextField('In-Person Events', culture.inPerson)}
+                    ${this.renderTextField('Remote Culture', culture.remoteCulture)}
+                    ${this.renderTextField('Inclusion', culture.inclusion)}
+                </div>
+            `;
+        }
+
+        renderTextField(label, value) {
+            return TemplateUtils.renderIf(value, v => `
+                <div class="policy-text-section">
+                    <h4>${label}:</h4>
+                    <p>${v}</p>
+                </div>
+            `);
         }
     }
 
     // ============================================================================
-    // Register Components
+    // Component Registration
     // ============================================================================
 
     customElements.define('company-description-section', CompanyDescriptionSection);
@@ -706,6 +843,8 @@
     // Export for testing
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = {
+            TemplateUtils,
+            ProfileSectionComponent,
             CompanyDescriptionSection,
             TheirStorySection,
             CompanyValuesSection,
