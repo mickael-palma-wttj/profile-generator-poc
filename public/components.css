@@ -213,7 +213,7 @@
 .milestone-item::before {
     content: '';
     position: absolute;
-    left: -2.2rem;
+    left: -2.25rem;
     top: 0.25em;
     width: 10px;
     height: 10px;
