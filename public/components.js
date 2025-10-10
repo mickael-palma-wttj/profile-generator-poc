@@ -481,9 +481,16 @@
         }
 
         renderFundingSummary({ totalRaised, latestRound, valuation, status }) {
+            // Handle latestRound which might be an object or string
+            const latestRoundValue = latestRound
+                ? (typeof latestRound === 'string'
+                    ? latestRound
+                    : `${latestRound.series || 'Round'} - ${latestRound.amount || 'N/A'}`)
+                : null;
+
             const summaryItems = [
                 totalRaised && { label: 'Total Raised', value: totalRaised, icon: '💰' },
-                latestRound && { label: 'Latest Round', value: latestRound, icon: '🎯' },
+                latestRoundValue && { label: 'Latest Round', value: latestRoundValue, icon: '🎯' },
                 valuation && { label: 'Valuation', value: valuation, icon: '📈' },
                 status && { label: 'Status', value: status, icon: '📊' }
             ].filter(Boolean);
@@ -536,9 +543,11 @@
                 <div class="key-investors">
                     <h3>Key Investors</h3>
                     <div class="investors-list">
-                        ${TemplateUtils.renderList(investors, inv => `
-                            <div class="investor-tag">${inv}</div>
-                        `)}
+                        ${TemplateUtils.renderList(investors, inv => {
+                // Handle both string and object formats
+                const name = typeof inv === 'string' ? inv : (inv.name || JSON.stringify(inv));
+                return `<div class="investor-tag">${name}</div>`;
+            })}
                     </div>
                 </div>
             `;
