@@ -12,9 +12,15 @@
 
     const CONFIG = {
         sectionOrder: [
-            'their_story', 'company_values', 'company_description',
-            'leadership', 'funding_parser', 'key_numbers',
-            'office_locations', 'perks_and_benefits', 'remote_policy'
+            'company_description',   // What the company is/does
+            'their_story',          // Origin and history
+            'company_values',       // Culture and principles
+            'key_numbers',          // Quantitative snapshot
+            'funding_parser',       // Financial backing
+            'leadership',           // Who runs the company
+            'office_locations',     // Geographic presence
+            'perks_and_benefits',   // Employee benefits
+            'remote_policy'         // Work arrangements
         ],
         icons: {
             pending: '⏳',
