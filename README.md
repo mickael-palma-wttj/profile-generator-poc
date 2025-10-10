@@ -115,7 +115,7 @@ The application will be available at `http://localhost:4567`
 ### Using the Web Interface
 
 1. Navigate to `http://localhost:4567`
-2. Enter a company name (required)
+2. Enter a Company Name (required)
 3. Optionally add the company website
 4. Click "Generate Profile"
 5. Wait for the AI to generate all sections (this may take 1-2 minutes)
@@ -239,7 +239,7 @@ profile_generator/
    touch prompts/custom_section.prompt.md
    ```
 
-2. Write your prompt template (use `[COMPANY NAME]` as placeholder)
+2. Write your prompt template (use `[Company Name]` as placeholder)
 
 3. The section will automatically be included in profile generation
 

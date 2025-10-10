@@ -62,4 +62,4 @@ Structure each value as:
 </div>
 ```
 
-Begin your research and generate HTML for the company values for: [COMPANY NAME]
+Begin your research and generate HTML for the company values for: [Company Name]

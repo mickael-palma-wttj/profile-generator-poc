@@ -52,4 +52,4 @@ Structure the story as:
 </div>
 ```
 
-Begin your research and generate HTML for the origin story for: [COMPANY NAME]
+Begin your research and generate HTML for the origin story for: [Company Name]

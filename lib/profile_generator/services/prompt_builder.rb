@@ -6,11 +6,8 @@ module ProfileGenerator
     # Follows Strategy pattern and SRP - only responsible for prompt construction
     class PromptBuilder
       COMPANY_PLACEHOLDERS = [
-        "[COMPANY NAME]",
         "[Company Name]",
-        "[COMPANY_NAME]",
-        "[Company]",
-        "[company]"
+        "[Company]"
       ].freeze
 
       def initialize(company)
@@ -19,7 +16,7 @@ module ProfileGenerator
 
       # Build system prompt by replacing company placeholders in template
       # @param template [String] The prompt template with placeholders
-      # @return [String] The system prompt with company name substituted
+      # @return [String] The system prompt with Company Name substituted
       def build_system_prompt(template)
         COMPANY_PLACEHOLDERS.reduce(template) do |text, placeholder|
           text.gsub(placeholder, @company.name)
