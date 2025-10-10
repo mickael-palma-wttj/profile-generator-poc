@@ -34,4 +34,91 @@ task :test do
   exec "bundle exec rspec"
 end
 
+# Profile generation tasks
+namespace :profile do
+  desc "Generate company profile with HTML export"
+  task :generate, [:company_name, :website, :output_dir] do |_t, args|
+    require_relative "config/boot"
+
+    company_name = args[:company_name] || raise("Company name required. Usage: rake 'profile:generate[CompanyName]' (note the quotes for zsh)")
+    website = args[:website] || "https://#{company_name.downcase.gsub(/\s+/, '')}.com"
+    output_dir = args[:output_dir] || "public"
+
+    puts "🚀 Generating profile for #{company_name}..."
+    puts "🌐 Website: #{website}"
+
+    # Create company
+    company = ProfileGenerator::Models::Company.new(name: company_name, website: website)
+
+    # Generate profile
+    generator = ProfileGenerator::Interactors::GenerateProfile.new
+    result = generator.call(company: company)
+
+    if result.success?
+      profile = result.value
+      puts "✅ Profile generated with #{profile.sections.count} sections"
+
+      # Save as markdown
+      markdown_file = File.join(output_dir, "#{company_name.downcase.gsub(/\s+/, '_')}_profile.md")
+      markdown_content = build_markdown_content(profile)
+      File.write(markdown_file, markdown_content)
+      puts "📄 Markdown saved: #{markdown_file}"
+
+      # Generate HTML
+      html_generator = ProfileGenerator::Services::HtmlGenerator.new
+      html_file = File.join(output_dir, "#{company_name.downcase.gsub(/\s+/, '_')}_profile.html")
+      html_generator.generate_and_save(profile, html_file)
+
+      puts "\n✨ Success! Files generated:"
+      puts "  📄 Markdown: #{markdown_file}"
+      puts "  🌐 HTML: #{html_file}"
+      puts "\nOpen HTML: open #{html_file}"
+    else
+      puts "❌ Error: #{result.error}"
+      exit 1
+    end
+  end
+
+  desc "Convert existing markdown profile to HTML"
+  task :to_html, [:markdown_file, :output_file] do |_t, args|
+    require_relative "config/boot"
+
+    markdown_file = args[:markdown_file] || "qonto_prompt_output.md"
+    output_file = args[:output_file] || "public/#{File.basename(markdown_file, '.md')}.html"
+
+    unless File.exist?(markdown_file)
+      puts "❌ Error: File not found: #{markdown_file}"
+      exit 1
+    end
+
+    puts "📄 Reading markdown file: #{markdown_file}"
+    puts "🎨 Converting to HTML..."
+    puts "⚠️  Note: This task requires parsing markdown to rebuild profile structure"
+    puts "    For best results, use: rake profile:generate[CompanyName]"
+
+    # This would need a markdown parser to reconstruct the profile object
+    # For now, recommend using the generate task instead
+    puts "\n💡 Tip: To generate both markdown and HTML:"
+    puts "   rake profile:generate[CompanyName]"
+  end
+end
+
+def build_markdown_content(profile)
+  content = []
+  content << "# #{profile.company.name} - Company Profile"
+  content << "Generated: #{profile.generated_at.strftime('%d/%m/%Y')}"
+  content << ""
+
+  profile.sections.each do |section|
+    content << "## #{section.name}"
+    content << ""
+    content << section.content
+    content << ""
+    content << "---"
+    content << ""
+  end
+
+  content.join("\n")
+end
+
 task default: :server

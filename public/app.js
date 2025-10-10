@@ -477,12 +477,53 @@
     }
 
     /**
+     * Process section content - strip code fences and detect HTML
+     */
+    function processSectionContent(content) {
+        if (!content) return '';
+
+        let cleaned = content.trim();
+
+        // Strip markdown code fences if present (```html or ```)
+        if (cleaned.match(/^```(?:html|HTML)?\s*[\r\n]/m)) {
+            cleaned = cleaned.replace(/^```(?:html|HTML)?\s*[\r\n]+/m, '');
+            cleaned = cleaned.replace(/[\r\n\s]*```[\r\n\s]*$/m, '');
+            cleaned = cleaned.trim();
+        }
+
+        // Check if content is HTML (starts with < and contains >)
+        const isHTML = cleaned.startsWith('<') && cleaned.includes('>');
+
+        if (isHTML) {
+            // Return HTML as-is
+            return cleaned;
+        } else {
+            // For markdown content, we need to format it
+            // Since we don't have a markdown parser in JS, return as-is with <pre>
+            return `<pre style="white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(cleaned)}</pre>`;
+        }
+    }
+
+    /**
+     * Escape HTML special characters
+     */
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    /**
      * Create a section card element
      */
     function createSectionCard(sectionName, humanizedName, content) {
         const card = document.createElement('div');
         card.className = 'card section-card';
         card.id = `result-section-${sectionName}`;
+
+        // Process content to strip code fences and handle HTML
+        const processedContent = processSectionContent(content);
+
         card.innerHTML = `
       <div class="section-header section-header-toggle" onclick="window.profileGenerator.toggleSection('${sectionName}')">
         <h2>${humanizedName || humanizeSectionName(sectionName)}</h2>
@@ -495,7 +536,7 @@
         </div>
       </div>
       <div class="section-content" id="content-${sectionName}">
-        ${content}
+        ${processedContent}
       </div>
     `;
         return card;

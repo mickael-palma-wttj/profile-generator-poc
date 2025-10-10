@@ -19,21 +19,59 @@
 3. **Research from reliable sources:** Yahoo Finance, Google Finance, company investor pages, SEC filings
 
 **OUTPUT FORMAT:**
+
+Return **ONLY HTML** - no markdown, no explanations, no code fences.
+
+Structure the content as:
+```html
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value">[Value]</div>
+    <div class="stat-label">[Metric Name]</div>
+    <div class="stat-description">[Why this matters]</div>
+  </div>
+  <!-- Repeat for 5-8 key metrics -->
+</div>
+
+<div class="highlight-box">
+  <h4>Why These Numbers Matter</h4>
+  <p>[1-2 sentence explanation of why these specific metrics are most relevant for this company]</p>
+</div>
+
+<p><strong>Key Context:</strong> [Any important notes about the data, sources, or company situation. Include data date.]</p>
 ```
-## [COMPANY NAME] ([TICKER]) - Key Financial Numbers
-**Industry:** [Industry/Sector]
-**Data Date:** [Date] | **Sources:** [Main sources used]
 
-**Why these 5 numbers matter for [Company Name]:**
-[1-2 sentence explanation of why these specific metrics are most relevant]
+**Requirements:**
+- Use `<div class="stats-grid">` to contain all stat cards
+- Each metric in a `<div class="stat-card">` with three sub-divs: stat-value, stat-label, stat-description
+- Use `<div class="highlight-box">` for the explanation section
+- Keep stat values concise (e.g., "$50B", "2.5M users", "45% growth")
+- Keep descriptions to one short sentence per metric
+- Include 5-8 most relevant metrics for the company
+- NO outer wrapper div
 
-1. **[Metric Name]:** [Value] - [1 line explaining why this matters]
-2. **[Metric Name]:** [Value] - [1 line explaining why this matters]  
-3. **[Metric Name]:** [Value] - [1 line explaining why this matters]
-4. **[Metric Name]:** [Value] - [1 line explaining why this matters]
-5. **[Metric Name]:** [Value] - [1 line explaining why this matters]
+**Example Output:**
+```html
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value">$50B</div>
+    <div class="stat-label">Annual Revenue (2023)</div>
+    <div class="stat-description">30% year-over-year growth</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-value">8,000+</div>
+    <div class="stat-label">Employees</div>
+    <div class="stat-description">Across 40+ countries</div>
+  </div>
+</div>
 
-**Key Context:** [Any important notes about the data or company situation]
+<div class="highlight-box">
+  <h4>Why These Numbers Matter</h4>
+  <p>For a payments infrastructure company like Stripe, processing volume, revenue growth, and global reach are the most critical metrics showing market dominance and scalability.</p>
+</div>
+
+<p><strong>Key Context:</strong> Data as of October 2024. Latest valuation from Series I funding round in 2023.</p>
 ```
 
 **QUALITY RULES:**

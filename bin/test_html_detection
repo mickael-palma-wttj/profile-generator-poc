@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../config/boot"
+
+# Test HTML detection
+html_content = <<~HTML
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">$50B</div>
+      <div class="stat-label">Revenue</div>
+    </div>
+  </div>
+HTML
+
+markdown_content = <<~MD
+  ## Key Numbers
+
+  - Revenue: $50B
+  - Employees: 10,000
+MD
+
+generator = ProfileGenerator::Services::HtmlGenerator.new
+
+puts "Testing HTML detection..."
+puts "HTML content starts with '<': #{html_content.strip.start_with?('<')}"
+puts "HTML content includes '>': #{html_content.strip.include?('>')}"
+puts "Looks like HTML: #{generator.send(:looks_like_html?, html_content)}"
+puts ""
+puts "Markdown content starts with '<': #{markdown_content.strip.start_with?('<')}"
+puts "Looks like HTML: #{generator.send(:looks_like_html?, markdown_content)}"

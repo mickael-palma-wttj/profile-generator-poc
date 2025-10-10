@@ -34,56 +34,92 @@ When given a company name, you will:
 
 ## OUTPUT FORMAT:
 
-# [COMPANY NAME] Remote Work Policy Analysis
+Return **ONLY HTML** - no markdown, no explanations, no code fences.
 
-## Company Overview
-- **Industry:** [Industry]
-- **Size:** [Employee count if available]
-- **Remote Work Model:** [Fully remote/Hybrid/Distributed]
-- **Geographic Presence:** [Countries/regions]
+Structure the content as:
+```html
+<div class="remote-policy-content">
+  <div class="highlight-box">
+    <h4>Remote Work Model</h4>
+    <p><strong>[Fully Remote / Hybrid / Office-First]</strong> - [Brief description of overall approach]</p>
+  </div>
 
-## Policy Details
+  <h3>🏠 Work Location & Flexibility</h3>
+  <ul>
+    <li><strong>Where You Can Work:</strong> [Details]</li>
+    <li><strong>Geographic Restrictions:</strong> [Details]</li>
+    <li><strong>Office Requirements:</strong> [Details]</li>
+  </ul>
 
-### 🏠 **Work Location & Flexibility**
-- [Specific details about where employees can work]
-- [Any geographic restrictions or requirements]
-- [Process for requesting/approving remote work]
+  <h3>💼 Equipment & Financial Support</h3>
+  <ul>
+    <li><strong>Home Office Budget:</strong> [Specific amounts]</li>
+    <li><strong>Equipment Provided:</strong> [What's included]</li>
+    <li><strong>Monthly Stipends:</strong> [Internet, utilities, etc.]</li>
+  </ul>
 
-### 💼 **Equipment & Financial Support**
-- [Specific allowances with dollar amounts]
-- [What equipment is provided vs. reimbursed]
-- [Home office setup budgets]
-- [Internet/utility stipends]
+  <h3>⏰ Work Schedule & Expectations</h3>
+  <ul>
+    <li><strong>Working Hours:</strong> [Flexibility details]</li>
+    <li><strong>Time Zone Requirements:</strong> [Details]</li>
+    <li><strong>Performance Measurement:</strong> [How they track]</li>
+  </ul>
 
-### ⏰ **Work Schedule & Expectations**
-- [Work hours flexibility]
-- [Time zone requirements]
-- [Performance measurement methods]
-- [Productivity expectations]
+  <h3>🤝 Team Connection & Culture</h3>
+  <ul>
+    <li><strong>In-Person Gatherings:</strong> [Frequency and details]</li>
+    <li><strong>Team Building:</strong> [Activities and budgets]</li>
+    <li><strong>Travel Expectations:</strong> [Policies]</li>
+  </ul>
 
-### 🤝 **Team Connection & Culture**
-- [In-person meeting requirements]
-- [Team building and social activities]
-- [Travel policies and budgets]
-- [Onboarding processes]
+  <div class="highlight-box">
+    <h4>Philosophy & Unique Practices</h4>
+    <p>[Company's approach to remote work, unique policies, or quotes from leadership]</p>
+  </div>
 
-### 📋 **Unique Policies & Practices**
-- [Any distinctive or innovative approaches]
-- [Company-specific remote work principles]
-- [Cultural elements that support remote work]
+  <p><strong>Sources:</strong> [Sources and last updated date]</p>
+</div>
+```
 
-## Key Quotes & Philosophy
-[Direct quotes from company leaders or official documents about remote work philosophy]
+**Requirements:**
+- Wrap all content in `<div class="remote-policy-content">`
+- Use `<div class="highlight-box">` for overview and philosophy sections
+- Use `<h3>` for main sections with emojis
+- Use `<ul>` and `<li>` for policy details
+- Use `<strong>` for labels and key terms
+- Include specific details (dollar amounts, time frames, etc.)
+- Be honest about limited information
 
-## Sources & References
-- [List all sources with links]
-- [Date of last policy update if available]
-- [Note any limitations in available information]
+**Example Output:**
+```html
+<div class="remote-policy-content">
+  <div class="highlight-box">
+    <h4>Remote Work Model</h4>
+    <p><strong>Fully Remote</strong> - GitLab operates as an all-remote company with no physical offices. All 2,000+ employees work remotely from 65+ countries.</p>
+  </div>
 
-## Implementation Insights
-- [What makes their approach successful]
-- [Challenges they've addressed]
-- [Lessons other companies can learn]
+  <h3>🏠 Work Location & Flexibility</h3>
+  <ul>
+    <li><strong>Where You Can Work:</strong> Work from anywhere with reliable internet. No geographic restrictions.</li>
+    <li><strong>Work from Anywhere:</strong> Travel and work from different countries up to 90 days per year.</li>
+    <li><strong>Coworking Spaces:</strong> $150/month stipend for coworking memberships.</li>
+  </ul>
+
+  <h3>💼 Equipment & Financial Support</h3>
+  <ul>
+    <li><strong>Home Office Budget:</strong> $500 one-time setup budget + annual refresh allowance.</li>
+    <li><strong>Equipment Provided:</strong> Laptop (Mac/Linux), monitor, keyboard, mouse provided by company.</li>
+    <li><strong>Internet Stipend:</strong> Reimbursement up to $100/month for internet costs.</li>
+  </ul>
+
+  <div class="highlight-box">
+    <h4>Philosophy & Unique Practices</h4>
+    <p>GitLab's "Handbook-first" culture documents everything publicly. CEO Sid Sijbrandij: <em>"Remote work isn't a perk—it's how we unlock global talent and give everyone flexibility."</em> They pioneered asynchronous communication and detailed documentation practices.</p>
+  </div>
+
+  <p><strong>Sources:</strong> GitLab company handbook, careers page, and leadership blog. Last updated October 2024.</p>
+</div>
+```
 
 ---
 

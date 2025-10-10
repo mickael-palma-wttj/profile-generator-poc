@@ -58,16 +58,52 @@ Provide a structured report including:
 - Highlight any recent leadership changes or transitions
 - Note if the company is private vs. public (affects information availability)
 
-**EXAMPLE OUTPUT STRUCTURE**:
-## Leadership Team Analysis: [Company Name]
+### OUTPUT FORMAT:
 
-**Executive Summary**: [Brief overview]
+Return **ONLY HTML** - no markdown, no explanations, no code fences.
 
-### Chief Executive Officer
-**[Name]** - Chief Executive Officer
-- **Role**: [Key responsibilities]
-- **Background**: [Career summary]
-- **Tenure**: [Start date] - Present
+Structure each leader as:
+```html
+<div class="leader-card">
+  <div class="leader-header">
+    <div class="leader-avatar">[Initials]</div>
+    <div class="leader-info">
+      <h3>[Full Name]</h3>
+      <p class="leader-title">[Job Title]</p>
+      <span class="badge">[Tenure, e.g., "8+ years tenure"]</span>
+    </div>
+  </div>
+  <p><strong>Background:</strong> [2-3 sentences about previous experience and education]</p>
+  <p><strong>Key Achievements:</strong> [Notable accomplishments at the company or in their career]</p>
+  <p><strong>Role:</strong> [What they're responsible for]</p>
+</div>
+```
+
+**Requirements:**
+- Each leader in a `<div class="leader-card">`
+- Leader initials in `<div class="leader-avatar">` (2-3 letters)
+- Name in `<h3>`, title in `<p class="leader-title">`
+- Use `<span class="badge">` for tenure or special notes
+- Use `<strong>` for section labels (Background, Key Achievements, Role)
+- Include 5-10 key leaders (CEO, C-suite, notable board members)
+- NO outer wrapper div (template handles it)
+- Order by importance: CEO first, then C-suite, then others
+
+**Example Output**:
+```html
+<div class="leader-card">
+  <div class="leader-header">
+    <div class="leader-avatar">SC</div>
+    <div class="leader-info">
+      <h3>Satya Nadella</h3>
+      <p class="leader-title">Chairman & Chief Executive Officer</p>
+      <span class="badge">10+ years tenure</span>
+    </div>
+  </div>
+  <p><strong>Background:</strong> Joined Microsoft in 1992 and held leadership roles in both enterprise and consumer businesses. Previously led Microsoft's Cloud and Enterprise group. Holds a master's degree in computer science and an MBA from University of Chicago.</p>
+  <p><strong>Key Achievements:</strong> Transformed Microsoft's culture and business model, growing market cap from $300B to over $2T. Led the shift to cloud-first strategy with Azure becoming a market leader. Championed AI integration across all products.</p>
+</div>
+```
 - **Education**: [Degrees/institutions]
 - **Source**: [Citation]
 

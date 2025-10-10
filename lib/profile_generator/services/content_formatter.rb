@@ -60,6 +60,9 @@ module ProfileGenerator
         # Clean up the content
         cleaned = clean_content(content)
 
+        # Strip HTML code fences if present (AI sometimes wraps HTML in ```html)
+        cleaned = strip_html_code_fences(cleaned)
+
         # Handle JSON code blocks - convert them to formatted JSON HTML
         cleaned = process_json_code_blocks(cleaned)
 
@@ -68,6 +71,20 @@ module ProfileGenerator
 
         # Post-process HTML for better styling
         post_process_html(html)
+      end
+
+      # Strip ```html code fences that wrap HTML content
+      # The AI sometimes returns HTML wrapped in markdown code blocks
+      # which causes Redcarpet to escape it as code instead of rendering it
+      def strip_html_code_fences(content)
+        # Match ```html or ``` at start, HTML content, and ``` at end
+        if /^```(?:html|HTML)?\s*[\r\n]/m.match?(content.strip)
+          content = content.sub(/^```(?:html|HTML)?\s*[\r\n]+/m, "")
+          content = content.sub(/[\r\n\s]*```[\r\n\s]*$/m, "")
+          content.strip
+        else
+          content
+        end
       end
 
       def process_json_code_blocks(content)

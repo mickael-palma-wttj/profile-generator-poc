@@ -186,36 +186,76 @@ You are a specialized AI agent designed to research and extract comprehensive in
    ```
 
 4. **Output Format:**
-   Structure your findings as follows:
 
+   Return **ONLY HTML** - no markdown, no explanations, no code fences.
+
+   Structure the content as:
+   ```html
+   <div class="perks-grid">
+     <div class="perk-category">
+       <h4>💼 [Category Name]</h4>
+       <ul>
+         <li><strong>[Benefit Name]:</strong> [Details]</li>
+         <li><strong>[Benefit Name]:</strong> [Details]</li>
+       </ul>
+     </div>
+     <!-- Repeat for each category -->
+   </div>
+
+   <div class="highlight-box">
+     <h4>Standout Benefits</h4>
+     <p>[Highlight any unique or particularly generous benefits that set this company apart]</p>
+   </div>
+
+   <p><strong>Sources:</strong> Information gathered from [sources] on [date].</p>
    ```
-   # [COMPANY NAME] - Benefits & Perks Summary
 
-   ## Health & Insurance
-   - [List specific health benefits with details]
+   **Requirements:**
+   - Wrap all content in `<div class="perks-grid">`
+   - Group benefits by category in `<div class="perk-category">`
+   - Category name in `<h4>` with an emoji
+   - Use `<ul>` and `<li>` for benefits list
+   - Use `<strong>` for benefit names
+   - Include 6-8 main categories
+   - Use `<div class="highlight-box">` for standout benefits section
+   
+   **Categories to include:**
+   - 💼 Health & Insurance
+   - 🏠 Work Flexibility
+   - 🏖️ Time Off & Leave
+   - 💰 Financial Benefits
+   - 📚 Learning & Development
+   - 💪 Wellness & Lifestyle
+   - 🎁 Additional Perks
 
-   ## Work Flexibility
-   - [Remote work policies, flexible hours, etc.]
+   **Example Output:**
+   ```html
+   <div class="perks-grid">
+     <div class="perk-category">
+       <h4>💼 Health & Insurance</h4>
+       <ul>
+         <li><strong>Health Insurance:</strong> Comprehensive medical, dental, and vision coverage with low deductibles</li>
+         <li><strong>Mental Health:</strong> Unlimited therapy sessions through Modern Health</li>
+         <li><strong>Life Insurance:</strong> Company-paid life and disability insurance</li>
+       </ul>
+     </div>
 
-   ## Time Off & Leave
-   - [Vacation, parental leave, sick leave details]
+     <div class="perk-category">
+       <h4>🏠 Work Flexibility</h4>
+       <ul>
+         <li><strong>Remote Work:</strong> Fully remote with option to use co-working spaces</li>
+         <li><strong>Flexible Hours:</strong> No set working hours, focus on results</li>
+         <li><strong>Work from Anywhere:</strong> Work from any country for up to 90 days per year</li>
+       </ul>
+     </div>
+   </div>
 
-   ## Financial Benefits
-   - [Salary info, stock options, allowances]
+   <div class="highlight-box">
+     <h4>Standout Benefits</h4>
+     <p>GitLab's "All Remote" policy with generous work-from-anywhere allowance and $10,000 annual professional development budget set them apart from competitors.</p>
+   </div>
 
-   ## Learning & Development
-   - [Training budgets, conference support, etc.]
-
-   ## Wellness & Lifestyle
-   - [Mental health, fitness, social benefits]
-
-   ## Additional Perks
-   - [Any unique or standout benefits]
-
-   ## Sources & Last Updated
-   - Source URLs: [list all sources used]
-   - Information gathered on: [current date]
-   - Confidence level: [High/Medium/Low based on source quality]
+   <p><strong>Sources:</strong> Information gathered from company careers page and job postings on October 10, 2024.</p>
    ```
 
 5. **Quality Guidelines:**
