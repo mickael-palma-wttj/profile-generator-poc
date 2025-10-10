@@ -32,56 +32,6 @@
         </div>
       <% else %>
         <div class="profile-sections">
-          <% 
-            # Helper method to format section content (detect HTML vs Markdown)
-            def format_section_content(content)
-              return "" if content.nil? || content.strip.empty?
-              
-              cleaned = content.strip
-              
-              # DEBUG: Log first 100 chars
-              puts "[DEBUG] Original starts with: #{cleaned[0..100].inspect}"
-              
-              # Step 1: Strip markdown code fences if present (AI sometimes wraps HTML in ```html blocks)
-              # Handle various fence formats: ```html, ```HTML, or just ```
-              # Use multiline mode to handle newlines properly
-              if cleaned =~ /\A```(?:html|HTML)?[\s\r\n]+/m
-                puts "[DEBUG] Found code fence, stripping..."
-                # Remove opening fence (```html or ``` followed by newlines/spaces)
-                cleaned = cleaned.sub(/\A```(?:html|HTML)?[\s\r\n]+/m, "")
-                # Remove closing fence (newlines/spaces followed by ```)
-                cleaned = cleaned.sub(/[\s\r\n]*```[\s\r\n]*\z/m, "")
-                cleaned = cleaned.strip
-                puts "[DEBUG] After stripping: #{cleaned[0..100].inspect}"
-              end
-              
-              # Step 2: Remove any AI thinking/search tags (e.g., <search>, <code class="search">)
-              # This handles cases where AI returns thinking steps instead of clean HTML
-              if cleaned.include?('<code class="search">') || cleaned.include?('<h1 class="content-h1">Searching for')
-                # Extract only the HTML content after the search/thinking sections
-                # Look for the first actual content div (value-card, story-content, etc.)
-                if cleaned =~ /(<div class="(?:value-card|story-content|company-overview|leader-card|funding-content|stats-grid|locations-grid|perks-grid|remote-policy-content)")/
-                  # Extract from the first real content div onwards
-                  cleaned = cleaned[$~.pre_match.length..-1]
-                end
-              end
-              
-              # Step 3: Check if content looks like HTML
-              is_html = cleaned.start_with?("<") && cleaned.include?(">")
-              puts "[DEBUG] is_html: #{is_html}, starts_with: #{cleaned[0..20].inspect}"
-              
-              if is_html
-                puts "[DEBUG] Returning raw HTML"
-                # Return HTML as-is (it's already formatted with proper CSS classes)
-                cleaned
-              else
-                puts "[DEBUG] Formatting as markdown"
-                # Fall back to markdown formatter for old-style content (use cleaned content)
-                ProfileGenerator::Services::ContentFormatter.new.format(cleaned)
-              end
-            end
-          %>
-          
           <% profile.sections.each do |section| %>
             <div class="card section-card" id="section-<%= section.prompt_file %>">
               <div class="section-header section-header-toggle" onclick="toggleSection('<%= section.prompt_file %>')">
@@ -92,7 +42,7 @@
                 </div>
               </div>
               <div class="section-content" id="content-<%= section.prompt_file %>">
-                <%== format_section_content(section.content) %>
+                <%== ProfileGenerator::Helpers::SectionContentHelper.format(section.content) %>
               </div>
             </div>
           <% end %>
