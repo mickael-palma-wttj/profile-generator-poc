@@ -34,8 +34,15 @@ module ProfileGenerator
       def format(content)
         return "" if content.nil? || content.strip.empty?
 
+        # Strip JSON code fences if AI wrapped JSON in ```json...```
+        cleaned_content = strip_json_code_fences(content)
+
         # Try to detect and parse JSON first
-        if looks_like_json?(content)
+        if looks_like_json_with_type?(cleaned_content)
+          # New web component format
+          format_as_component(cleaned_content)
+        elsif looks_like_json?(cleaned_content)
+          # Legacy JSON format (for backward compatibility)
           format_json(content)
         else
           # Default to Markdown parsing
@@ -45,10 +52,66 @@ module ProfileGenerator
 
       private
 
+      # Check if content is JSON with a "type" field (new web component format)
+      def looks_like_json_with_type?(content)
+        stripped = content.strip
+        return false unless stripped.start_with?("{") && stripped.end_with?("}")
+
+        # Actually parse the JSON to check for "type" field
+        begin
+          data = JSON.parse(stripped)
+          data.is_a?(Hash) && data.key?("type")
+        rescue JSON::ParserError
+          false
+        end
+      end
+
       def looks_like_json?(content)
         stripped = content.strip
         (stripped.start_with?("{") && stripped.end_with?("}")) ||
           (stripped.start_with?("[") && stripped.end_with?("]"))
+      end
+
+      # Format JSON as a web component
+      def format_as_component(json_content)
+        data = JSON.parse(json_content)
+        section_type = data["type"]
+        component_name = component_name_for_type(section_type)
+
+        # Escape single quotes in JSON for HTML attribute
+        escaped_json = json_content.gsub("'", "&apos;")
+
+        # Return web component HTML
+        %(<#{component_name} data='#{escaped_json}'></#{component_name}>)
+      rescue JSON::ParserError
+        # Fall back to markdown if JSON parsing fails
+        format_markdown(json_content)
+      end
+
+      # Map section types to component names
+      def component_name_for_type(type)
+        case type
+        when "company_description"
+          "company-description-section"
+        when "their_story"
+          "their-story-section"
+        when "company_values"
+          "company-values-section"
+        when "key_numbers"
+          "key-numbers-section"
+        when "funding_parser"
+          "funding-section"
+        when "leadership"
+          "leadership-section"
+        when "office_locations"
+          "office-locations-section"
+        when "perks_and_benefits"
+          "perks-benefits-section"
+        when "remote_policy"
+          "remote-policy-section"
+        else
+          "generic-section"
+        end
       end
 
       def format_json(content)
@@ -71,6 +134,21 @@ module ProfileGenerator
 
         # Post-process HTML for better styling
         post_process_html(html)
+      end
+
+      # Strip ```json code fences that wrap JSON content
+      # The AI sometimes returns JSON wrapped in markdown code blocks
+      # despite being instructed not to
+      def strip_json_code_fences(content)
+        stripped = content.strip
+        # Match ```json at start and ``` at end
+        if stripped.start_with?("```json", "```\n{", "```\r\n{")
+          stripped = stripped.sub(/^```(?:json)?\s*[\r\n]+/m, "")
+          stripped = stripped.sub(/[\r\n\s]*```[\r\n\s]*$/m, "")
+          stripped.strip
+        else
+          content
+        end
       end
 
       # Strip ```html code fences that wrap HTML content

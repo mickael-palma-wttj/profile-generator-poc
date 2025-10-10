@@ -5,7 +5,7 @@ require_relative "app/application"
 require "rack/static"
 
 # Configure Rack
-use Rack::Static, urls: ["/styles.css", "/app.js"], root: "public"
+use Rack::Static, urls: ["/styles.css", "/app.js", "/components.js"], root: "public"
 
 # Run the application
 run ProfileGenerator::Application

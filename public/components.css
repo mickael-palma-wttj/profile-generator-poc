@@ -1,0 +1,1194 @@
+/**
+ * Web Component Styles
+ * Styles for profile section custom elements
+ */
+
+/* ============================================================================
+   Company Description Component
+   ============================================================================ */
+
+.company-description-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.company-description-section .tagline {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+    border-radius: 8px;
+}
+
+.company-quick-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.fact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.fact-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.fact-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.fact-value {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.fact-value a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.fact-value a:hover {
+    text-decoration: underline;
+}
+
+.key-products {
+    margin-top: 1.5rem;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.product-card {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.product-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+}
+
+.product-card p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.info-section {
+    margin-top: 1.5rem;
+}
+
+.info-section h3 {
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+/* ============================================================================
+   Their Story Component
+   ============================================================================ */
+
+.their-story-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.founding-year {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.founders-section {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.founders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.founder-card {
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.founder-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.founder-background {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.story-section {
+    line-height: 1.8;
+}
+
+.story-section h3 {
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.aha-moment {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #fff9e6, #fff4cc);
+    border-radius: 8px;
+    border-left: 4px solid #f39c12;
+}
+
+.aha-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.aha-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: #d68910;
+}
+
+.aha-content p {
+    margin: 0;
+    line-height: 1.7;
+}
+
+.milestones-section {
+    margin-top: 1.5rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin-top: 1.5rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--primary-color), transparent);
+}
+
+.milestone-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.milestone-item::before {
+    content: '';
+    position: absolute;
+    left: -2.2rem;
+    top: 0.25em;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    box-shadow: 0 0 0 4px white, 0 0 0 6px var(--primary-color);
+}
+
+.milestone-year {
+    font-weight: 700;
+    color: var(--primary-color);
+    min-width: 60px;
+    flex-shrink: 0;
+    line-height: 1.4;
+}
+
+.milestone-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.milestone-content p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Company Values Component
+   ============================================================================ */
+
+.company-values-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.values-intro {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.value-card {
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.value-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.value-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.value-icon {
+    font-size: 2rem;
+}
+
+.value-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.value-tagline {
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.value-description {
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.value-description p {
+    margin: 0.5rem 0;
+}
+
+.value-examples {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.value-examples strong {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.value-examples ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+}
+
+.value-examples li {
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+}
+
+/* ============================================================================
+   Key Numbers Component
+   ============================================================================ */
+
+.key-numbers-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.stat-label {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.95;
+    margin-bottom: 0.5rem;
+}
+
+.stat-context {
+    font-size: 0.875rem;
+    opacity: 0.85;
+}
+
+.numbers-context {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.numbers-context p {
+    margin: 0;
+    line-height: 1.7;
+}
+
+.last-updated {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Funding Component
+   ============================================================================ */
+
+.funding-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.funding-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.funding-stat {
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.funding-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.funding-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.funding-stat-date {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.funding-rounds {
+    margin-top: 1.5rem;
+}
+
+.funding-timeline {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.funding-round {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.round-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.round-series {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.round-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.round-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.round-amount {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.round-valuation {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.round-investors {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.round-description {
+    margin-top: 0.75rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.key-investors {
+    margin-top: 2rem;
+}
+
+.investors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.investor-card {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.investor-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.investor-type {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.investor-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Leadership Component
+   ============================================================================ */
+
+.leadership-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.leadership-intro {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.leaders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.leader-card {
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.leader-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.leader-header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.leader-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.leader-info {
+    flex: 1;
+}
+
+.leader-name {
+    margin: 0 0 0.25rem 0;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.leader-title {
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.leader-tenure {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.leader-background {
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.leader-achievements {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.leader-achievements strong {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.leader-achievements ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+}
+
+.leader-achievements li {
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+    line-height: 1.6;
+}
+
+.leader-quote {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+    border-radius: 8px;
+    position: relative;
+}
+
+.quote-icon {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-size: 3rem;
+    color: var(--primary-color);
+    opacity: 0.3;
+}
+
+.leader-quote p {
+    margin: 0;
+    padding-left: 2rem;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.leader-linkedin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.leader-linkedin:hover {
+    text-decoration: underline;
+}
+
+.board-members {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.board-member {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.board-member-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.board-member-role {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.board-member-affiliation {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* ============================================================================
+   Office Locations Component
+   ============================================================================ */
+
+.office-locations-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.headquarters-card {
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.location-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.location-city {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.headquarters-card .location-city {
+    color: white;
+}
+
+.location-address {
+    opacity: 0.9;
+    margin: 0 0 0.75rem 0;
+}
+
+.location-size {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+}
+
+.location-description {
+    margin: 0.75rem 0 0 0;
+    line-height: 1.6;
+}
+
+.headquarters-card .location-description {
+    opacity: 0.95;
+}
+
+.offices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.office-card {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.office-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.location-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.office-card .location-city {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.location-type-badge {
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.office-card .location-address {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    opacity: 1;
+}
+
+.office-card .location-size {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.office-card .location-description {
+    color: var(--text-secondary);
+}
+
+.remote-presence {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+    border-radius: 12px;
+    border-left: 4px solid #2ecc71;
+}
+
+.remote-presence h3 {
+    margin: 0 0 1rem 0;
+    color: #27ae60;
+}
+
+.remote-presence p {
+    margin: 0;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+/* ============================================================================
+   Perks and Benefits Component
+   ============================================================================ */
+
+.perks-benefits-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.perks-intro {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.standout-benefits {
+    padding: 2rem;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 12px;
+    color: white;
+}
+
+.standout-benefits h3 {
+    margin: 0 0 1.5rem 0;
+    color: white;
+}
+
+.standout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.standout-benefit {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.benefit-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.benefit-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: white;
+}
+
+.benefit-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.95;
+}
+
+.benefits-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.benefit-category {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.category-icon {
+    font-size: 2rem;
+}
+
+.category-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.benefits-list {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.benefit-item {
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border-left: 3px solid var(--border-color);
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.benefit-item:hover {
+    border-left-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.benefit-item.highlight {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+    border-left-color: var(--primary-color);
+}
+
+.benefit-name {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.benefit-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   Remote Policy Component
+   ============================================================================ */
+
+.remote-policy-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.policy-header {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+}
+
+.policy-model {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.policy-summary {
+    font-size: 1.1rem;
+    margin: 0;
+    opacity: 0.95;
+}
+
+.policy-block {
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.policy-block h3 {
+    margin: 0 0 1.5rem 0;
+    color: var(--primary-color);
+}
+
+.policy-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.policy-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+}
+
+.policy-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.policy-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.policy-highlight {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1));
+    border-radius: 8px;
+    border-left: 4px solid #2ecc71;
+}
+
+.policy-highlight strong {
+    color: #27ae60;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.tool-group {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+}
+
+.tool-group strong {
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.tool-group span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.culture-block {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+}
+
+.culture-block p {
+    margin: 0.75rem 0;
+    line-height: 1.7;
+}
+
+.culture-block strong {
+    color: var(--primary-color);
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .company-quick-facts {
+        grid-template-columns: 1fr;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .founders-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .aha-moment {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .timeline {
+        padding-left: 1.5rem;
+    }
+
+    .funding-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .investors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .leaders-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .board-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .offices-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .standout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .policy-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .board-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .leader-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}

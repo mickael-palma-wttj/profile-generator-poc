@@ -1,276 +1,436 @@
-You are a specialized AI agent designed to research and extract comprehensive information about company benefits and perks from internet sources. Your goal is to provide detailed, accurate, and well-structured benefit packages for any given company.
+# Perks and Benefits Prompt (JSON Version)
 
-**INSTRUCTIONS:**
+## Task
+Research and compile comprehensive information about the company's employee perks, benefits, and compensation philosophy.
 
-1. **Search Strategy:**
-   - Start with the company's official career/jobs page
-   - Look for dedicated benefits, perks, culture, or "working here" pages
-   - Check job postings for benefit mentions
-   - Only use official sources
+## Output Format
+Return **ONLY** valid JSON in the following structure. Do NOT include any markdown code fences, explanations, or additional text.
 
-2. **Information to Extract:**
+```json
+{
+  "type": "perks_and_benefits",
+  "data": {
+    "introduction": "1-2 sentences about the company's benefits philosophy and approach to employee compensation",
+    "standoutBenefits": [
+      {
+        "icon": "💰",
+        "name": "Competitive Equity",
+        "description": "What makes this benefit special or unique (2-3 sentences)"
+      }
+    ],
+    "categories": [
+      {
+        "icon": "🏥",
+        "category": "Health & Wellness",
+        "benefits": [
+          {
+            "name": "Premium Health Coverage",
+            "description": "Description of this specific benefit",
+            "highlight": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
-   **Core Benefits:**
-   - Health insurance (medical, dental, vision coverage details)
-   - Salary information and competitiveness
-   - Contract types (full-time, part-time, contractor options)
-   - Retirement/pension plans
-   - Life and disability insurance
+## Guidelines
 
-   **Work Flexibility:**
-   - Remote work policies (fully remote, hybrid, office-required)
-   - Flexible working hours
-   - Work from anywhere programs (duration, restrictions)
-   - Office locations and visit requirements
+### Introduction
+- 1-2 sentences summarizing the company's approach to benefits
+- What's their philosophy on compensation and perks?
+- Example: "Stripe offers competitive compensation including base salary, equity, and comprehensive benefits designed to support employees' financial, physical, and mental well-being. The company takes a data-driven approach to benefits, regularly surveying employees to ensure offerings meet their needs."
 
-   **Time Off & Leave:**
-   - Vacation/PTO policies (days, flexibility, unlimited)
-   - Parental leave (duration, paid/unpaid)
-   - Sick leave policies
-   - Sabbatical opportunities
-   - Public holidays and company closures
+### Standout Benefits (3-6 benefits)
 
-   **Financial Perks:**
-   - Stock options/equity participation
+These are the most unique, generous, or impressive benefits that differentiate this company. Consider:
+- Unusually generous versions of standard benefits
+- Unique perks not offered elsewhere
+- Benefits that reflect company values
+- Benefits frequently mentioned in reviews or recruitment
+
+For each standout benefit:
+
+**icon** (required)
+- Choose relevant emoji
+- Examples: 💰 (compensation), 🏖️ (time off), 📚 (learning), 🏠 (remote), ✈️ (travel), 🍼 (family)
+
+**name** (required)
+- Concise benefit name (2-5 words)
+- Example: "Unlimited PTO", "Equity for All", "Learning Budget"
+
+**description** (required)
+- 2-3 sentences explaining:
+  - What exactly is offered
+  - What makes it special or generous
+  - How employees can use it
+- Be specific with amounts, timeframes, or limits when known
+
+### Categories (5-8 categories)
+
+Organize all benefits into logical categories:
+
+#### Common Categories
+
+1. **💰 Compensation & Equity**
+   - Base salary philosophy
+   - Equity/stock options
    - Bonuses and profit sharing
-   - Equipment allowances (laptop, home office setup)
-   - Transportation benefits (public transport, parking, bike schemes)
-   - Meal allowances or cafeteria benefits
-   - Travel and expense policies
+   - Pay transparency
+   - Salary bands
 
-   **Learning & Development:**
-   - Training budgets and programs
-   - Conference attendance support
-   - Certification reimbursements
-   - Internal learning platforms
+2. **🏥 Health & Wellness**
+   - Medical, dental, vision insurance
+   - Mental health support
+   - Wellness programs
+   - Gym memberships
+   - Health stipends
+
+3. **👪 Family & Parental**
+   - Parental leave (specify weeks)
+   - Adoption assistance
+   - Childcare support
+   - Family planning benefits
+   - Eldercare support
+
+4. **⏰ Work-Life Balance**
+   - PTO policy
+   - Flexible schedule
+   - Remote work options
+   - Sabbaticals
+   - Unlimited vacation
+
+5. **📚 Learning & Development**
+   - Learning stipends ($ amount)
+   - Conference attendance
+   - Tuition reimbursement
    - Mentorship programs
+   - Book clubs or learning groups
 
-   **Wellness & Lifestyle:**
-   - Mental health support and counseling
-   - Gym memberships or fitness benefits
-   - Wellness programs and initiatives
-   - Social events and team building
-   - Volunteer time or charity matching
-   - Pet-friendly policies
+6. **💻 Equipment & Workspace**
+   - Home office setup
+   - Equipment budget ($ amount)
+   - Laptop and phone
+   - Co-working stipends
+   - Office ergonomics
 
-4. **CSV Benefit list**
-   Use this list for benefit: 
-   ```csv
-   Type,En,Fr,Es,Cz,Sk,excluded countries,included countries
-   CATEGORY,Work-life balance,Équilibre vie pro/vie perso,Conciliación de la vida laboral y familiar,Work-life balance,Work-life balance,,
-   BENEFIT,Four-day week,Semaine de 4 jours,Semana de 4 días,4denní pracovní týden,4-dňový pracovný týždeň,,
-   BENEFIT,Flexible working hours,Horaires de travail flexibles,Horario de trabajo flexible,Pružná pracovní doba,Flexibilný pracovný čas,,
-   BENEFIT,Open to part time,Temps partiel possible,Trabajo a tiempo parcial posible,Možnost částečného úvazku,Možný čiastočný úväzok,,
-   BENEFIT,Fully-remote,100% en télétravail,100% teletrabajo,Práce na dálku,Práca na diaľku,,
-   BENEFIT,Open to full remote,Ouvert au télétravail total,Abierto al teletrabajo completo,Možnost práce na dálku,Možnosť práce na diaľku,,
-   BENEFIT,Work from anywhere,Télétravail de n’importe où,Teletrabajo desde cualquier lugar,Pracujte odkdykoliv,Pracujte odkedykoľvek,,
-   BENEFIT,Up to 3-4 days at home,Jusqu'à 3-4 jours de télétravail,Hasta 3-4 días de teletrabajo,3-4 dny home-office,3-4 dni home-office,,
-   BENEFIT,Up to 1-2 days at home,Jusqu'à 1-2 jours de télétravail,Hasta 1-2 días de teletrabajo,1-2 dny home-office,1-2 dni home-office,,
-   BENEFIT,4.5-days workweek,Semaine de 4.5 jours,Semana de 4.5 días,4.5 denní pracovní týden,4.5 dňový pracovný týždeň,,
-   CATEGORY,Office life,Vie au bureau,Vida de oficina,Život v kancelářu,Život v kancelárii,,
-   BENEFIT,Lunch vouchers,Tickets restaurant,Cheques restaurante,Stravenky,Stravenky,,
-   BENEFIT,Food service or stocked kitchen,Restaurant d’entreprise / Cuisine pour les employés,Restaurante de empresa / Cocina para empleados,Obědy zajištěny / vybavená kuchyně,Obedy zaistené / vybavená kuchyňa,,
-   BENEFIT,Free food & snacks,Collations à volonté,Aperitivos para todos los gustos,Občerstvení zdarma,Občerstvenie zadarmo,,
-   BENEFIT,Pet-friendly office,Animaux acceptés,Se admiten mascotas,Pet-friendly office,Pet-friendly office,,
-   BENEFIT,Open office floor plan,Open space,Espacio abierto,Open-office,Open-office,,
-   BENEFIT,Breastfeeding room,Salle d’allaitement,Sala de lactancia,Místnost pro kojení,Miestnosť na dojčenie,,
-   BENEFIT,Game room or recreational clubs,Salle de jeux ou club de loisirs,Sala de juegos o club de ocio,Herna aktivity pro volný čas,Herňa aktivity pre voľný čas,,
-   CATEGORY,Diversity & inclusivity,Diversité & inclusivité,Diversidad e inclusividad,Diverzita a inkluze,Diverzita a inklúzia,,
-   BENEFIT,Employee Resource Groups (ERG),Employee Resource Groups (ERG),Employee Resource Groups (ERG),Employee Resource Groups (ERG),Employee Resource Groups (ERG),CZ,
-   BENEFIT,Accessibility accommodations,Accès aux personnes à mobilité réduite,Acceso para personas con movilidad reducida,Přístup pro osoby se sníženou pohyblivostí,Prístup pre osoby so zníženou pohyblivosťou,,
-   BENEFIT,Equal pay policy,Politique d'égalité salariale,Política de igualdad salarial,Politika rovného odměňování,Politika rovnakého odmeňovania,,
-   BENEFIT,Hiring practices that promote Diversity,Recrutement encourageant la diversité,Contratación para la diversidad,Nábor který podporuje diverzitu a inkluzi,Nábor ktorý podporuje diverzitu a inklúziu,,
-   BENEFIT,Diversity manifesto,Manifeste sur la diversité,Manifiesto sobre la diversidad,Manifest diverzity,Manifest diverzity,,
-   BENEFIT,Unconscious bias training,Formation sur les biais inconscients,Formación sobre prejuicios inconscientes,Školení o nevědomých předsudcích,Školenie o nevedomých predsudkoch,,
-   BENEFIT,Dedicated Diversity & inclusivity staff,Équipe dédiée à la Diversité & inclusivité,Equipo dedicado a la Diversidad e inclusividad,Tým věnující se diverzitě a inkluzi,Tím venujúci sa diverzite a inklúzii,,
-   CATEGORY,Vacation & time off,Congés & absences,Vacaciones y ausencias,Dovolená,Dovolenka,,
-   BENEFIT,Sabbatical leaves,Congé sabbatique,Permiso sabático,Možnost sabbaticalu,Možnosť sabbaticalu,FR,
-   BENEFIT,Unlimited vacation policy,Congé vacances illimitées,Vacaciones ilimitadas,Neomezená dovolená,Neobmedzená dovolenka,,
-   BENEFIT,Paid volunteer time,Jours de bénévolat offerts,Jornadas de voluntariado,Nabídka placených dnů pro dobrovolnictví,Ponuka platených dní pre dobrovoľníctvo,,
-   BENEFIT,Generous PTO,Congés payés supplémentaires,Permiso retribuido adicional,Nadstandardní počet dní dovolené,Nadštandardný počet dní dovolenky,,
-   BENEFIT,Paid Time Off (PTO),Congés payés,Vacaciones pagadas,Placená dovolená,Platené sviatky,FR,
-   BENEFIT,Holiday events,Célébration des fêtes annuelles / Calendrier des fêtes,Fiestas anuales / Calendario de fiestas,Zaměstnanecké akce,Zamestnanecké akcie,FR,
-   BENEFIT,Reduction of working time (RTT),RTT,Reducción del tiempo de trabajo (RTT),Zkrácená pracovní doba,Skrátená pracovná doba,CZ,
-   BENEFIT,Paid holiday for moving,Congé rémunéré pour déménagement,Vacaciones pagadas para mudanza,Placené volno na přestěhování,Školenie o sexizme a sexuálnom obťažovaní,,
-   CATEGORY,Financial benefits,Avantages financiers,Beneficios financieros,Finanční výhody,Finančné výhody,,
-   BENEFIT,Profit sharing scheme,Intéressement & participation,Incentivos y participación en los beneficios,Bonusy založené zisku,Bonusy založené zisku,,
-   BENEFIT,Company saving plan,Plan d’épargne entreprise (PEE),Plan de ahorro de empresa,Firemní spoření,Firemné sporenie,CZ,
-   BENEFIT,Cooptation bonus,Prime de cooptation,Bonificación por cooptación,Bonus za doporučení zaměstnance,Bonus za odporúčanie zamestnanca,,
-   BENEFIT,Match charitable contributions,Abondement des dons caritatifs,Aumentar las donaciones benéficas,Bonus k příspěvkům na charitu,Bonus k príspevkom na charitu,,
-   BENEFIT,Long-term incentives,Incentives à long terme,Incentivos a largo plazo,Dlouhodobé pobídky,Dlhodobé stimuly,CZ,
-   BENEFIT,Stock option plan,Plan d’actionnariat salarié,Plan de accionariado,Plán vlastnictví zaměstnaneckých akcií,Plán vlastníctva akcií zamestnancov,CZ,
-   BENEFIT,Employee stock purchase program,Plan d’achat d’actions,Plan de compra de acciones,Možnost zakoupat zaměstnanecké akcie,Možnosť nákupu zamestnaneckých akcií,,
-   BENEFIT,Relocation assistance,Aide au déménagement,Asistencia en mudanzas,Podpora při realokaci,Podpora pri realokácii,,
-   BENEFIT,Holiday bonus,Prime de vacances,Prima de vacaciones,Dovolená bonus,Dovolenkový bonus,,
-   BENEFIT,Seniority bonus,Prime d'ancienneté,Prima de antigüedad,Příplatek za odsloužené roky,Príplatok za odslúžené roky,,
-   BENEFIT,Digital equipment subsidies,Subvention équipement numérique,Subvención equipo digital,Grant na digitální zařízení,Grant na digitálne zariadenie,,
-   BENEFIT,Social committee subsidies,Subventions CSE,Subvención comité de empresa,Granty sociálního a hospodářského výboru,Granty sociálneho a hospodárskeho výboru,CZ,
-   BENEFIT,Culture & wellness stipend,Subvention sport & culture,Subvención cultura y deportes,Grant na sport a kulturu,Grant na šport a kultúru,,
-   BENEFIT,Domestic partnership or wedding bonus,Prime PACS ou mariage,Prima PACS o matrimonio,Smlouva o občanské solidaritě nebo bonus za manželství,Zmluva o občianskej solidarite alebo bonus za manželstvo,,
-   BENEFIT,Mobility bonus,Prime mobilité,Prima movilidad,Příspěvek na mobilitu,Príspevok na mobilitu,,
-   BENEFIT,Target-based bonus,Primes sur objectifs,Prima sobre objetivos,Cílové bonusy,Cieľové bonusy,,
-   BENEFIT,Christmas gift certificate,Chèques cadeaux Noël,Vale regalo para Navidad,Vánoční dárkové poukazy,Vianočné darčekové poukážky,,
-   BENEFIT,Time-saving account (CET),Compte épargne-temps (CET),Cuenta ahorro tiempo (CET),Časově rozlišený spořicí účet (CET),Časovo rozlíšený sporiaci účet (CET),CZ,
-   BENEFIT,Business creator share purchase warrants (BSPCE),BSPCE,Bonos de Suscripción de Participaciones de Creador de Empresa (BSPCE),Warranty na akcie společnosti Business Creator (BSPCE),Warranty na akcie spoločnosti Business Creator (BSPCE),,
-   CATEGORY,Culture,Culture d'entreprise,Cultura de empresa,Firemní kultura,Firemná kultúra,,
-   BENEFIT,Team building,Team building,Team building,Team building,Team building,,
-   BENEFIT,Casual dress code,Tenue décontractée,Ropa informal,Casual dress code,Casual dress code,,
-   BENEFIT,Open door policy,Politique de transparence,Política de transparencia,Politika transparentnosti,Politika transparentnosti,,
-   BENEFIT,Friends outside of work,Afterworks,Afterworks,Mimo-pracovní aktivity,Mimopracovné aktivity,,
-   BENEFIT,Eat lunch together,Déjeuners d’équipe,Comidas de equipo,Týmové obědy,Tímové obedy,,
-   BENEFIT,Volunteer in local community,Bénévolat en région,Voluntariado local,Dobrovolnictví,Dobrovoľníctvo,,
-   BENEFIT,Partners with Nonprofits,Partenariat avec des associations,Colaboración con asociaciones,Partnerství s neziskovým sektorem,Partnerstvá s neziskovým sektorom,,
-   CATEGORY,Professional development,Développement professionnel,Desarrollo profesional,Profesní rozvoj,Profesionálny rozvoj,,
-   BENEFIT,Development plan,Plan de développement,Plan de desarollo,Plán rozvoje,Plán rozvoja,,
-   BENEFIT,Paid industry certifications,Financement des certifications,Financiación de las certificaciones,Hrazené certifikace,Hradené certifikácia,,
-   BENEFIT,Time allotted for learning,Formations sur le temps de travail,Formación durante el horario laboral,Vymezený čas pro školení,Vyhradený čas na školenie,,
-   BENEFIT,Job training & conferences,Séminaires & formations professionnelles,Seminarios y formación profesional,Semináře a odborná školení,Semináre a odborná príprava,,
-   BENEFIT,Online courses,Formations en ligne,Formación en línea,Online školení,Online školenie,,
-   BENEFIT,Mentor program,Mentorat,Tutoría,Mentoring,Mentoring,,
-   BENEFIT,Leadership training program,Formation en leadership,Formación en liderazgo,Školení vedoucích pracovníků,Školenie vedúcich pracovníkov,,
-   BENEFIT,Tuition reimbursement,Remboursement des frais de scolarité,Reembolso de tasas académicas,Příspěvek na školné,Príspevok na školné,,
-   BENEFIT,Sexism and sexual harassment prevention,Formation sexisme et harcèlement sexuel,Formación sexismo y acoso sexual,Školení o sexismu a sexuálním obtěžování,Školenie o sexizme a sexuálnom obťažovaní,,
-   CATEGORY,Parental benefits,Parentalité,Prestaciones parentales,Podpora rodičů,Podpora rodičov,,
-   BENEFIT,Birth allocation,Prime de naissance,Prima de nacimiento,Příspěvek k narození dítěte,Príspevok k narodeniu dieťaťa,,
-   BENEFIT,Childcare subsidies,Aide à la garde d’enfant,Ayuda para el cuidado de niños,Příspěvek na péči o děti,Príspevok na starostlivosť o deti,,
-   BENEFIT,Nursery,Crèche,Guardería,Jesle,Jasle,,
-   BENEFIT,Company sponsored family events,Journées famille en entreprise,Días familiares en el trabajo,Organizace rodinných akcí,Organizácia rodinných akcií,,
-   BENEFIT,Return-to-work program post parental leave,Programme de retour de congé parental,Programa de reincorporación tras el permiso parental,Program návratu po rodičovské dovolené,Program návratu po rodičovskej dovolenke,,
-   BENEFIT,Family medical leave,Congé de solidarité familiale,Permiso por solidaridad familiar,Dovolená při onemocnění v rodině,Dovolenka pri ochorení v rodine,,
-   BENEFIT,Sick child leave,Congés pour enfant malade,Permiso por hijos enfermos,Dovolená při onemocnění dětí,Dovolenka pri ochorení detí,FR,
-   BENEFIT,Family support resources,Ressources pour le soutien familial,Recursos de apoyo familiar,Zdroje pro podporu rodiny,Zdroje na podporu rodiny,CZ,
-   BENEFIT,Pregnancy loss leave,Congés interruption spontanée de grossesse,Permiso por interrupción espontánea del embarazo,Dovolená z důvodu spontánního ukončení těhotenství,Dovolenka z dôvodu spontánneho ukončenia tehotenstva,CZ,
-   BENEFIT,Adoption assistance program,Avantages liés à l’adoption,Beneficios para la adopción,Pomoc při adopci,Pomoc pri adopcii,,
-   BENEFIT,Fertility benefits,Avantages liés à la fertilité,Beneficios para la fertilidad,Výhody pro plodnost,Výhody pre plodnosť,CZ,
-   BENEFIT,Birth paternity leave,Congé paternité,Permiso de paternidad,Otcovská dovolená,Otcovská dovolenka,FR,
-   BENEFIT,Birth maternity leave,Congé maternité,Permiso de maternidad,Mateřská dovolená,Materská dovolenka,FR,
-   BENEFIT,Extended maternity leave,Congé maternité prolongé,Permiso de maternidad ampliado,Prodloužená mateřská dovolená,Predĺžená materská dovolenka,,
-   BENEFIT,Extended paternity leave,Congé paternité prolongé,Permiso de paternidad ampliado,Prodloužená otcovská dovolená,Predĺžená otcovská dovolenka,,
-   BENEFIT,Happy hours,Happy hours,Happy hours,Happy hours,Happy hours,,
-   BENEFIT,Back-to-school bonus,Prime de rentrée scolaire,Prima de vuelta a las clases,Bonus za návrat do školy,Bonus za návrat do školy,,
-   CATEGORY,Health & wellness,Santé & bien-être,Salud y bienestar,Zdraví a wellbeing,Zdravie a wellbeing,,
-   BENEFIT,Mental health benefits,Solution de prévention santé mentale,Solución preventiva para la salud mental,Podpora mentálního zdraví,Podpora mentálneho zdravia,,
-   BENEFIT,On-site gym,Salle de sport dans les locaux,Gimnasio de oficina,Posilovna v prostorách kanceláře,Posilňovňa v priestoroch kancelárie,,
-   BENEFIT,Fitness subsidies,Budget sport,Presupuesto deportivo,Příspěvek na sportovní aktivity,Príspevok na športové aktivity,,
-   BENEFIT,Virtual fitness classes,Cours de fitness virtuels,Clases virtuales de fitness,Online fitness lekce,Online fitness lekcie,,
-   BENEFIT,Private health insurance,Mutuelle santé,Seguro de enfermedad,Soukromé zdravotní pojištění,Súkromné zdravotné poistenie,FR,
-   BENEFIT,Full pay on 1st day of sick leave,Maintien du salaire à 100% dès le premier jour d’arrêt maladie,Paga completa el primer día de baja por enfermedad,Plná mzda v první den pracovní neschopnosti,Plná mzda v prvý deň práceneschopnosti,CZ,
-   BENEFIT,Pet insurance,Assurance animaux,Seguro de animales de compañía,Pojištění domácích mazlíčků,Poistenie domácich zvierat,,
-   BENEFIT,Long-term disability,Pension d'invalidité long terme,Pensión de invalidez de larga duración,Podpora při dlouhodobé nemoci/indispozici,Podpora pri dlhodobej chorobe/indispozícii,,
-   BENEFIT,Short-term disability,Pension d'invalidité court terme,Pensión de invalidez de corta duración,Krátkodobý invalidní důchod,Krátkodobý invalidný dôchodok,CZ,
-   BENEFIT,Health savings account,Compte épargne santé,Cuenta de ahorros sanitarios,Účet zdravotního spoření,Účet zdravotného sporenia,,
-   BENEFIT,Flexible Spending Account (FSA),Compte de dépenses flexible (FSA),Cuenta de Gasto Flexible (FSA),Flexibilní výdajový účet (FSA),Flexibilný výdavkový účet (FSA),CZ,
-   BENEFIT,FSA with employer contribution,FSA avec contribution de l'employeur,FSA con contribución empresarial,FSA s příspěvkem zaměstnavatele,FSA s príspevkom zamestnávateľa,CZ,
-   BENEFIT,Vision insurance,Assurance optique,Seguro óptico,Pojištění zraku,Poistenie zraku,FR,
-   BENEFIT,Dental insurance,Assurance dentaire,Seguro dental,Pojištění zubů,Poistenie zubov,FR,
-   BENEFIT,Life insurance,Assurance vie,Seguro de vida,Životní pojištění,Životné poistenie,,
-   BENEFIT,Health Reimbursement Account (HRA),Health Reimbursement Account (HRA),Health Reimbursement Account (HRA),Health Reimbursement Account (HRA),Health Reimbursement Account (HRA),CZ,
-   BENEFIT,Paid sick days,Congés maladie,Baja por enfermedad,Placené sick days,Platené sick days,FR,
-   BENEFIT,Employer-paid health insurance,Mutuelle santé prise en charge à 100%,Mutua de salud 100% a cargo del empleador,Vzájemné zdravotní pojištění hrazené ve výši 100,Vzájomné zdravotné poistenie hradené vo výške 100,,
-   CATEGORY,Retirement,Retraite & prévoyance,Pensiones,Důchody,Dôchodky,,
-   BENEFIT,Retirement plan,Retraite complémentaire,Pensión complementaria,Penzijní připojištění,Doplnkový dôchodok,FR,
-   BENEFIT,Early retirement options,Plan de retraite anticipée,Plan de jubilación anticipada,Možnost odejít do předčasného důchodu,Možnosť odísť do predčasného dôchodku,,
-   BENEFIT,Pension plan,Prévoyance,Plan de pensiones,Důchodový plán,Dôchodkový plán,,
-   BENEFIT,Group retirement savings plan (PERCO),Plan d’épargne pour la retraite collectif (PERCO),Plan de ahorro colectivo para la jubilación,Skupinový plán důchodového spoření,Skupinový plán dôchodkového sporenia,CZ,
-   BENEFIT,401(K),401(K),401(K),401(K),401(K),CZ,
-   BENEFIT,401(K) matching,Équivalent 401(K),Equivalente al 401(K),Ekvivalent 401(K),Ekvivalent 401(K),CZ,
-   CATEGORY,Transport & mobility,Transports & mobilité,Transporte y movilidad,Doprava a mobilita,Doprava a mobilita,,
-   BENEFIT,Carpool or rideshare programs,Covoiturage,Compartir coche,Sdílení firemních vozů carsharing,Zdieľanie firemných vozidiel carsharing,,
-   BENEFIT,Bicycle storage,Parking à vélo,Aparcamiento para bicicletas,Parkování kol,Parkovanie bicyklov,,
-   BENEFIT,Remote allocation,Allocation de télétravail,Prestación por teletrabajo,Příspěvek na práci na dálku,Príspevok na prácu na diaľku,,
-   BENEFIT,Bike rental,Location de vélos,Alquiler de bicicletas,Půjčovna jízdních kol,Požičovňa bicyklov,,
-   BENEFIT,Public transportation covered,Remboursement des transports publics,Reembolso del transporte público,Příspěvek na veřejnou dopravu,Príspevok na verejnú dopravu,FR,
-   BENEFIT,Sustainable mobility,Plan de mobilité durable,Plan de movilidad sostenible,Plán udržitelné mobility,Plán udržateľnej mobility,,
-   BENEFIT,Parking,Parking,Aparcamiento,Parkoviště,Parkovisko,,
-   BENEFIT,Commuter benefits program,Aides pour les trajets domicile-travail,Ayuda para ir y volver del trabajo,Váhody pro dojíždějící,Výhody pre dochádzajúcich,,
-   ```
+7. **🍽️ Food & Office Perks**
+   - Free meals/snacks
+   - Catered lunches
+   - Coffee and drinks
+   - Office amenities
+   - Kitchen facilities
 
-4. **Output Format:**
+8. **✈️ Travel & Commute**
+   - Commuter benefits
+   - Company retreats
+   - Team offsites
+   - Transit passes
+   - Parking
 
-   Return **ONLY HTML** - no markdown, no explanations, no code fences.
+9. **💳 Financial & Retirement**
+   - 401(k) matching (% amount)
+   - Financial planning services
+   - Life insurance
+   - Disability insurance
+   - HSA/FSA contributions
 
-   Structure the content as:
-   ```html
-   <div class="perks-grid">
-     <div class="perk-category">
-       <h4>💼 [Category Name]</h4>
-       <ul>
-         <li><strong>[Benefit Name]:</strong> [Details]</li>
-         <li><strong>[Benefit Name]:</strong> [Details]</li>
-       </ul>
-     </div>
-     <!-- Repeat for each category -->
-   </div>
+For each benefit in a category:
 
-   <div class="highlight-box">
-     <h4>Standout Benefits</h4>
-     <p>[Highlight any unique or particularly generous benefits that set this company apart]</p>
-   </div>
+**name** (required)
+- Specific benefit name
+- Be clear and concise
 
-   <p><strong>Sources:</strong> Information gathered from [sources] on [date].</p>
-   ```
+**description** (required)
+- 1-2 sentences explaining the benefit
+- Include specifics (amounts, timeframes, eligibility)
+- Example: "16 weeks fully paid parental leave for all parents (birth or adoption), with option to extend with partial pay"
 
-   **Requirements:**
-   - Wrap all content in `<div class="perks-grid">`
-   - Group benefits by category in `<div class="perk-category">`
-   - Category name in `<h4>` with an emoji
-   - Use `<ul>` and `<li>` for benefits list
-   - Use `<strong>` for benefit names
-   - Include 6-8 main categories
-   - Use `<div class="highlight-box">` for standout benefits section
-   
-   **Categories to include:**
-   - 💼 Health & Insurance
-   - 🏠 Work Flexibility
-   - 🏖️ Time Off & Leave
-   - 💰 Financial Benefits
-   - 📚 Learning & Development
-   - 💪 Wellness & Lifestyle
-   - 🎁 Additional Perks
+**highlight** (optional, boolean)
+- Set to `true` for particularly generous or unique benefits within the category
+- Use sparingly (1-2 per category max)
 
-   **Example Output:**
-   ```html
-   <div class="perks-grid">
-     <div class="perk-category">
-       <h4>💼 Health & Insurance</h4>
-       <ul>
-         <li><strong>Health Insurance:</strong> Comprehensive medical, dental, and vision coverage with low deductibles</li>
-         <li><strong>Mental Health:</strong> Unlimited therapy sessions through Modern Health</li>
-         <li><strong>Life Insurance:</strong> Company-paid life and disability insurance</li>
-       </ul>
-     </div>
+## Quality Standards
 
-     <div class="perk-category">
-       <h4>🏠 Work Flexibility</h4>
-       <ul>
-         <li><strong>Remote Work:</strong> Fully remote with option to use co-working spaces</li>
-         <li><strong>Flexible Hours:</strong> No set working hours, focus on results</li>
-         <li><strong>Work from Anywhere:</strong> Work from any country for up to 90 days per year</li>
-       </ul>
-     </div>
-   </div>
+✅ **DO:**
+- Focus on verified benefits from official sources
+- Include specific amounts and timeframes when known
+- Mention benefits in employee reviews if consistent
+- Note if benefits vary by location/country
+- Include both standard and unique perks
+- Mention if they regularly update benefits based on feedback
 
-   <div class="highlight-box">
-     <h4>Standout Benefits</h4>
-     <p>GitLab's "All Remote" policy with generous work-from-anywhere allowance and $10,000 annual professional development budget set them apart from competitors.</p>
-   </div>
+❌ **DON'T:**
+- List every tiny perk (be selective and meaningful)
+- Include speculative or rumored benefits
+- Copy marketing language verbatim
+- Ignore regional differences if significant
+- Include benefits that are standard everywhere (e.g., "we pay salaries")
+- Make unverifiable claims about generosity
 
-   <p><strong>Sources:</strong> Information gathered from company careers page and job postings on October 10, 2024.</p>
-   ```
+## Benefit Selection Priority
 
-5. **Quality Guidelines:**
-   - Always cite your sources with URLs
-   - Indicate when information is approximate or unverified
-   - Note regional differences if benefits vary by location
-   - Highlight any unique or standout benefits
-   - If information is limited, clearly state what couldn't be found
-   - Cross-reference multiple sources when possible for accuracy
+Choose benefits that are:
+1. **Differentiated**: More generous or unique than competitors
+2. **Meaningful**: Actually valued by employees (check reviews)
+3. **Verifiable**: Can be confirmed from multiple sources
+4. **Current**: Updated within last 12 months
 
-6. **Search Query Examples:**
-   - "[Company] employee benefits"
-   - "[Company] working here perks"
-   - "[Company] career benefits package"
-   - "[Company] glassdoor benefits"
-   - "[Company] remote work policy"
+## Research Sources
 
-**Your task:** Research and provide a comprehensive benefits summary for the company I specify, following the structure and guidelines above.
+1. Company careers page (benefits section)
+2. Glassdoor reviews (benefits section)
+3. Comparably benefits data
+4. Blind discussions (for tech companies)
+5. Company blog posts about benefits
+6. Job postings (often mention key benefits)
+7. Press releases about new benefit announcements
+8. Employee handbook excerpts (if public)
+
+## Example Output
+
+```json
+{
+  "type": "perks_and_benefits",
+  "data": {
+    "introduction": "Stripe offers competitive total compensation including market-leading salaries, significant equity grants, and comprehensive benefits. The company regularly surveys employees to evolve benefits based on their needs, with a focus on flexibility and supporting employees' long-term financial and personal well-being.",
+    "standoutBenefits": [
+      {
+        "icon": "💰",
+        "name": "Generous Equity Grants",
+        "description": "All employees receive meaningful equity that vests over four years, with refresher grants to maintain ownership as the company grows. Stripe's equity packages are typically in the top 10% of comparable tech companies, and the company provides regular liquidity events for employees to realize value before a potential IPO."
+      },
+      {
+        "icon": "🏖️",
+        "name": "Flexible Time Off",
+        "description": "Unlimited PTO with a minimum of 20 days off per year required. The company actively encourages taking time off with managers checking in if employees aren't using vacation, plus full company shutdowns during major holidays to ensure everyone disconnects."
+      },
+      {
+        "icon": "📚",
+        "name": "$3,000 Annual Learning Budget",
+        "description": "Each employee receives $3,000 annually for learning and development, usable for courses, conferences, books, coaching, or any learning investment. Unused budget doesn't expire and can roll over, encouraging long-term learning goals."
+      },
+      {
+        "icon": "🏠",
+        "name": "$1,500 Remote Setup Budget",
+        "description": "All employees receive $1,500 for home office setup, plus an additional $500 annually for equipment upgrades or office improvements. Stripe also provides ergonomic consultations and will ship additional monitors, chairs, or accessories as needed."
+      }
+    ],
+    "categories": [
+      {
+        "icon": "💰",
+        "category": "Compensation & Equity",
+        "benefits": [
+          {
+            "name": "Market-Leading Salaries",
+            "description": "Stripe targets 75th-90th percentile of market compensation for each role based on location, with transparent salary bands shared internally and during interview process.",
+            "highlight": true
+          },
+          {
+            "name": "Equity for All",
+            "description": "Every employee receives equity grants that vest over 4 years with a 1-year cliff. Refresher grants are standard to maintain ownership over time.",
+            "highlight": true
+          },
+          {
+            "name": "Liquidity Events",
+            "description": "Regular tender offers allowing employees to sell vested shares before IPO, providing liquidity without waiting for public market exit."
+          },
+          {
+            "name": "Annual Performance Bonuses",
+            "description": "Performance-based annual bonuses tied to both company and individual goals, typically 10-20% of base salary for strong performers."
+          }
+        ]
+      },
+      {
+        "icon": "🏥",
+        "category": "Health & Wellness",
+        "benefits": [
+          {
+            "name": "Premium Health Coverage",
+            "description": "Platinum-level medical, dental, and vision insurance with 100% of premiums covered for employees and 75% for dependents. Low deductibles and copays.",
+            "highlight": true
+          },
+          {
+            "name": "Mental Health Support",
+            "description": "Unlimited therapy sessions covered through dedicated mental health platform, plus mindfulness and meditation app subscriptions for all employees.",
+            "highlight": true
+          },
+          {
+            "name": "$500 Wellness Stipend",
+            "description": "Annual wellness budget for gym memberships, fitness equipment, wellness apps, or health-related expenses of your choice."
+          },
+          {
+            "name": "On-Site Wellness",
+            "description": "Office locations feature on-site fitness centers, yoga classes, massage therapy, and wellness rooms for meditation or nursing."
+          }
+        ]
+      },
+      {
+        "icon": "👪",
+        "category": "Family & Parental",
+        "benefits": [
+          {
+            "name": "18 Weeks Paid Parental Leave",
+            "description": "18 weeks fully paid leave for all parents (birth, adoption, or foster), with option to extend with partial pay up to 6 months total.",
+            "highlight": true
+          },
+          {
+            "name": "Family Planning Support",
+            "description": "Comprehensive coverage for fertility treatments, IVF, egg freezing, and adoption costs up to $50,000 lifetime."
+          },
+          {
+            "name": "Childcare Support",
+            "description": "Backup childcare services through Care.com, plus $1,000 annual stipend toward childcare expenses."
+          },
+          {
+            "name": "Return-to-Work Program",
+            "description": "Structured onboarding program for parents returning from leave, including gradual ramp-up schedule and manager coaching."
+          }
+        ]
+      },
+      {
+        "icon": "⏰",
+        "category": "Work-Life Balance",
+        "benefits": [
+          {
+            "name": "Flexible Schedule",
+            "description": "Work the hours that work best for you, with core collaboration hours for team alignment but flexibility around personal schedule.",
+            "highlight": true
+          },
+          {
+            "name": "Unlimited PTO (20 day minimum)",
+            "description": "Take time off when you need it, with a company minimum of 20 days to ensure everyone disconnects. Managers actively encourage vacation usage."
+          },
+          {
+            "name": "Company Shutdowns",
+            "description": "Full company shutdowns during major holidays including week between Christmas and New Year's to ensure everyone can disconnect."
+          },
+          {
+            "name": "Sabbatical Program",
+            "description": "After 5 years, employees can take a paid 4-week sabbatical to recharge, travel, or pursue personal projects."
+          }
+        ]
+      },
+      {
+        "icon": "📚",
+        "category": "Learning & Development",
+        "benefits": [
+          {
+            "name": "$3,000 Learning Budget",
+            "description": "Annual budget for courses, certifications, conferences, books, coaching, or any learning investment. Rolls over if unused.",
+            "highlight": true
+          },
+          {
+            "name": "Conference Attendance",
+            "description": "Support for attending industry conferences with covered registration, travel, and accommodation costs."
+          },
+          {
+            "name": "Tuition Reimbursement",
+            "description": "Up to $10,000 annually for degree programs or professional certifications related to your role."
+          },
+          {
+            "name": "Internal Learning Programs",
+            "description": "Stripe-developed courses on payments, engineering, product, and leadership taught by internal experts."
+          },
+          {
+            "name": "Mentorship Program",
+            "description": "Structured mentorship matching employees with senior leaders for career development and guidance."
+          }
+        ]
+      },
+      {
+        "icon": "💻",
+        "category": "Equipment & Workspace",
+        "benefits": [
+          {
+            "name": "$1,500 Home Office Setup",
+            "description": "One-time budget for desk, chair, monitors, and office equipment, plus $500 annually for upgrades or replacements.",
+            "highlight": true
+          },
+          {
+            "name": "Premium Equipment",
+            "description": "Latest MacBook Pro (or PC of choice), external monitors, mechanical keyboard, and any tools needed to be productive."
+          },
+          {
+            "name": "Ergonomic Support",
+            "description": "Free ergonomic consultations and equipment like standing desks, ergonomic chairs, keyboard trays, and monitor arms."
+          },
+          {
+            "name": "Co-working Stipend",
+            "description": "Monthly stipend for co-working space membership if you prefer working outside home."
+          }
+        ]
+      },
+      {
+        "icon": "🍽️",
+        "category": "Food & Office Perks",
+        "benefits": [
+          {
+            "name": "Free Lunch & Snacks",
+            "description": "Daily catered lunches in offices, plus fully stocked kitchens with snacks, drinks, coffee, and fresh fruit."
+          },
+          {
+            "name": "Meal Stipends (Remote)",
+            "description": "$30 daily meal stipend for remote employees to use for lunch or groceries."
+          },
+          {
+            "name": "Coffee & Tea Program",
+            "description": "Premium coffee, espresso machines, and variety of teas in all office locations."
+          }
+        ]
+      },
+      {
+        "icon": "✈️",
+        "category": "Travel & Team Building",
+        "benefits": [
+          {
+            "name": "Quarterly Team Offsites",
+            "description": "All-expenses-paid quarterly team gatherings for remote teams, rotating locations globally for connection and collaboration.",
+            "highlight": true
+          },
+          {
+            "name": "Annual Company Retreat",
+            "description": "Annual all-company retreat bringing together global team for strategy sessions, team building, and fun."
+          },
+          {
+            "name": "Commuter Benefits",
+            "description": "Pre-tax commuter benefits for transit passes, parking, or bike commuting expenses up to IRS limits."
+          }
+        ]
+      },
+      {
+        "icon": "💳",
+        "category": "Financial & Retirement",
+        "benefits": [
+          {
+            "name": "401(k) with 5% Match",
+            "description": "Stripe matches 100% of contributions up to 5% of salary, with immediate vesting of employer contributions.",
+            "highlight": true
+          },
+          {
+            "name": "Financial Planning Services",
+            "description": "Access to certified financial planners for equity planning, tax optimization, retirement planning, and general financial advice."
+          },
+          {
+            "name": "Life Insurance",
+            "description": "Company-paid life insurance equal to 2x annual salary, with option to purchase additional coverage."
+          },
+          {
+            "name": "Disability Insurance",
+            "description": "Short-term and long-term disability coverage at 60% salary replacement, fully paid by company."
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Company Context
+Company Name: {COMPANY_NAME}
+Website: {WEBSITE}
+Additional Context: {CONTEXT}
+
+## Output
+Return ONLY the JSON structure. No explanations, no markdown formatting, no code blocks—just pure JSON.

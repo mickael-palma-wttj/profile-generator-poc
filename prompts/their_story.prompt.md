@@ -1,55 +1,197 @@
-You are an AI agent specialized in researching and writing compelling company origin stories. Your task is to gather information and create a concise, engaging narrative about how companies were founded.
+# Their Story Prompt (JSON Version)
 
-### RESEARCH METHODOLOGY:
+## Task
+Research and generate a compelling narrative about the company's founding, origins, and journey.
 
-**Primary Search Queries:**
-- "[Company Name] origin story founders"
-- "[Company Name] founding story how started"
-- "[Founder Names] background before [Company Name]"
-- "[Company Name] early days history"
-- "[Founder Names] interview founding"
-- "[Company Name] problem solving mission why started"
+## Output Format
+Return **ONLY** valid JSON in the following structure. Do NOT include any markdown code fences, explanations, or additional text.
 
-### INFORMATION TO EXTRACT:
-- Founder backgrounds and how they met
-- The specific problem or frustration that sparked the idea
-- The "aha moment" or catalyst
-- Original solution and vision
-- Key early challenges or milestones
-- What made their approach unique
-
-### OUTPUT FORMAT:
-
-Return **ONLY HTML** - no markdown, no explanations, no code fences.
-
-Structure the story as:
-```html
-<div class="story-content">
-  <p>First paragraph introducing founders, their backgrounds, and the problem they identified...</p>
-  <p>Second paragraph about the "aha moment" and initial solution...</p>
-  <p>Third paragraph about early development and what made them unique...</p>
-  <p>Optional fourth paragraph about early traction or key milestone...</p>
-</div>
+```json
+{
+  "type": "their_story",
+  "data": {
+    "foundingStory": "3-4 paragraphs telling the story of how and why the company was founded. Include the problem they saw, what motivated them, and how they got started.",
+    "founders": [
+      {
+        "name": "Founder Name",
+        "role": "Co-Founder & CEO",
+        "background": "Brief description of their background before founding the company (1-2 sentences)",
+        "image": "https://example.com/image.jpg"
+      }
+    ],
+    "ahaMoment": {
+      "icon": "💡",
+      "title": "The Aha Moment",
+      "description": "Description of the key insight or moment that led to the company's creation"
+    },
+    "milestones": [
+      {
+        "year": "2023",
+        "title": "Company Founded",
+        "description": "Brief description of this milestone"
+      }
+    ]
+  }
+}
 ```
 
-**Requirements:**
-- Wrap all content in `<div class="story-content">`
-- Use 2-4 `<p>` tags for paragraphs (aim for ~150-250 words total)
-- Use `<strong>` to highlight key names, terms, or turning points
-- Use `<em>` for emphasis on unique aspects
-- Keep it narrative and engaging - tell a story
+## Guidelines
 
-**Style:** Narrative and engaging, like you're telling a story. Focus on the human elements and key turning points.
+### Founding Story (3-4 paragraphs)
+Tell a compelling narrative that includes:
 
-**Example Output:**
-```html
-<div class="story-content">
-  <p>Airbnb was born in 2007 when <strong>Brian Chesky and Joe Gebbia</strong>, two design school graduates struggling to pay rent in San Francisco, bought three air mattresses and turned their apartment into a makeshift bed-and-breakfast during a design conference when all hotels were sold out.</p>
-  
-  <p>They built a simple website called <strong>"Air Bed & Breakfast"</strong> and charged guests $80 a night, which included breakfast. The concept was radical—inviting strangers into your home for money—but they saw an opportunity to help people afford expensive cities while connecting travelers with local experiences.</p>
-  
-  <p>After bringing on technical co-founder <strong>Nathan Blecharczyk</strong>, they launched nationally but struggled to gain traction. The breakthrough came when they realized their photos were terrible, so they flew to New York and personally took professional photos of listings, <em>doing things that don't scale</em> to prove the concept worked.</p>
-</div>
+**Paragraph 1: The Problem**
+- What problem did the founders experience or observe?
+- Why did existing solutions fall short?
+- What was the pain point that motivated them?
+
+**Paragraph 2: The Insight**
+- What unique insight did they have?
+- What made them think they could solve it differently?
+- What was their background that prepared them for this?
+
+**Paragraph 3: The Beginning**
+- How did they actually get started?
+- First product, first customer, early days
+- Key decisions or pivots in the early journey
+
+**Paragraph 4 (optional): The Evolution**
+- How has the company evolved since founding?
+- Major inflection points or transformations
+- Where they are today vs. where they started
+
+### Founders (1-5 founders)
+For each founder:
+- **Name**: Full name
+- **Role**: Current or founding role
+- **Background**: What they did before (education, previous companies, expertise)
+- **Image**: URL to professional photo (if publicly available) or omit field
+- Focus on most prominent or active founders if there are many
+
+### Aha Moment
+- **Icon**: Choose relevant emoji (💡 🚀 ⚡ 🎯 💥)
+- **Title**: Short, punchy headline (3-6 words)
+- **Description**: 2-3 sentences describing the pivotal insight or moment
+- Should feel like a "eureka" moment or turning point
+
+### Milestones (5-10 milestones)
+Choose significant moments in chronological order:
+- Company founded
+- First product launch
+- First major customer or milestone
+- Funding rounds (if significant)
+- Major product launches
+- International expansion
+- Key partnerships or acquisitions
+- Major rebrands or pivots
+- Recent achievements
+
+For each milestone:
+- **Year**: Year it happened
+- **Title**: Short description (3-6 words)
+- **Description**: 1-2 sentences providing context
+
+## Quality Standards
+
+✅ **DO:**
+- Make it read like a compelling story, not a Wikipedia entry
+- Include specific details that make it memorable
+- Show the human side - struggles, uncertainties, breakthroughs
+- Connect the founding story to the company's current mission
+- Use quotes from founders if publicly available
+- Include interesting anecdotes or lesser-known facts
+
+❌ **DON'T:**
+- Make it dry or corporate-sounding
+- Include every single detail or milestone (be selective)
+- Speculate or make up details you can't verify
+- Focus only on successes - challenges make stories compelling
+- Use generic startup language ("disrupting the industry")
+
+## Research Sources
+
+1. Company's "About" or "Our Story" page
+2. Founder interviews in tech press (TechCrunch, Forbes, etc.)
+3. Company blog posts about history and culture
+4. Podcast appearances by founders
+5. LinkedIn profiles for founder backgrounds
+6. Press releases for milestone dates
+7. Wikipedia for timeline verification
+
+## Example Output
+
+```json
+{
+  "type": "their_story",
+  "data": {
+    "foundingStory": "In 2009, brothers Patrick and John Collison were running their first startup when they experienced firsthand how difficult it was to accept payments online. Integrating with traditional payment processors meant weeks of paperwork, complex technical requirements, and partnerships with multiple banks. For two developers who just wanted to start selling software, it felt absurdly complicated.\n\nThe brothers realized the problem wasn't unique to them—every developer building an online business faced the same frustrating barriers. They saw an opportunity to abstract away all the complexity of payments infrastructure behind a simple API. What if accepting payments could be as easy as adding a few lines of code? This insight became the foundation of Stripe.\n\nIn 2010, Patrick and John started building what would become Stripe in their apartment. They focused on creating an elegant developer experience first, then handling all the banking relationships and compliance requirements behind the scenes. Their early beta attracted developers from startups like Lyft, Pinterest, and Shopify who were hungry for a better payments solution. Within a year of launch, Stripe was processing millions in transactions.\n\nWhat started as a simple payments API has evolved into comprehensive economic infrastructure for the internet. Today, Stripe powers payments for millions of businesses and processes hundreds of billions of dollars annually, but the core mission remains the same: make it easier for businesses to start, run, and scale online.",
+    "founders": [
+      {
+        "name": "Patrick Collison",
+        "role": "Co-Founder & CEO",
+        "background": "Began programming at age 10, won Young Scientist of the Year award at 16, founded previous startup Auctomatic (acquired) at 17, attended MIT briefly before founding Stripe"
+      },
+      {
+        "name": "John Collison",
+        "role": "Co-Founder & President",
+        "background": "Won Young Scientist of the Year award at 19, studied physics at Harvard, worked on Auctomatic before co-founding Stripe at age 20"
+      }
+    ],
+    "ahaMoment": {
+      "icon": "💡",
+      "title": "Payments Should Be Simple",
+      "description": "The Collison brothers realized that accepting payments online was unnecessarily complex. They saw that if they could handle all the banking relationships and compliance behind a simple API, they could remove this barrier for millions of developers and businesses trying to build online."
+    },
+    "milestones": [
+      {
+        "year": "2010",
+        "title": "Stripe Founded",
+        "description": "Patrick and John Collison start building Stripe after experiencing payment integration pain firsthand"
+      },
+      {
+        "year": "2011",
+        "title": "Public Launch",
+        "description": "Stripe opens to the public after a year in private beta with early customers like Lyft and Pinterest"
+      },
+      {
+        "year": "2012",
+        "title": "First Major Funding",
+        "description": "Raised $20M Series A led by Sequoia Capital and Andreessen Horowitz"
+      },
+      {
+        "year": "2014",
+        "title": "International Expansion",
+        "description": "Launched in 9 European countries, beginning global expansion beyond the US"
+      },
+      {
+        "year": "2016",
+        "title": "Stripe Atlas Launched",
+        "description": "Released Atlas to help entrepreneurs worldwide incorporate and start a business from anywhere"
+      },
+      {
+        "year": "2018",
+        "title": "Expanded Beyond Payments",
+        "description": "Launched Stripe Billing, Terminal, and Radar to become a full financial services platform"
+      },
+      {
+        "year": "2021",
+        "title": "$600B+ in Volume",
+        "description": "Processed over $600 billion in payments for millions of businesses worldwide"
+      },
+      {
+        "year": "2023",
+        "title": "Stripe Treasury & Banking",
+        "description": "Launched comprehensive banking-as-a-service infrastructure for platforms"
+      }
+    ]
+  }
+}
 ```
 
-Begin your research and generate HTML for the origin story for: [Company Name]
+## Company Context
+Company Name: {COMPANY_NAME}
+Website: {WEBSITE}
+Additional Context: {CONTEXT}
+
+## Output
+Return ONLY the JSON structure. No explanations, no markdown formatting, no code blocks—just pure JSON.
