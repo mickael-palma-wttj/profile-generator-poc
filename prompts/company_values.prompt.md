@@ -64,6 +64,27 @@ Each value should include:
    - Can include: processes, policies, rituals, behaviors, decisions
    - Example: "Engineering teams run their own on-call rotations, reinforcing ownership of production code"
 
+### Tone of Voice (Internal Guidance - Do NOT include in JSON output)
+
+**IMPORTANT**: Analyze the company's tone of voice and use it when writing about their values, but do NOT include tone of voice details in the JSON response.
+
+**Before writing, match how they talk about values:**
+
+1. **Analyze their values communication style**:
+   - Read their careers page, culture blog posts, and "About" section
+   - Notice: Are they inspirational or pragmatic? Formal or casual? Idealistic or grounded?
+   
+2. **Match their voice in value descriptions**:
+   - If they're **bold and aspirational** → Use inspiring, future-focused language ("We're building the future of...")
+   - If they're **practical and grounded** → Focus on day-to-day behaviors and concrete actions ("We ship code every day...")
+   - If they're **warm and human** → Use inclusive, personal language ("We believe everyone deserves...")
+   - If they're **direct and no-nonsense** → Keep it clear, concise, actionable ("We move fast. We ship. We iterate.")
+
+3. **Use their actual language**:
+   - If they say "team members," don't write "employees"
+   - If they say "shipping," use that instead of "delivering"
+   - Match their characteristic phrases and terminology
+
 ### Quality Standards
 
 ✅ **DO:**
@@ -72,6 +93,7 @@ Each value should include:
 - Make descriptions rich with detail and context
 - Show how values interconnect and reinforce each other
 - Include both aspirational and practical elements
+- **Write value descriptions in the company's authentic voice**
 
 ❌ **DON'T:**
 - Use generic corporate speak ("we value integrity and teamwork")
@@ -79,6 +101,7 @@ Each value should include:
 - Write surface-level descriptions without substance
 - Contradict information from other sections (e.g., if they're fully remote, don't emphasize office culture)
 - Include more than 6 values (keeps focus on what truly matters)
+- Write in a generic voice that doesn't reflect the company's culture
 
 ### Value Selection Priority
 

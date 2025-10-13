@@ -91,6 +91,27 @@ For each milestone:
 - **Title**: Short description (3-6 words)
 - **Description**: 1-2 sentences providing context
 
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
+
+**IMPORTANT**: Analyze the company's tone of voice and use it to write the story, but do NOT include tone of voice details in the JSON response.
+
+**Before writing, match the company's storytelling style:**
+
+1. **Analyze their voice**:
+   - Read their About page, blog posts, founder interviews
+   - Notice: Do they tell emotional stories or stick to facts? Are they inspirational or humble? Bold or understated?
+   
+2. **Match their narrative style**:
+   - If they're **bold and visionary** → Use aspirational language, paint the big picture ("They set out to change how the world...")
+   - If they're **humble and human** → Focus on personal struggles and authenticity ("Like many founders, they faced...")
+   - If they're **technical and precise** → Keep it factual, focus on the problem and solution ("They identified a gap in...")
+   - If they're **playful and creative** → Include their characteristic personality and warmth
+
+3. **Write the story in their voice**:
+   - The founding story should sound like THEY would tell it
+   - Use their typical word choices and phrasing patterns
+   - Match their level of formality, emotion, and detail
+
 ## Quality Standards
 
 ✅ **DO:**
@@ -100,6 +121,7 @@ For each milestone:
 - Connect the founding story to the company's current mission
 - Use quotes from founders if publicly available
 - Include interesting anecdotes or lesser-known facts
+- **Write in the company's authentic voice and storytelling style**
 
 ❌ **DON'T:**
 - Make it dry or corporate-sounding
@@ -107,6 +129,7 @@ For each milestone:
 - Speculate or make up details you can't verify
 - Focus only on successes - challenges make stories compelling
 - Use generic startup language ("disrupting the industry")
+- Write in a generic voice that could apply to any company
 
 ## Research Sources
 

@@ -68,6 +68,32 @@ For each product:
 - 2-3 sentences that paint a clear picture
 - Example: "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs."
 
+### Tone of Voice (Internal Guidance - Do NOT include in JSON output)
+
+**IMPORTANT**: Analyze the company's tone of voice and use it to write the content, but do NOT include tone of voice details in the JSON response.
+
+**Before writing, analyze how the company communicates:**
+
+1. **Read their materials**: Homepage, About page, blog posts, social media
+2. **Identify their style**: 
+   - Are they formal or casual? Technical or accessible?
+   - Do they use "we" or avoid pronouns?
+   - Are sentences short and punchy, or longer and detailed?
+   - Do they use humor, metaphors, or stay straightforward?
+
+3. **Match their voice when writing**:
+   - If they're technical and developer-focused → Use precise language, avoid marketing fluff
+   - If they're bold and aspirational → Use confident, future-focused language
+   - If they're warm and human → Use conversational tone, focus on people and impact
+   - If they're playful → Include their characteristic wit or personality
+
+4. **Examples of tone matching**:
+   - Stripe (developer-focused): "Simple APIs that developers love" ✅ not "Industry-leading payment solutions" ❌
+   - Airbnb (community-focused): "Belong anywhere" ✅ not "Global accommodation platform" ❌
+   - Notion (approachable): "Your connected workspace for wiki, docs & projects" ✅ not "Enterprise collaboration suite" ❌
+
+**Write all content (tagline, overview, descriptions) in the company's authentic voice, but keep the JSON structure clean and focused on facts.**
+
 ## Quality Standards
 
 ✅ **DO:**
@@ -128,7 +154,7 @@ For each product:
         "description": "Banking-as-a-service platform that lets businesses embed financial services directly into their products"
       }
     ],
-    "targetMarket": "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs like multi-currency support, subscription billing, or marketplace payments."
+    "targetMarket": "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs."
   }
 }
 ```
