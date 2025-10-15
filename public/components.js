@@ -769,9 +769,18 @@
                         ${TemplateUtils.renderIf(category.icon, i => `${i} `)}${category.category}
                     </h4>
                     <ul class="benefits-list">
-                        ${TemplateUtils.renderList(category.items, item => `<li>${item}</li>`)}
+                        ${TemplateUtils.renderList(category.benefits, benefit => this.renderBenefit(benefit))}
                     </ul>
                 </div>
+            `;
+        }
+
+        renderBenefit(benefit) {
+            const highlightClass = benefit.highlight ? ' class="benefit-highlight-item"' : '';
+            return `
+                <li${highlightClass}>
+                    <strong>${benefit.name}:</strong> ${benefit.description}
+                </li>
             `;
         }
     }
