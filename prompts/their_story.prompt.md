@@ -30,6 +30,14 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "title": "Company Founded",
         "description": "Brief description of this milestone"
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "website|article|press-release|interview|blog-post"
+      }
     ]
   }
 }
@@ -137,9 +145,33 @@ For each milestone:
 2. Founder interviews in tech press (TechCrunch, Forbes, etc.)
 3. Company blog posts about history and culture
 4. Podcast appearances by founders
-5. LinkedIn profiles for founder backgrounds
+6. LinkedIn profiles for founder backgrounds
 6. Press releases for milestone dates
 7. Wikipedia for timeline verification
+
+## Sources (3-10 sources)
+
+**IMPORTANT**: Include citations for the founding story, founder backgrounds, and milestones.
+
+**For each source:**
+- **title**: Clear description (e.g., "Founder interview on TechCrunch", "Company origin story blog post")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `website`, `article`, `press-release`, `interview`, `blog-post`, `podcast`, `video`
+
+**What to cite:**
+- Company's "About" or "Our Story" page (for founding story)
+- Founder interviews in tech press or podcasts
+- Company blog posts about history and culture
+- LinkedIn profiles for founder backgrounds
+- Press releases for milestone dates
+- Wikipedia for timeline verification (but verify with primary sources)
+
+**Quality guidelines:**
+- Prioritize founder interviews and first-person accounts
+- Include at least one source from the company itself
+- Include publication dates for all time-sensitive information
+- Prefer sources that include direct quotes from founders
 
 ## Example Output
 
@@ -205,6 +237,26 @@ For each milestone:
         "year": "2023",
         "title": "Stripe Treasury & Banking",
         "description": "Launched comprehensive banking-as-a-service infrastructure for platforms"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Patrick Collison interview on How I Built This",
+        "url": "https://www.npr.org/2018/08/02/podcast-interview",
+        "date": "2018-08-02",
+        "type": "podcast"
+      },
+      {
+        "title": "Stripe: Our Story",
+        "url": "https://stripe.com/about",
+        "date": "2024-01-15",
+        "type": "company-page"
+      },
+      {
+        "title": "TechCrunch: Stripe's origin story",
+        "url": "https://techcrunch.com/2011/03/28/stripe-launches",
+        "date": "2011-03-28",
+        "type": "article"
       }
     ]
   }

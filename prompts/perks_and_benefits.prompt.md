@@ -30,6 +30,14 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
           }
         ]
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "company-page|article|employee-review"
+      }
     ]
   }
 }
@@ -177,16 +185,41 @@ Choose benefits that are:
 3. **Verifiable**: Can be confirmed from multiple sources
 4. **Current**: Updated within last 12 months
 
-## Research Sources
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
 
-1. Company careers page (benefits section)
-2. Glassdoor reviews (benefits section)
-3. Comparably benefits data
-4. Blind discussions (for tech companies)
-5. Company blog posts about benefits
-6. Job postings (often mention key benefits)
-7. Press releases about new benefit announcements
-8. Employee handbook excerpts (if public)
+**IMPORTANT**: Match the company's style when describing benefits.
+
+**For benefit descriptions:**
+- If they're **employee-focused/caring** → Emphasize support and wellbeing ("Supporting your health and family...")
+- If they're **data-driven/technical** → Include specific numbers and details ("$X annual budget", "Y weeks of leave")
+- If they're **competitive/ambitious** → Highlight market-leading aspects ("Top 10% of industry", "Best-in-class...")
+
+**Keep benefit details factual** but match their tone in how benefits are framed.
+
+## Sources (3-8 sources)
+
+**IMPORTANT**: Include citations for benefits information.
+
+**For each source:**
+- **title**: Clear description (e.g., "Company careers benefits page", "Glassdoor reviews", "Parental leave announcement")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `company-page`, `article`, `press-release`, `employee-review`, `blog-post`, `job-posting`
+
+**What to cite:**
+- Company careers page (benefits section)
+- Glassdoor reviews (benefits section)
+- Comparably benefits data
+- Company blog posts about benefits
+- Job postings (often mention key benefits)
+- Press releases about new benefit announcements
+- Employee handbook excerpts (if publicly available)
+
+**Quality guidelines:**
+- Prefer official company sources for benefit details
+- Use employee reviews to validate and provide context
+- Include press releases for major benefit announcements
+- Note if benefits vary by location/country
 
 ## Example Output
 
@@ -421,6 +454,26 @@ Choose benefits that are:
             "description": "Short-term and long-term disability coverage at 60% salary replacement, fully paid by company."
           }
         ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Stripe Careers: Benefits",
+        "url": "https://stripe.com/jobs/benefits",
+        "date": "2024-01-15",
+        "type": "company-page"
+      },
+      {
+        "title": "Glassdoor: Stripe Benefits Reviews",
+        "url": "https://www.glassdoor.com/Benefits/Stripe-US-Benefits",
+        "date": "2024-01-20",
+        "type": "employee-review"
+      },
+      {
+        "title": "Stripe Blog: Expanding Parental Leave",
+        "url": "https://stripe.com/blog/parental-leave-2023",
+        "date": "2023-06-15",
+        "type": "blog-post"
       }
     ]
   }

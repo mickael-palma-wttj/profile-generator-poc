@@ -33,6 +33,14 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "type": "Venture Capital",
         "description": "Early investor and board member, led multiple rounds"
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "press-release|article|database"
+      }
     ]
   }
 }
@@ -153,15 +161,41 @@ For each investor:
 - **Secondary**: Existing shares sold, no capital to company
 - **Debt Financing**: Loans, credit facilities
 
-## Research Sources
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
 
-1. Crunchbase (most comprehensive funding database)
-2. PitchBook (for accurate valuations)
-3. Company press releases announcing funding
-4. TechCrunch and tech press covering rounds
-5. SEC filings (Form D for US companies)
-6. Company website investor relations page
-7. Investor firm announcements
+**IMPORTANT**: Match the company's communication style when writing descriptions, but keep financial data objective.
+
+**For funding round descriptions:**
+- Match their narrative style from press releases and announcements
+- If they're **bold/ambitious** → "Accelerating global expansion and product innovation"
+- If they're **technical/precise** → "Funding infrastructure development and scaling engineering team"
+- If they're **mission-driven** → "Advancing our mission to make payments accessible worldwide"
+
+**Keep financial data factual** (amounts, dates, valuations) but infuse their voice into the narrative descriptions.
+
+## Sources (3-10 sources)
+
+**IMPORTANT**: Include citations for funding information.
+
+**For each source:**
+- **title**: Clear description (e.g., "Crunchbase funding data", "Series B press release", "TechCrunch funding announcement")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `press-release`, `article`, `database`, `sec-filing`, `investor-announcement`
+
+**What to cite:**
+- Crunchbase or PitchBook for comprehensive funding data
+- Company press releases announcing funding rounds
+- TechCrunch and tech press covering major rounds
+- SEC filings (Form D for US companies)
+- Company website investor relations page
+- Investor firm announcements
+
+**Quality guidelines:**
+- Prefer official press releases for round announcements
+- Use Crunchbase/PitchBook for comprehensive timeline verification
+- Include dates for time-sensitive financial information
+- Cite SEC filings for legally disclosed information
 
 ## Example Output
 
@@ -282,6 +316,26 @@ For each investor:
         "name": "Y Combinator",
         "type": "Venture Capital",
         "description": "Backed Stripe in their S10 batch in 2010. Provided initial seed funding and mentorship during the company's earliest days."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Crunchbase: Stripe Funding Rounds",
+        "url": "https://www.crunchbase.com/organization/stripe/funding",
+        "date": "2024-01-15",
+        "type": "database"
+      },
+      {
+        "title": "Stripe Series I Press Release",
+        "url": "https://stripe.com/newsroom/news/series-i",
+        "date": "2023-03-14",
+        "type": "press-release"
+      },
+      {
+        "title": "TechCrunch: Stripe raises $6.5B at $50B valuation",
+        "url": "https://techcrunch.com/2023/03/14/stripe-series-i",
+        "date": "2023-03-14",
+        "type": "article"
       }
     ]
   }

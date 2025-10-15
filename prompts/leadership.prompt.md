@@ -31,6 +31,14 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "role": "Board Member",
         "affiliation": "Sequoia Capital"
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "company-page|article|linkedin|press-release"
+      }
     ]
   }
 }
@@ -129,16 +137,42 @@ For each board member:
 - List every manager - focus on top leadership
 - Copy LinkedIn summaries verbatim
 
-## Research Sources
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
 
-1. Company's leadership or team page
-2. LinkedIn profiles (for background and tenure)
-3. Press releases announcing appointments
-4. TechCrunch and tech press profiles
-5. Company blog posts authored by leaders
-6. Conference talks and podcast appearances
-7. Crunchbase for board member information
-8. SEC filings (if public) for official titles
+**IMPORTANT**: Match the company's style when writing leader backgrounds and achievements.
+
+**For leader descriptions:**
+- If they're **bold/visionary** → Emphasize big achievements ("Scaled from 100 to 10,000 users", "Led transformation of...")
+- If they're **technical/precise** → Focus on technical credentials and specific contributions
+- If they're **humble/team-focused** → Highlight collaboration and team building ("Built and led team of...")
+
+**Keep factual information objective** but match their narrative style in descriptions.
+
+## Sources (3-10 sources)
+
+**IMPORTANT**: Include citations for leadership information.
+
+**For each source:**
+- **title**: Clear description (e.g., "Company leadership page", "LinkedIn profile", "CEO appointment announcement")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `company-page`, `article`, `linkedin`, `press-release`, `interview`, `podcast`, `video`
+
+**What to cite:**
+- Company's leadership or team page
+- LinkedIn profiles (for background and tenure)
+- Press releases announcing appointments
+- TechCrunch and tech press profiles
+- Company blog posts authored by leaders
+- Conference talks and podcast appearances
+- Crunchbase for board member information
+- SEC filings (if public) for official titles
+
+**Quality guidelines:**
+- Cite LinkedIn profiles for professional backgrounds
+- Include press releases for executive appointments
+- Reference interviews/podcasts for quotes
+- Verify board member information from official sources
 
 ## Example Output
 
@@ -255,6 +289,26 @@ For each board member:
         "name": "Joshua Kushner",
         "role": "Board Observer",
         "affiliation": "Thrive Capital"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Stripe Leadership Team Page",
+        "url": "https://stripe.com/about/leadership",
+        "date": "2024-01-15",
+        "type": "company-page"
+      },
+      {
+        "title": "LinkedIn: Patrick Collison",
+        "url": "https://linkedin.com/in/patrickcollison",
+        "date": "2024-01-20",
+        "type": "linkedin"
+      },
+      {
+        "title": "TechCrunch: Stripe appoints David Singleton as CTO",
+        "url": "https://techcrunch.com/2022/stripe-cto",
+        "date": "2022-06-15",
+        "type": "article"
       }
     ]
   }

@@ -23,6 +23,14 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "label": "Annual Revenue",
         "context": "Additional context or year reference"
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "press-release|article|company-page"
+      }
     ]
   }
 }
@@ -195,10 +203,54 @@ Choose appropriate emoji:
         "label": "Uptime",
         "context": "Industry-leading reliability with 99.99% uptime SLA"
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "press-release|article|company-page|financial-report"
+      }
     ]
   }
 }
 ```
+
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
+
+**IMPORTANT**: Match the company's style when writing metric contexts, but keep numbers factual.
+
+**For metric context:**
+- If they're **data-driven/technical** → Use precise language, include methodology ("Based on Q4 2023 results")
+- If they're **bold/aspirational** → Emphasize impact ("Powering millions of businesses worldwide")
+- If they're **humble/grounded** → Focus on customer benefit ("Helping businesses of all sizes succeed")
+
+**Keep numbers objective** but infuse their voice into the narrative context.
+
+## Sources (3-8 sources)
+
+**IMPORTANT**: Include citations for key metrics and statistics.
+
+**For each source:**
+- **title**: Clear description (e.g., "Company Q4 2023 results", "LinkedIn company page", "TechCrunch interview")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `press-release`, `article`, `company-page`, `financial-report`, `interview`, `database`
+
+**What to cite:**
+- Company's official press releases and investor relations
+- Recent news articles with disclosed metrics
+- LinkedIn for employee count
+- Crunchbase/PitchBook for funding data
+- Company blog posts sharing milestones
+- SEC filings (if public company)
+- Industry reports (as secondary validation)
+
+**Quality guidelines:**
+- Prefer official company sources for financial metrics
+- Include dates for all time-sensitive numbers
+- Cite multiple sources if numbers vary
+- Note if metrics are estimates vs. official figures
 
 ## Company Context
 Company Name: {COMPANY_NAME}

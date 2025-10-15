@@ -24,7 +24,15 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "description": "Brief description of what this product does and why it matters"
       }
     ],
-    "targetMarket": "Description of who the company serves - customer segments, industries, company sizes, etc."
+    "targetMarket": "Description of who the company serves - customer segments, industries, company sizes, etc.",
+    "sources": [
+      {
+        "title": "Source title (e.g., company website, press release, article)",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "website|article|press-release|company-page"
+      }
+    ]
   }
 }
 ```
@@ -67,6 +75,30 @@ For each product:
 - Include: company sizes, industries, geographies, use cases
 - 2-3 sentences that paint a clear picture
 - Example: "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs."
+
+### Sources (3-10 sources)
+Include citations for all major facts and claims:
+
+**For each source:**
+- **title**: Clear title describing what information came from this source (e.g., "Stripe About Page", "TechCrunch funding announcement", "Company careers page")
+- **url**: Full URL to the source (must be accessible)
+- **date**: Date of publication or last updated (YYYY-MM-DD format)
+- **type**: One of: `website`, `article`, `press-release`, `company-page`, `blog-post`, `interview`, `financial-report`
+
+**What to cite:**
+- Company website/about page (for mission, overview, products)
+- Press releases (for funding, milestones, announcements)
+- News articles (for context, analysis, third-party validation)
+- Financial reports or Crunchbase (for valuation, revenue, headcount)
+- Company blog (for product launches, company updates)
+- Careers page (for culture, team size, office locations)
+
+**Quality guidelines:**
+- Prefer primary sources (company's own materials) over secondary
+- Include publication date when available
+- Use recent sources (prefer last 12 months when possible)
+- Include at least one source from the company itself
+- Include at least one third-party source for validation
 
 ### Tone of Voice (Internal Guidance - Do NOT include in JSON output)
 
@@ -154,7 +186,27 @@ For each product:
         "description": "Banking-as-a-service platform that lets businesses embed financial services directly into their products"
       }
     ],
-    "targetMarket": "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs."
+    "targetMarket": "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs.",
+    "sources": [
+      {
+        "title": "Stripe About Page",
+        "url": "https://stripe.com/about",
+        "date": "2024-03-15",
+        "type": "company-page"
+      },
+      {
+        "title": "TechCrunch: Stripe reaches $50B valuation",
+        "url": "https://techcrunch.com/2023/03/14/stripe-valuation-50b",
+        "date": "2023-03-14",
+        "type": "article"
+      },
+      {
+        "title": "Stripe Newsroom: Q4 2023 Metrics",
+        "url": "https://stripe.com/newsroom/news/q4-2023",
+        "date": "2024-01-15",
+        "type": "press-release"
+      }
+    ]
   }
 }
 ```

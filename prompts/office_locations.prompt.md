@@ -26,7 +26,15 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "description": "What teams work here and why this location is important (1-2 sentences)"
       }
     ],
-    "remotePresence": "Description of remote work policy and distributed team presence (2-3 sentences)"
+    "remotePresence": "Description of remote work policy and distributed team presence (2-3 sentences)",
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "company-page|article|press-release"
+      }
+    ]
   }
 }
 ```
@@ -128,15 +136,40 @@ For each office:
 - **R&D Center**: Research and development focused
 - **Satellite Office**: Smaller presence, often sales or specific team
 
-## Research Sources
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
 
-1. Company's careers page (often lists office locations)
-2. Press releases announcing new offices or expansions
-3. Real estate news about office leases
-4. LinkedIn (filter employees by location for estimates)
-5. Company blog posts about office openings
-6. Local business news when offices open
-7. Google Maps to verify addresses
+**IMPORTANT**: Match the company's style when describing office locations.
+
+**For office descriptions:**
+- If they're **bold/ambitious** → Emphasize strategic importance ("Hub for expanding into...", "Center of innovation for...")
+- If they're **technical/practical** → Focus on functions and teams ("Houses 300 engineers working on...")
+- If they're **culture-focused** → Highlight workspace design and team collaboration ("Designed to foster collaboration...")
+
+**Keep addresses and facts objective** but match their narrative style in descriptions.
+
+## Sources (2-8 sources)
+
+**IMPORTANT**: Include citations for office location information.
+
+**For each source:**
+- **title**: Clear description (e.g., "Company careers page", "New York office opening announcement", "Real estate news")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `company-page`, `article`, `press-release`, `real-estate`, `blog-post`
+
+**What to cite:**
+- Company's careers page (often lists office locations)
+- Press releases announcing new offices or expansions
+- Real estate news about office leases
+- Company blog posts about office openings
+- Local business news when offices open
+- LinkedIn for team size estimates (optional)
+
+**Quality guidelines:**
+- Cite official announcements for new office openings
+- Use company careers page for current office list
+- Include press releases for major expansions
+- Verify addresses from official company sources
 
 ## Example Output
 
@@ -221,7 +254,27 @@ For each office:
         "description": "Australian office serving businesses across Australia and New Zealand. Established to provide local support and build partnerships in the growing APAC e-commerce ecosystem."
       }
     ],
-    "remotePresence": "Stripe operates a flexible hybrid model where employees can work from offices or remotely based on team needs. The company has hundreds of fully remote employees across North America and Europe, with robust infrastructure for distributed collaboration including async communication tools and quarterly team offsites. Remote employees receive home office stipends and regular opportunities to visit offices for team gatherings."
+    "remotePresence": "Stripe operates a flexible hybrid model where employees can work from offices or remotely based on team needs. The company has hundreds of fully remote employees across North America and Europe, with robust infrastructure for distributed collaboration including async communication tools and quarterly team offsites. Remote employees receive home office stipends and regular opportunities to visit offices for team gatherings.",
+    "sources": [
+      {
+        "title": "Stripe Careers: Locations",
+        "url": "https://stripe.com/jobs/locations",
+        "date": "2024-01-15",
+        "type": "company-page"
+      },
+      {
+        "title": "Press Release: Stripe opens Toronto office",
+        "url": "https://stripe.com/newsroom/news/toronto-office",
+        "date": "2018-09-12",
+        "type": "press-release"
+      },
+      {
+        "title": "TechCrunch: Stripe expands Dublin HQ",
+        "url": "https://techcrunch.com/2020/stripe-dublin",
+        "date": "2020-06-15",
+        "type": "article"
+      }
+    ]
   }
 }
 ```

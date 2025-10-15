@@ -142,6 +142,32 @@
                 </div>
             `;
         }
+
+        /**
+         * Render sources/citations
+         * @param {Array} sources - Array of source objects with title, url, date, type
+         * @returns {string} Rendered sources HTML
+         */
+        static renderSources(sources) {
+            if (!sources || sources.length === 0) return '';
+
+            return `
+                <div class="section-sources">
+                    <h4>📚 Sources</h4>
+                    <ul class="sources-list">
+                        ${sources.map(source => `
+                            <li class="source-item">
+                                <a href="${source.url}" target="_blank" rel="noopener noreferrer" class="source-link">
+                                    ${source.title}
+                                </a>
+                                ${source.date ? `<span class="source-date">(${source.date})</span>` : ''}
+                                ${source.type ? `<span class="source-type">${source.type}</span>` : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
     }
 
     // ============================================================================
@@ -240,7 +266,8 @@
                 website,
                 keyProducts,
                 targetMarket,
-                businessModel
+                businessModel,
+                sources
             } = this.data;
 
             this.innerHTML = `
@@ -264,6 +291,7 @@
                     ${TemplateUtils.renderIf(businessModel, bm =>
                 TemplateUtils.renderSection('Business Model', `<p>${bm}</p>`)
             )}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -305,7 +333,7 @@
 
     class TheirStorySection extends ProfileSectionComponent {
         render() {
-            const { foundingStory, founders, ahaMoment, milestones } = this.data;
+            const { foundingStory, founders, ahaMoment, milestones, sources } = this.data;
 
             this.innerHTML = `
                 <div class="their-story-section">
@@ -313,6 +341,7 @@
                     ${this.renderFounders(founders)}
                     ${this.renderAhaMoment(ahaMoment)}
                     ${this.renderMilestones(milestones)}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -382,7 +411,7 @@
 
     class CompanyValuesSection extends ProfileSectionComponent {
         render() {
-            const { introduction, values } = this.data;
+            const { introduction, values, sources } = this.data;
 
             this.innerHTML = `
                 <div class="company-values-section">
@@ -390,6 +419,7 @@
                     <div class="values-grid">
                         ${TemplateUtils.renderList(values, v => this.renderValue(v))}
                     </div>
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -430,7 +460,7 @@
 
     class KeyNumbersSection extends ProfileSectionComponent {
         render() {
-            const { stats, context, lastUpdated } = this.data;
+            const { stats, context, lastUpdated, sources } = this.data;
 
             this.innerHTML = `
                 <div class="key-numbers-section">
@@ -447,6 +477,7 @@
                             <small>Last updated: ${u}</small>
                         </div>
                     `)}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -469,13 +500,14 @@
 
     class FundingSection extends ProfileSectionComponent {
         render() {
-            const { totalRaised, latestRound, valuation, status, rounds, keyInvestors } = this.data;
+            const { totalRaised, latestRound, valuation, status, rounds, keyInvestors, sources } = this.data;
 
             this.innerHTML = `
                 <div class="funding-section">
                     ${this.renderFundingSummary({ totalRaised, latestRound, valuation, status })}
                     ${this.renderFundingRounds(rounds)}
                     ${this.renderKeyInvestors(keyInvestors)}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -560,7 +592,7 @@
 
     class LeadershipSection extends ProfileSectionComponent {
         render() {
-            const { introduction, leaders, organizationStructure } = this.data;
+            const { introduction, leaders, organizationStructure, sources } = this.data;
 
             this.innerHTML = `
                 <div class="leadership-section">
@@ -569,6 +601,7 @@
                     ${TemplateUtils.renderIf(organizationStructure, s =>
                 TemplateUtils.renderSection('Organization Structure', `<p>${s}</p>`)
             )}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -632,12 +665,13 @@
 
     class OfficeLocationsSection extends ProfileSectionComponent {
         render() {
-            const { headquarters, offices } = this.data;
+            const { headquarters, offices, sources } = this.data;
 
             this.innerHTML = `
                 <div class="office-locations-section">
                     ${this.renderHeadquarters(headquarters)}
                     ${this.renderOffices(offices)}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -687,13 +721,14 @@
 
     class PerksBenefitsSection extends ProfileSectionComponent {
         render() {
-            const { introduction, standoutBenefits, categories } = this.data;
+            const { introduction, standoutBenefits, categories, sources } = this.data;
 
             this.innerHTML = `
                 <div class="perks-benefits-section">
                     ${TemplateUtils.renderIf(introduction, i => `<p class="benefits-intro">${i}</p>`)}
                     ${this.renderStandoutBenefits(standoutBenefits)}
                     ${this.renderCategories(categories)}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
@@ -747,7 +782,7 @@
 
     class RemotePolicySection extends ProfileSectionComponent {
         render() {
-            const { workLocation, equipment, schedule, tools, culture } = this.data;
+            const { workLocation, equipment, schedule, tools, culture, sources } = this.data;
 
             this.innerHTML = `
                 <div class="remote-policy-section">
@@ -756,6 +791,7 @@
                     ${this.renderSchedule(schedule)}
                     ${this.renderTools(tools)}
                     ${this.renderCulture(culture)}
+                    ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }

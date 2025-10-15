@@ -36,7 +36,15 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
       "inPerson": "Description of in-person gatherings and frequency",
       "remoteCulture": "How the company maintains culture remotely",
       "inclusion": "How remote employees are included in company culture"
-    }
+    },
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "website"
+      }
+    ]
   }
 }
 ```
@@ -177,16 +185,66 @@ Example: "Stripe operates a hybrid-flexible model where employees can choose to 
 - All employees distributed
 - Example: "Entire company is remote with co-working stipends"
 
-## Research Sources
+## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
 
-1. Company careers page (often has remote work section)
-2. Job postings (note if "remote" or "hybrid")
-3. Glassdoor reviews (search "remote" or "work from home")
-4. Blind discussions about company remote culture
-5. Company blog posts about remote work philosophy
-6. Press releases about office changes or remote policies
-7. LinkedIn posts from leadership about remote work
-8. Employee interviews and testimonials
+Match the company's tone when describing their remote work policies:
+- **Employee-centric companies** (e.g., GitLab, Buffer): Use warm, transparent, detailed language emphasizing trust and flexibility
+- **Tech-forward companies** (e.g., Stripe, Shopify): Use practical, data-driven language focusing on tools and processes
+- **Traditional companies** (e.g., banks, enterprises): Use professional, policy-focused language emphasizing structure and guidelines
+- **Startup culture**: Use casual, authentic language reflecting their actual practices over formal policies
+
+The tone should match how the company communicates about work culture and benefits. Avoid generic HR language—use their authentic voice.
+
+## Sources (2-8 sources)
+
+**CRITICAL**: Include 2-8 verifiable sources that document the remote work information. Prioritize official company sources for policies, and employee reviews for actual practices.
+
+**Structure**: Each source must include:
+- `title`: Clear, descriptive title of the source
+- `url`: Direct link to the source (must be accessible)
+- `date`: Publication or last update date (YYYY-MM-DD format)
+- `type`: One of: `company-page`, `article`, `press-release`, `employee-review`, `blog-post`, `job-posting`, `interview`
+
+**Source Types**:
+1. **company-page** - Careers page, remote work policy page, employee handbook sections
+2. **article** - News articles, blog posts about company's remote work announcements
+3. **press-release** - Official announcements about remote work changes
+4. **employee-review** - Glassdoor, Blind, or other employee review sites (for actual practice validation)
+5. **blog-post** - Company engineering/culture blog posts about remote work
+6. **job-posting** - Job listings that specify remote work arrangements
+7. **interview** - Leadership interviews discussing remote work philosophy
+
+**Quality Guidelines**:
+- Prioritize official company sources for formal policies (careers page, handbooks)
+- Use employee reviews to validate actual practice vs. stated policy
+- Include recent job postings to show current remote work options
+- Link to specific blog posts about remote work changes or philosophy
+- If policy differs by team/role, cite sources for each variation
+- Date sources appropriately (policies from last 1-2 years most relevant)
+
+**Example Sources**:
+```json
+"sources": [
+  {
+    "title": "Remote Work at Stripe - Careers Page",
+    "url": "https://stripe.com/careers/remote-work",
+    "date": "2024-01-15",
+    "type": "company-page"
+  },
+  {
+    "title": "Stripe Employee Reviews - Remote Work",
+    "url": "https://glassdoor.com/stripe-reviews-remote",
+    "date": "2024-03-20",
+    "type": "employee-review"
+  },
+  {
+    "title": "How Stripe Built a Hybrid-First Culture",
+    "url": "https://stripe.com/blog/hybrid-work-culture",
+    "date": "2023-09-10",
+    "type": "blog-post"
+  }
+]
+```
 
 ## Example Output
 
@@ -220,7 +278,33 @@ Example: "Stripe operates a hybrid-flexible model where employees can choose to 
       "inPerson": "Quarterly team offsites where distributed teams gather for 2-3 days of planning, team building, and social time. All travel and accommodation costs covered by company. Annual all-company gathering brings entire organization together for strategy sharing and celebration. Office-based teams often organize monthly social events that remote employees can join if they happen to be in town.",
       "remoteCulture": "Culture is maintained through transparent communication, strong documentation practices, and intentional inclusion of remote employees. All-hands meetings every two weeks keep everyone aligned on company direction. Internal blog shares wins, challenges, and learnings across teams. Employee resource groups help remote workers build connections beyond their immediate teams.",
       "inclusion": "Remote employees have equal access to growth opportunities with promotion rates tracked to ensure no location bias. All meetings default to video even if some participants are in office together to keep remote attendees equally engaged. Leadership makes concerted effort to highlight work from distributed teams. Remote employees report feeling equally valued and included based on internal surveys."
-    }
+    },
+    "sources": [
+      {
+        "title": "Remote Work at Stripe - Careers Page",
+        "url": "https://stripe.com/careers/remote-work",
+        "date": "2024-01-15",
+        "type": "company-page"
+      },
+      {
+        "title": "Stripe Employee Reviews - Remote Work",
+        "url": "https://glassdoor.com/stripe-reviews-remote",
+        "date": "2024-03-20",
+        "type": "employee-review"
+      },
+      {
+        "title": "How Stripe Built a Hybrid-First Culture",
+        "url": "https://stripe.com/blog/hybrid-work-culture",
+        "date": "2023-09-10",
+        "type": "blog-post"
+      },
+      {
+        "title": "Stripe's Remote Work Equipment Policy",
+        "url": "https://stripe.com/blog/remote-work-equipment",
+        "date": "2023-11-05",
+        "type": "article"
+      }
+    ]
   }
 }
 ```

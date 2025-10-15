@@ -22,6 +22,14 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
           "Another specific manifestation (e.g., 'Weekly demo days where anyone can present work to the entire company')"
         ]
       }
+    ],
+    "sources": [
+      {
+        "title": "Source title",
+        "url": "https://example.com/source",
+        "date": "2024-01-15",
+        "type": "website|article|company-page|blog-post"
+      }
     ]
   }
 }
@@ -124,14 +132,29 @@ Choose values that are:
 - Simplicity: Keep it simple, clarity over complexity
 - Trust: Transparency, honesty, integrity
 
-## Research Sources
+## Sources (3-8 sources)
 
-Prioritize finding information from:
-1. Official careers/about pages mentioning values or culture
-2. Company blog posts about culture and values
-3. Leadership interviews discussing company principles
-4. Employee reviews on Glassdoor/Comparably mentioning culture
-5. Press releases and announcements showing values in action
+**IMPORTANT**: Include citations for company values and culture information.
+
+**For each source:**
+- **title**: Clear description (e.g., "Company careers page", "Culture blog post", "CEO interview about values")
+- **url**: Full URL to the source
+- **date**: Publication or last updated date (YYYY-MM-DD)
+- **type**: `website`, `article`, `company-page`, `blog-post`, `interview`, `employee-review`
+
+**What to cite:**
+- Official careers/about pages mentioning values or culture
+- Company blog posts about culture and values
+- Leadership interviews discussing company principles
+- Employee reviews on Glassdoor/Comparably (as supporting evidence)
+- Press releases showing values in action
+- Company handbook or culture deck (if publicly available)
+
+**Quality guidelines:**
+- Prioritize official company sources for stated values
+- Include third-party sources (interviews, reviews) for validation
+- Cite specific blog posts or pages rather than just homepage
+- Include recent sources to ensure values are current
 
 ## Example Output
 
@@ -151,6 +174,26 @@ Prioritize finding information from:
           "Regular 'Bug Bash' events where entire company focuses on fixing user-reported issues",
           "Comprehensive documentation is written alongside code, not as an afterthought"
         ]
+      }
+    ],
+    "sources": [
+      {
+        "title": "Stripe Careers: Our Values",
+        "url": "https://stripe.com/jobs/culture",
+        "date": "2024-02-10",
+        "type": "company-page"
+      },
+      {
+        "title": "Stripe Blog: Operating Principles",
+        "url": "https://stripe.com/blog/operating-principles",
+        "date": "2023-11-15",
+        "type": "blog-post"
+      },
+      {
+        "title": "Glassdoor: Stripe Company Reviews",
+        "url": "https://www.glassdoor.com/Reviews/Stripe",
+        "date": "2024-01-20",
+        "type": "employee-review"
       }
     ]
   }
