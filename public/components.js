@@ -533,9 +533,9 @@
                 <div class="funding-summary">
                     ${summaryItems.map(item => `
                         <div class="funding-stat">
-                            <div class="funding-icon">${item.icon}</div>
-                            <div class="funding-label">${item.label}</div>
-                            <div class="funding-value">${item.value}</div>
+                            <div class="stat-icon">${item.icon}</div>
+                            <div class="funding-stat-label">${item.label}</div>
+                            <div class="funding-stat-value">${item.value}</div>
                         </div>
                     `).join('')}
                 </div>
