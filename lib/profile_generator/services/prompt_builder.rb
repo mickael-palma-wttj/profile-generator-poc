@@ -26,7 +26,9 @@ module ProfileGenerator
       # Build user prompt with company context
       # @return [String] The user prompt with company information
       def build_user_prompt
-        context_parts.compact.join("\n")
+        parts = context_parts.compact
+        parts << language_instruction if language_instruction
+        parts.join("\n")
       end
 
       private
@@ -42,6 +44,18 @@ module ProfileGenerator
         return nil unless @company.website
 
         "Company Website: #{@company.website}"
+      end
+
+      def language_instruction
+        return nil unless @company.respond_to?(:output_language)
+
+        lang_code = @company.output_language
+        return nil if lang_code.nil? || lang_code.to_s.strip.empty?
+
+        # Use a human-friendly label when possible (e.g., 'Français')
+        label = @company.respond_to?(:output_language_label) ? @company.output_language_label : lang_code
+
+        "Respond in #{label} (#{lang_code}) unless otherwise instructed. Keep JSON output structure unchanged."
       end
     end
   end

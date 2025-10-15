@@ -99,7 +99,7 @@ module ProfileGenerator
         duration = Time.now - start_time
 
         result = parse_response(response)
-        prompt_count = result.dig("data")&.length || 0
+        prompt_count = result["data"]&.length || 0
         logger.info("[Langfuse] ✓ Listed #{prompt_count} prompts in #{duration.round(2)}s")
 
         result
@@ -224,7 +224,7 @@ module ProfileGenerator
                          when "text"
                            result["prompt"]&.length || 0
                          when "chat"
-                           result["prompt"]&.map { |m| m["content"]&.length || 0 }&.sum || 0
+                           result["prompt"]&.sum { |m| m["content"]&.length || 0 } || 0
                          else
                            0
                          end

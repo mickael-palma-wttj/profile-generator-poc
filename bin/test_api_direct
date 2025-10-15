@@ -23,7 +23,7 @@ puts "URI: #{uri}"
 http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 request = Net::HTTP::Get.new(uri)
-request["Authorization"] = "Basic " + Base64.strict_encode64("#{public_key}:#{secret_key}")
+request["Authorization"] = "Basic #{Base64.strict_encode64("#{public_key}:#{secret_key}")}"
 
 response = http.request(request)
 puts "Response code: #{response.code}"
@@ -46,7 +46,7 @@ puts "URI: #{uri}"
 http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 request = Net::HTTP::Get.new(uri)
-request["Authorization"] = "Basic " + Base64.strict_encode64("#{public_key}:#{secret_key}")
+request["Authorization"] = "Basic #{Base64.strict_encode64("#{public_key}:#{secret_key}")}"
 
 response = http.request(request)
 puts "Response code: #{response.code}"

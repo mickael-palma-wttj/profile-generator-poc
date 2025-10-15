@@ -84,7 +84,7 @@ namespace :profile do
     require_relative "config/boot"
 
     markdown_file = args[:markdown_file] || "qonto_prompt_output.md"
-    output_file = args[:output_file] || "public/#{File.basename(markdown_file, '.md')}.html"
+    args[:output_file] || "public/#{File.basename(markdown_file, '.md')}.html"
 
     unless File.exist?(markdown_file)
       puts "❌ Error: File not found: #{markdown_file}"

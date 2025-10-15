@@ -106,7 +106,7 @@ module ProfileGenerator
 
       def list_langfuse_prompts
         response = langfuse_client.list_prompts(limit: 100)
-        response.dig("data")&.map { |prompt| prompt["name"] } || []
+        response["data"]&.map { |prompt| prompt["name"] } || []
       end
     end
   end

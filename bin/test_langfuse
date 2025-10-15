@@ -42,7 +42,7 @@ def test_langfuse_client
 end
 
 def test_get_specific_prompt
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "Test 2: Get Specific Prompt"
   puts "=" * 60
 
@@ -112,7 +112,7 @@ def test_get_specific_prompt
 end
 
 def test_prompt_manager
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "Test 3: Prompt Manager (Unified Interface)"
   puts "=" * 60
 
@@ -150,6 +150,6 @@ test_langfuse_client
 test_get_specific_prompt
 test_prompt_manager
 
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Tests Complete"
 puts "=" * 60

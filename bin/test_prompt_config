@@ -73,13 +73,13 @@ puts ""
 puts "🔧 Testing GenerateProfile with default configuration..."
 begin
   # Create a test company
-  company = ProfileGenerator::Models::Company.new(
+  ProfileGenerator::Models::Company.new(
     name: "Test Company",
     website: "https://example.com"
   )
 
   # Test single section generation
-  generator = ProfileGenerator::Interactors::GenerateProfile.new
+  ProfileGenerator::Interactors::GenerateProfile.new
   puts "  ✅ GenerateProfile initialized with default prompt source"
   puts "  💡 It will use PROMPT_SOURCE env variable (current: #{prompt_source})"
 

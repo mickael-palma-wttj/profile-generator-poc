@@ -14,11 +14,12 @@ module ProfileGenerator
       def initialize(params)
         @company_name = params[:company_name]&.strip
         @website = params[:website]&.strip
+        @output_language = params[:output_language] || params[:language] || params[:lang]
       end
 
       def build
         validate!
-        Models::Company.new(name: company_name, website: website)
+        Models::Company.new(name: company_name, website: website, output_language: @output_language)
       end
 
       private

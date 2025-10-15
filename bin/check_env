@@ -13,7 +13,7 @@ def check_env_var(name, required: false)
     puts "#{name}: #{status}"
     false
   else
-    masked_value = value.length > 20 ? "#{value[0..19]}..." : value[0..10] + "..."
+    masked_value = value.length > 20 ? "#{value[0..19]}..." : "#{value[0..10]}..."
     puts "#{name}: ✅ SET (#{masked_value})"
     true
   end
@@ -27,14 +27,14 @@ check_env_var("ANTHROPIC_MODEL")
 check_env_var("ANTHROPIC_MAX_TOKENS")
 check_env_var("ANTHROPIC_TEMPERATURE")
 
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Langfuse Configuration"
 puts "=" * 60
 langfuse_public = check_env_var("LANGFUSE_PUBLIC_KEY", required: true)
 langfuse_secret = check_env_var("LANGFUSE_SECRET_KEY", required: true)
 check_env_var("LANGFUSE_BASE_URL")
 
-puts "\n" + ("=" * 60)
+puts "\n#{'=' * 60}"
 puts "Summary"
 puts "=" * 60
 

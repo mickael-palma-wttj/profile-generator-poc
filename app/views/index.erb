@@ -45,6 +45,22 @@
             >
           </div>
 
+          <div class="form-group">
+            <label for="output_language">Output Language (Optional)</label>
+            <select id="output_language" name="output_language" class="language-select">
+              <option value="">🇬🇧 English (default)</option>
+              <option value="Français">🇫🇷 Français</option>
+              <option value="Español">🇪🇸 Español</option>
+              <option value="Deutsch">🇩🇪 Deutsch</option>
+              <option value="Português">🇵🇹 Português</option>
+              <option value="中文">🇨🇳 中文</option>
+              <option value="日本語">🇯🇵 日本語</option>
+              <option value="Other">🌐 Other</option>
+            </select>
+            <input type="text" id="output_language_other" name="output_language_other" placeholder="Type your language (e.g., Italiano, العربية)" style="display:none; margin-top:0.5rem;" />
+            <small class="muted">If you choose 'Other', type the desired language above.</small>
+          </div>
+
           <button type="submit" class="btn btn-primary">
             Generate Profile
           </button>

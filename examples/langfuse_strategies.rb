@@ -19,7 +19,7 @@ begin
     exit 1
   end
 
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "Fetching: #{prompt_name}"
   puts "=" * 60
 
@@ -54,7 +54,7 @@ begin
     puts "   ❌ #{e.message}"
   end
 
-  puts "\n" + ("=" * 60)
+  puts "\n#{'=' * 60}"
   puts "💡 Recommendation"
   puts "=" * 60
   puts "For most use cases, use the LATEST approach (no params):"

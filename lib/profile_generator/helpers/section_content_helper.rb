@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "English"
 module ProfileGenerator
   module Helpers
     # Service for formatting section content in views
@@ -50,7 +51,7 @@ module ProfileGenerator
       # Strip markdown code fences (```html or ```)
       # AI sometimes wraps HTML output in code fences despite prompt instructions
       def strip_code_fences(content)
-        return content unless has_code_fence?(content)
+        return content unless code_fence?(content)
 
         content
           .sub(/\A```(?:html|HTML)?[\s\r\n]+/m, "")
@@ -58,28 +59,29 @@ module ProfileGenerator
           .strip
       end
 
-      def has_code_fence?(content)
-        content =~ /\A```(?:html|HTML)?[\s\r\n]+/m
+      def code_fence?(content)
+        !!(content =~ /\A```(?:html|HTML)?[\s\r\n]+/m)
       end
 
       # Remove AI thinking/search tags if present
       # Extracts actual content div if thinking tags are detected
       def strip_thinking_tags(content)
-        return content unless has_thinking_tags?(content)
+        return content unless thinking_tags?(content)
 
         if content =~ content_div_pattern
-          content[$~.pre_match.length..-1]
+          content[$LAST_MATCH_INFO.pre_match.length..]
         else
           content
         end
       end
 
-      def has_thinking_tags?(content)
+      def thinking_tags?(content)
         THINKING_TAG_INDICATORS.any? { |indicator| content.include?(indicator) }
       end
 
       def content_div_pattern
-        @content_div_pattern ||= /<div class="(?:#{CONTENT_DIV_CLASSES.join('|')})")/
+        # match an opening div tag with one of the known content classes
+        @content_div_pattern ||= /<div class="(?:#{CONTENT_DIV_CLASSES.join('|')})"/
       end
 
       def html?(content)

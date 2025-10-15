@@ -72,6 +72,7 @@
     function init() {
         cacheDOMElements();
         initializeEventListeners();
+        initializeLanguageSelector();
         initializeStickyNav();
     }
 
@@ -82,6 +83,21 @@
         if (state.domElements.form) {
             state.domElements.form.addEventListener('submit', handleFormSubmit);
         }
+    }
+
+    function initializeLanguageSelector() {
+        const select = document.getElementById('output_language');
+        const otherInput = document.getElementById('output_language_other');
+        if (!select || !otherInput) return;
+
+        select.addEventListener('change', () => {
+            if (select.value === 'Other') {
+                otherInput.style.display = 'block';
+                otherInput.focus();
+            } else {
+                otherInput.style.display = 'none';
+            }
+        });
     }
 
     /**
@@ -144,6 +160,51 @@
      * Start async profile generation
      */
     async function startAsyncGeneration(companyName, website) {
+        const outputLanguageEl = document.getElementById('output_language');
+        const otherEl = document.getElementById('output_language_other');
+        let outputLanguage = outputLanguageEl ? outputLanguageEl.value : '';
+        if (outputLanguage === 'Other' && otherEl && otherEl.value.trim()) {
+            outputLanguage = otherEl.value.trim();
+        }
+
+        // Normalize common display strings to locale codes
+        const LANG_MAP = {
+            '': 'en',
+            '🇬🇧 English (default)': 'en',
+            'Français': 'fr',
+            'Español': 'es',
+            'Deutsch': 'de',
+            'Português': 'pt',
+            '中文': 'zh-CN',
+            '日本語': 'ja',
+            'English': 'en',
+            'Fr': 'fr'
+        };
+
+        // If the value is one of the mapped display names, convert it
+        if (LANG_MAP[outputLanguage]) {
+            outputLanguage = LANG_MAP[outputLanguage];
+        } else {
+            // If user typed free-text (Other), attempt to map common names
+            const normalized = outputLanguage.toString().trim().toLowerCase();
+            const fuzzyMap = {
+                'français': 'fr', 'francais': 'fr', 'french': 'fr',
+                'español': 'es', 'espanol': 'es', 'spanish': 'es',
+                'deutsch': 'de', 'german': 'de',
+                'português': 'pt', 'portugues': 'pt', 'portuguese': 'pt',
+                '中文': 'zh-CN', 'chinese': 'zh-CN', 'zh': 'zh-CN',
+                '日本語': 'ja', 'japanese': 'ja', 'ja': 'ja',
+                'italiano': 'it', 'italian': 'it',
+                'العربية': 'ar', 'arabic': 'ar',
+                'русский': 'ru', 'russian': 'ru'
+            };
+
+            if (fuzzyMap[normalized]) {
+                outputLanguage = fuzzyMap[normalized];
+            }
+            // else leave as-is (backend will attempt to canonicalize)
+        }
+
         const response = await fetch('/generate/async', {
             method: 'POST',
             headers: {
@@ -152,6 +213,7 @@
             body: new URLSearchParams({
                 company_name: companyName,
                 website: website
+                , output_language: outputLanguage
             })
         });
 
