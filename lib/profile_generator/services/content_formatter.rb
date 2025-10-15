@@ -10,6 +10,8 @@ module ProfileGenerator
     class ContentFormatter
       def initialize(json_formatter: nil)
         @json_formatter = json_formatter || JsonFormatter.new
+        @post_processor = ContentPostProcessor.new(json_formatter: @json_formatter)
+
         @markdown = Redcarpet::Markdown.new(
           Redcarpet::Render::HTML.new(
             hard_wrap: true,
@@ -90,28 +92,19 @@ module ProfileGenerator
 
       # Map section types to component names
       def component_name_for_type(type)
-        case type
-        when "company_description"
-          "company-description-section"
-        when "their_story"
-          "their-story-section"
-        when "company_values"
-          "company-values-section"
-        when "key_numbers"
-          "key-numbers-section"
-        when "funding_parser"
-          "funding-section"
-        when "leadership"
-          "leadership-section"
-        when "office_locations"
-          "office-locations-section"
-        when "perks_and_benefits"
-          "perks-benefits-section"
-        when "remote_policy"
-          "remote-policy-section"
-        else
-          "generic-section"
-        end
+        mapping = {
+          "company_description" => "company-description-section",
+          "their_story" => "their-story-section",
+          "company_values" => "company-values-section",
+          "key_numbers" => "key-numbers-section",
+          "funding_parser" => "funding-section",
+          "leadership" => "leadership-section",
+          "office_locations" => "office-locations-section",
+          "perks_and_benefits" => "perks-benefits-section",
+          "remote_policy" => "remote-policy-section"
+        }
+
+        mapping[type] || "generic-section"
       end
 
       def format_json(content)
@@ -133,7 +126,7 @@ module ProfileGenerator
         html = @markdown.render(cleaned)
 
         # Post-process HTML for better styling
-        post_process_html(html)
+        @post_processor.post_process(html)
       end
 
       # Strip ```json code fences that wrap JSON content
@@ -247,28 +240,7 @@ module ProfileGenerator
           .gsub(/\n{3,}/, "\n\n")
       end
 
-      def post_process_html(html)
-        processed = add_css_classes(html)
-        decode_json_placeholders(processed)
-      end
-
-      def add_css_classes(html)
-        html.gsub("<h1>", '<h1 class="content-h1">')
-            .gsub("<h2>", '<h2 class="content-h2">')
-            .gsub("<h3>", '<h3 class="content-h3">')
-            .gsub("<ul>", '<ul class="content-list">')
-            .gsub("<ol>", '<ol class="content-list-ordered">')
-            .gsub("<blockquote>", '<blockquote class="content-quote">')
-            .gsub("<code>", '<code class="content-code">')
-            .gsub("<pre>", '<pre class="content-pre">')
-            .gsub("<table>", '<table class="content-table">')
-      end
-
-      def decode_json_placeholders(html)
-        html.gsub(/<!-- JSON_BLOCK:(.*?) -->/) do
-          @json_formatter.decode_placeholder(Regexp.last_match(1))
-        end
-      end
+      # post-processing responsibilities extracted to ContentPostProcessor
     end
   end
 end

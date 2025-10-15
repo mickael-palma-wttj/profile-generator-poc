@@ -29,6 +29,7 @@ async_generator.generate(session_id, company)
 puts "⏳ Waiting for generation to complete..."
 
 # Poll for results
+# rubocop:disable Metrics/BlockLength
 10.times do
   sleep 2
   session_data = session_manager.get_session(session_id)
@@ -67,3 +68,5 @@ puts "⏳ Waiting for generation to complete..."
 end
 
 puts "\n🏁 Test completed"
+
+# rubocop:enable Metrics/BlockLength

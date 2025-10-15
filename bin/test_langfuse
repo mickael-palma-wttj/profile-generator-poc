@@ -41,6 +41,7 @@ def test_langfuse_client
   end
 end
 
+# rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 def test_get_specific_prompt
   puts "\n#{'=' * 60}"
   puts "Test 2: Get Specific Prompt"
@@ -110,6 +111,8 @@ def test_get_specific_prompt
     puts "❌ Error: #{e.class} - #{e.message}"
   end
 end
+
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
 def test_prompt_manager
   puts "\n#{'=' * 60}"

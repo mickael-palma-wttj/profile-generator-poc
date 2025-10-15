@@ -19,6 +19,11 @@ module ProfileGenerator
           @logger.info("Starting profile generation for: #{company.name}")
           @logger.info("Website: #{company.website}") if company.website
           @logger.info("Sections to generate: #{section_names.join(', ')}")
+          if company&.output_language
+            lang_label = company.output_language_label || company.output_language
+            @logger.info("Output language: #{lang_label}")
+            @logger.info("Output locale: #{company.output_language}")
+          end
         end
       end
 
@@ -38,15 +43,23 @@ module ProfileGenerator
           attempts = (retry_attempt + 1).to_s
           @logger.warn("Retrying section: #{section_name} (attempt #{attempts})")
         else
-          @logger.info("Starting generation: #{section_name} (#{company.name})")
+          message = "Starting generation: #{section_name} (#{company.name})"
+          message += lang_suffix(company)
+          @logger.info(message)
         end
       end
 
       # Log when a section generation completes successfully
-      def section_completed(section_name, duration, content_length, retry_count)
+      # section_completed accepts an options hash to avoid long parameter lists
+      # options may include :retry_count and :company
+      def section_completed(section_name, duration, content_length, options = {})
+        retry_count = options.fetch(:retry_count, 0)
+        company = options[:company]
+
         retry_info = retry_count.positive? ? " (after #{retry_count} retries)" : ""
         message = "Completed: #{section_name} in #{duration.round(2)}s " \
                   "(#{content_length} chars)#{retry_info}"
+        message += lang_suffix(company)
         @logger.info(message)
       end
 
@@ -81,6 +94,13 @@ module ProfileGenerator
         @logger.info(SEPARATOR)
         yield
         @logger.info(SEPARATOR)
+      end
+
+      def lang_suffix(company)
+        return "" unless company&.output_language
+
+        lang_label = company.output_language_label || company.output_language
+        " [lang: #{lang_label} (#{company.output_language})]"
       end
 
       def default_logger

@@ -75,7 +75,8 @@ module ProfileGenerator
           section_name,
           duration,
           section_content.length,
-          retry_attempt
+          retry_count: retry_attempt,
+          company: company
         )
 
         section = Models::ProfileSection.new(

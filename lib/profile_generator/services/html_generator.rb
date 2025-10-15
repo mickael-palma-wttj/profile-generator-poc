@@ -12,6 +12,7 @@ module ProfileGenerator
       def initialize(template_path: nil)
         @template_path = template_path || default_template_path
         @content_formatter = ContentFormatter.new
+        @section_builder = SectionBuilder.new(content_formatter: @content_formatter)
       end
 
       # Generate a standalone HTML page from a profile
@@ -44,9 +45,10 @@ module ProfileGenerator
       end
 
       def generate_from_profile(profile)
-        # Generate complete HTML structure matching qonto_profile.html
-        sections = build_all_sections(profile)
+        render_page(profile, build_all_sections(profile))
+      end
 
+      def render_page(profile, sections_html)
         <<~HTML
           <!DOCTYPE html>
           <html lang="en">
@@ -60,7 +62,7 @@ module ProfileGenerator
               #{hero_section(profile)}
               <div class="container">
                   #{navigation_tabs}
-                  #{sections}
+                  #{sections_html}
               </div>
               #{javascript}
           </body>
@@ -97,187 +99,10 @@ module ProfileGenerator
       end
 
       def build_all_sections(profile)
-        build_section_list(profile).join("\n")
+        @section_builder.build_all_sections(profile)
       end
 
-      def build_section_list(profile)
-        [
-          build_story_section(profile),
-          build_values_section(profile),
-          build_description_section(profile),
-          build_leadership_section(profile),
-          build_numbers_section(profile),
-          build_locations_section(profile),
-          build_perks_section(profile),
-          build_remote_section(profile),
-          build_funding_section(profile)
-        ]
-      end
-
-      def build_story_section(profile)
-        content = get_section_html(profile, "their_story")
-        indented_content = indent_html(content, 18)
-
-        wrap_section_html("story", "Their Story", "📖", indented_content, active: true, extra_card_class: "story-card")
-      end
-
-      def build_values_section(profile)
-        content = get_section_html(profile, "company_values")
-        indented_content = indent_html(content, 22)
-
-        inner = "<div class=\"values-grid\">\n#{indented_content}\n                            </div>"
-        wrap_section_html("values", "Company Values", "💎", inner)
-      end
-
-      def build_description_section(profile)
-        content = get_section_html(profile, "company_description")
-        indented_content = indent_html(content, 18)
-
-        wrap_section_html("description", "Company Overview", "🏢", indented_content)
-      end
-
-      def build_leadership_section(profile)
-        content = get_section_html(profile, "leadership")
-        indented_content = indent_html(content, 18)
-
-        <<~HTML
-                    <div id="leadership" class="section">
-                        <div class="card">
-                            <h2><span class="section-icon">👥</span>Leadership Team</h2>
-          #{indented_content}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def build_numbers_section(profile)
-        content = get_section_html(profile, "key_numbers")
-        indented_content = indent_html(content, 18)
-
-        <<~HTML
-                    <div id="numbers" class="section">
-                        <div class="card">
-                            <h2><span class="section-icon">📊</span>Key Numbers</h2>
-          #{indented_content}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def build_locations_section(profile)
-        content = get_section_html(profile, "office_locations")
-        indented_content = indent_html(content, 18)
-
-        <<~HTML
-                    <div id="locations" class="section">
-                        <div class="card">
-                            <h2><span class="section-icon">📍</span>Office Locations</h2>
-          #{indented_content}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def build_perks_section(profile)
-        content = get_section_html(profile, "perks_and_benefits")
-        indented_content = indent_html(content, 18)
-
-        <<~HTML
-                    <div id="perks" class="section">
-                        <div class="card">
-                            <h2><span class="section-icon">🎁</span>Perks & Benefits</h2>
-          #{indented_content}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def build_remote_section(profile)
-        content = get_section_html(profile, "remote_policy")
-        indented_content = indent_html(content, 18)
-
-        <<~HTML
-                    <div id="remote" class="section">
-                        <div class="card">
-                            <h2><span class="section-icon">🏠</span>Remote Work Policy</h2>
-          #{indented_content}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def build_funding_section(profile)
-        content = get_section_html(profile, "funding_parser")
-        indented_content = indent_html(content, 18)
-
-        <<~HTML
-                    <div id="funding" class="section">
-                        <div class="card">
-                            <h2><span class="section-icon">💰</span>Funding Status</h2>
-          #{indented_content}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def get_section_html(profile, section_file_name)
-        # Find section by prompt_file since that's what we use internally
-        section = find_section_by_file(profile, section_file_name)
-        return "<p>Section not available</p>" unless section
-
-        content = strip_code_fences(section.content)
-        looks_like_html?(content) ? content : @content_formatter.format(content)
-      end
-
-      def find_section_by_file(profile, section_file_name)
-        profile.sections.find { |s| s.prompt_file == section_file_name } || profile.find_section(section_file_name)
-      end
-
-      def wrap_section_html(id, title, emoji, inner_html, active: false, extra_card_class: nil)
-        active_class = active ? " active" : ""
-        card_class = extra_card_class ? "card #{extra_card_class}" : "card"
-
-        <<~HTML
-                    <div id="#{id}" class="section#{active_class}">
-                        <div class="#{card_class}">
-                            <h2><span class="section-icon">#{emoji}</span>#{title}</h2>
-          #{inner_html}
-                        </div>
-                    </div>
-        HTML
-      end
-
-      def strip_code_fences(content)
-        return content if content.nil? || content.strip.empty?
-
-        # Remove markdown code fences like ```html ... ``` or ``` ... ```
-        stripped = content.strip
-
-        # Check for ```html or ``` at start and ``` at end
-        if stripped.start_with?("```html")
-          stripped = stripped.sub(/\A```html\s*\n?/, "").sub(/\n?```\z/, "")
-        elsif stripped.start_with?("```")
-          stripped = stripped.sub(/\A```\s*\n?/, "").sub(/\n?```\z/, "")
-        end
-
-        stripped
-      end
-
-      def looks_like_html?(content)
-        return false if content.nil? || content.strip.empty?
-
-        stripped = content.strip
-        # Check if it starts with an HTML tag (after stripping whitespace)
-        # Also check for common HTML patterns like <div, <h3, <p, <ul, etc.
-        stripped.start_with?("<") && stripped.include?(">")
-      end
-
-      def indent_html(html, spaces)
-        return "" if html.nil? || html.empty?
-
-        indent = " " * spaces
-        html.lines.map { |line| line.strip.empty? ? line : "#{indent}#{line}" }.join
-      end
+      # Section building is delegated to SectionBuilder
 
       def escape_html(text)
         return "" if text.nil?

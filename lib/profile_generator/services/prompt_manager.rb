@@ -54,16 +54,13 @@ module ProfileGenerator
       # @param name [String] The prompt name
       # @return [Boolean] True if prompt exists
       def exist?(name)
-        case @source
-        when :file
-          file_loader.exist?(name)
-        when :langfuse
-          begin
-            load_from_langfuse(name)
-            true
-          rescue PromptNotFoundError
-            false
-          end
+        return file_loader.exist?(name) if @source == :file
+
+        begin
+          load_from_langfuse(name)
+          true
+        rescue PromptNotFoundError
+          false
         end
       end
 

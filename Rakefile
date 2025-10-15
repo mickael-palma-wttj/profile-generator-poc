@@ -40,7 +40,8 @@ namespace :profile do
   task :generate, [:company_name, :website, :output_dir] do |_t, args|
     require_relative "config/boot"
 
-    company_name = args[:company_name] || raise("Company name required. Usage: rake 'profile:generate[CompanyName]' (note the quotes for zsh)")
+    usage_msg = "Company name required. Usage: rake 'profile:generate[CompanyName]' (note the quotes for zsh)"
+    company_name = args[:company_name] || raise(usage_msg)
     website = args[:website] || "https://#{company_name.downcase.gsub(/\s+/, '')}.com"
     output_dir = args[:output_dir] || "public"
 

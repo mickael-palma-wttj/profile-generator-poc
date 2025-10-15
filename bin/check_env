@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# rubocop:disable Naming/PredicateMethod
+
 require "bundler/setup"
 require "dotenv/load"
 
@@ -18,6 +20,8 @@ def check_env_var(name, required: false)
     true
   end
 end
+
+# rubocop:enable Naming/PredicateMethod
 
 puts "=" * 60
 puts "Anthropic Configuration"
