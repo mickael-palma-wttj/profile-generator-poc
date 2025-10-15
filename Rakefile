@@ -104,21 +104,20 @@ namespace :profile do
 end
 
 def build_markdown_content(profile)
-  content = []
-  content << "# #{profile.company.name} - Company Profile"
-  content << "Generated: #{profile.generated_at.strftime('%d/%m/%Y')}"
-  content << ""
+  parts = []
+  parts << "# #{profile.company.name} - Company Profile"
+  parts << "Generated: #{profile.generated_at.strftime('%d/%m/%Y')}"
+  parts << ""
 
-  profile.sections.each do |section|
-    content << "## #{section.name}"
-    content << ""
-    content << section.content
-    content << ""
-    content << "---"
-    content << ""
+  parts.concat(build_sections_markdown(profile.sections))
+
+  parts.join("\n")
+end
+
+def build_sections_markdown(sections)
+  sections.flat_map do |section|
+    ["## #{section.name}", "", section.content, "", "---", ""]
   end
-
-  content.join("\n")
 end
 
 task default: :server
