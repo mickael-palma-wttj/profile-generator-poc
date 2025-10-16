@@ -39,3 +39,4 @@ log/
 # Temporary files
 *.tmp
 debug/
+.rspec_status
