@@ -6,11 +6,14 @@ module ProfileGenerator
   module Services
     # Orchestrates parallel generation of sections using a SectionGenerator instance.
     class ParallelSectionGenerator
-      def initialize(section_generator:, max_threads:, progress_callback: nil, logger: nil)
+      def initialize(section_generator:, max_threads:, progress_callback: nil, logger: nil, future_builder: nil)
         @section_generator = section_generator
         @max_threads = max_threads
         @progress_callback = progress_callback
         @logger = logger
+        # future_builder is a callable that takes (pool) and a block and returns an object
+        # responding to `value`. Default uses Concurrent::Future.execute.
+        @future_builder = future_builder || ->(pool, &block) { Concurrent::Future.execute(executor: pool, &block) }
       end
 
       def call(company:, section_names:)
@@ -42,7 +45,7 @@ module ProfileGenerator
       end
 
       def future_for_name(pool, company, name)
-        Concurrent::Future.execute(executor: pool) do
+        @future_builder.call(pool) do
           notify(name, :in_progress)
           generate_section_with_notify(company, name)
         end

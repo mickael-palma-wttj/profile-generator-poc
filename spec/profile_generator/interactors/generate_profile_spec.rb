@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../spec_helper"
-
 RSpec.describe ProfileGenerator::Interactors::GenerateProfile do
   subject(:interactor) do
     gen_logger = instance_double(

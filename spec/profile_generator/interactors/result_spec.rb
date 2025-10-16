@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../spec_helper"
-
 RSpec.describe ProfileGenerator::Interactors::Result do
   describe ".success" do
     let(:result) { described_class.success({ foo: "bar" }, { generated: 1 }) }
