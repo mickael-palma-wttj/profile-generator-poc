@@ -59,35 +59,31 @@ module ProfileGenerator
       def generate_section(company:, section_name:, retry_attempt: 0)
         validate_company!(company)
         validate_section_exists!(section_name)
-
         @generation_logger.section_started(section_name, company, retry_attempt)
         start_time = Time.now
 
-        prompt_builder = Services::PromptBuilder.new(company)
-        section_content = generate_section_content(
-          prompt_builder,
-          section_name,
-          company
-        )
+        retryer = Services::Retryer.new(max_retries: @max_retries, logger: generation_logger)
+
+        section = retryer.with_retries do
+          Services::SectionGenerator.new(
+            anthropic_client: anthropic_client,
+            prompt_loader: prompt_loader,
+            logger: generation_logger
+          ).call(company: company, section_name: section_name)
+        end
 
         duration = Time.now - start_time
         @generation_logger.section_completed(
           section_name,
           duration,
-          section_content.length,
+          section.content.length,
           retry_count: retry_attempt,
           company: company
         )
 
-        section = Models::ProfileSection.new(
-          name: humanize_section_name(section_name),
-          content: section_content,
-          prompt_file: section_name
-        )
-
         Result.success(section)
       rescue StandardError => e
-        handle_section_error(e, company, section_name, retry_attempt)
+        build_failure_result(e, section_name, retry_attempt)
       end
 
       private
@@ -140,11 +136,20 @@ module ProfileGenerator
 
       # Sequential generation
       def generate_sections_sequential(company, section_names)
-        @generation_logger.info("Generating sections sequentially")
-        section_names.filter_map do |section_name|
-          result = generate_section(company: company, section_name: section_name)
-          handle_section_result(result, section_name)
-        end
+        section_generator = Services::SectionGenerator.new(
+          anthropic_client: anthropic_client,
+          prompt_loader: prompt_loader,
+          logger: generation_logger,
+          retryer: Services::Retryer.new(max_retries: @max_retries, logger: generation_logger)
+        )
+
+        sequential = Services::SequentialSectionGenerator.new(
+          section_generator: section_generator,
+          progress_callback: @progress_callback,
+          logger: generation_logger
+        )
+
+        sequential.call(company: company, section_names: section_names)
       end
 
       def handle_section_result(result, section_name)
@@ -156,19 +161,20 @@ module ProfileGenerator
 
       # Parallel generation using thread pool
       def generate_sections_parallel(company, section_names)
-        message = "Generating #{section_names.count} sections in parallel " \
-                  "(max #{@max_threads} threads)"
-        @generation_logger.info(message)
+        section_generator = Services::SectionGenerator.new(
+          anthropic_client: anthropic_client,
+          prompt_loader: prompt_loader,
+          logger: generation_logger
+        )
 
-        notify_all_pending(section_names)
+        parallel_generator = Services::ParallelSectionGenerator.new(
+          section_generator: section_generator,
+          max_threads: @max_threads,
+          progress_callback: @progress_callback,
+          logger: generation_logger
+        )
 
-        pool = Concurrent::FixedThreadPool.new(@max_threads)
-        futures = create_section_futures(pool, company, section_names)
-
-        sections = collect_future_results(futures)
-        shutdown_pool(pool)
-
-        sections
+        parallel_generator.call(company: company, section_names: section_names)
       end
 
       def notify_all_pending(section_names)
