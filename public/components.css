@@ -790,6 +790,79 @@
     gap: 2rem;
 }
 
+.combined-map-container {
+    margin-bottom: 1rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.combined-map-container h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.combined-map {
+    width: 100%;
+    height: 500px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.location-map-container {
+    margin-top: 1.25rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 300px;
+}
+
+.location-map {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+}
+
+/* Leaflet map styling */
+.leaflet-container {
+    font-family: inherit;
+}
+
+.leaflet-popup-content {
+    margin: 8px 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.leaflet-popup-content strong {
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.leaflet-popup-content em {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 4px;
+}
+
+.office-marker {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+@media print {
+
+    .combined-map-container,
+    .location-map-container {
+        display: none;
+    }
+}
+
 .headquarters-card {
     padding: 2rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

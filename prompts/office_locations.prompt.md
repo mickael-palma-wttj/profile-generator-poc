@@ -3,6 +3,8 @@
 ## Task
 Research and compile information about the company's office locations, headquarters, and physical presence.
 
+**IMPORTANT**: Include latitude and longitude coordinates for ALL locations. These coordinates are REQUIRED for map visualization in the profile.
+
 ## Output Format
 Return **ONLY** valid JSON in the following structure. Do NOT include any markdown code fences, explanations, or additional text.
 
@@ -12,7 +14,10 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
   "data": {
     "headquarters": {
       "city": "San Francisco",
+      "country": "United States",
       "address": "510 Townsend Street, San Francisco, CA 94103",
+      "latitude": 37.7749,
+      "longitude": -122.4194,
       "size": "185,000 sq ft",
       "description": "Brief description of the HQ location and what makes it special (1-2 sentences)"
     },
@@ -22,6 +27,8 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
         "country": "Ireland",
         "type": "Regional HQ",
         "address": "1 Grand Canal Street Lower, Dublin 2",
+        "latitude": 53.3494,
+        "longitude": -6.2601,
         "size": "50,000 sq ft",
         "description": "What teams work here and why this location is important (1-2 sentences)"
       }
@@ -47,10 +54,23 @@ Return **ONLY** valid JSON in the following structure. Do NOT include any markdo
 - City name where HQ is located
 - Example: "San Francisco", "London", "Singapore"
 
+**country** (required)
+- Country name (for international clarity)
+
 **address** (required)
 - Full street address
 - Format: "Street Address, City, State/Province ZIP, Country"
 - Use official address from company website or press releases
+
+**latitude** (required)
+- Geographic latitude coordinate (e.g., 37.7749)
+- Use decimal format with up to 4 decimal places
+- Find coordinates from Google Maps or public geocoding services
+
+**longitude** (required)
+- Geographic longitude coordinate (e.g., -122.4194)
+- Use decimal format with up to 4 decimal places
+- Find coordinates from Google Maps or public geocoding services
 
 **size** (optional)
 - Office size in square feet or square meters
@@ -88,6 +108,16 @@ For each office:
 - Full address if publicly available
 - Can omit if not disclosed
 
+**latitude** (optional)
+- Geographic latitude coordinate (e.g., 53.3494)
+- Use decimal format with up to 4 decimal places
+- Required for map display; find from Google Maps or public geocoding services
+
+**longitude** (optional)
+- Geographic longitude coordinate (e.g., -6.2601)
+- Use decimal format with up to 4 decimal places
+- Required for map display; find from Google Maps or public geocoding services
+
 **size** (optional)
 - Office size if publicly disclosed
 
@@ -109,15 +139,35 @@ For each office:
 - Include even if company is office-centric (state the policy)
 - Example: "Stripe operates a hybrid model with employees working from offices or remotely. The company has hundreds of fully remote employees across the US and Europe, with infrastructure built to support distributed collaboration. Remote workers receive home office stipends and gather quarterly for team offsites."
 
+## ⚠️ MANDATORY: Coordinates for All Locations
+
+**CRITICAL**: You MUST include latitude and longitude for EVERY office location (both headquarters and all offices). This is required for the maps feature to work.
+
+**How to find coordinates:**
+1. Search the address on Google Maps
+2. Right-click on the map marker
+3. Copy the coordinates shown (format: latitude, longitude)
+4. Example: Paris = 48.8566, 2.3522
+
+**Format:** 
+- Use decimal numbers with up to 4 decimal places
+- Latitude range: -90 to +90
+- Longitude range: -180 to +180
+- Example: "latitude": 48.8566, "longitude": 2.3522
+
+**This is NOT optional.** If you cannot find coordinates for a location, do NOT include that location in the output.
+
 ## Quality Standards
 
 ✅ **DO:**
+- **ALWAYS include latitude and longitude for every location** (this is the most important requirement)
 - Verify addresses from official company sources
 - List offices in order of importance (HQ first, then by size/significance)
 - Include both established presence and recent expansions
 - Note if office is new or recently expanded
 - Mention if location is in notable building or district
 - Include team size if publicly disclosed
+- Use Google Maps to verify coordinates are correct before including them
 
 ❌ **DON'T:**
 - Include every small satellite office or co-working space
@@ -179,7 +229,10 @@ For each office:
   "data": {
     "headquarters": {
       "city": "San Francisco",
+      "country": "United States",
       "address": "510 Townsend Street, San Francisco, CA 94103",
+      "latitude": 37.7749,
+      "longitude": -122.4194,
       "size": "185,000 sq ft",
       "description": "Stripe's headquarters occupies a renovated warehouse in San Francisco's SOMA district, housing over 1,000 employees across engineering, product, design, and executive teams. The space features an open floor plan designed to foster collaboration and includes a demo theater for product showcases."
     },
@@ -189,6 +242,8 @@ For each office:
         "country": "Ireland",
         "type": "Regional HQ - EMEA",
         "address": "1 Grand Canal Street Lower, Dublin 2, Ireland",
+        "latitude": 53.3494,
+        "longitude": -6.2601,
         "size": "50,000 sq ft",
         "description": "Stripe's European headquarters serves as the hub for EMEA operations, including engineering, sales, and customer support teams. Dublin was chosen for its tech talent pool and favorable business environment for serving European customers."
       },
@@ -197,6 +252,8 @@ For each office:
         "country": "Singapore",
         "type": "Regional HQ - APAC",
         "address": "9 Straits View, Marina One West Tower, Singapore 018937",
+        "latitude": 1.2773,
+        "longitude": 103.8507,
         "size": "40,000 sq ft",
         "description": "The APAC headquarters leads Stripe's expansion across Asia-Pacific markets with teams focused on regional partnerships, localization, and regulatory compliance. Opened in 2017 to serve growing demand from Asian businesses."
       },
@@ -205,6 +262,8 @@ For each office:
         "country": "United States",
         "type": "Engineering Hub",
         "address": "925 4th Avenue, Suite 1800, Seattle, WA 98104",
+        "latitude": 47.6062,
+        "longitude": -122.3321,
         "description": "Major engineering office focused on payments infrastructure and platform development. Home to 300+ engineers and growing, taking advantage of Seattle's deep technical talent pool from Amazon, Microsoft, and local tech companies."
       },
       {
@@ -212,6 +271,8 @@ For each office:
         "country": "United Kingdom",
         "type": "Engineering Hub",
         "address": "1 Finsbury Market, London EC2A 2EN, United Kingdom",
+        "latitude": 51.5185,
+        "longitude": -0.0855,
         "description": "Stripe's second-largest office outside the US, housing engineering, product, and sales teams. Critical hub for serving UK and European markets with dedicated teams for local payment methods and financial regulations."
       },
       {
@@ -219,6 +280,8 @@ For each office:
         "country": "United States",
         "type": "Sales Office",
         "address": "354 Oyster Point Blvd, South San Francisco, CA 94080",
+        "latitude": 40.7128,
+        "longitude": -74.0060,
         "description": "Stripe's East Coast office focuses primarily on enterprise sales and partnerships with major financial institutions and corporations. Strategic location for accessing Wall Street and Fortune 500 companies."
       },
       {
@@ -226,31 +289,33 @@ For each office:
         "country": "Canada",
         "type": "Engineering Hub",
         "address": "135 Liberty Street, Suite 200, Toronto, ON M6K 1A7",
+        "latitude": 43.6532,
+        "longitude": -79.3832,
         "description": "Canadian headquarters serving as an engineering and product hub. Opened in 2018 to tap into Toronto's thriving tech ecosystem and serve Canadian businesses with local support."
-      },
-      {
-        "city": "Chicago",
-        "country": "United States",
-        "type": "Sales Office",
-        "description": "Midwest sales and partnerships office serving the central US region. Focus on mid-market and enterprise accounts in manufacturing, logistics, and traditional industries."
       },
       {
         "city": "Paris",
         "country": "France",
         "type": "Sales Office",
         "address": "18 Rue la Fayette, 75009 Paris, France",
+        "latitude": 48.8566,
+        "longitude": 2.3522,
         "description": "French office serving local market with sales, support, and partnerships teams. Critical for navigating French regulatory environment and serving local businesses."
       },
       {
         "city": "Tokyo",
         "country": "Japan",
         "type": "Sales Office",
+        "latitude": 35.6762,
+        "longitude": 139.6503,
         "description": "Japan office focused on expanding Stripe's presence in one of the world's largest e-commerce markets. Teams work on local payment method integrations and partnerships with Japanese businesses."
       },
       {
         "city": "Sydney",
         "country": "Australia",
         "type": "Sales Office",
+        "latitude": -33.8688,
+        "longitude": 151.2093,
         "description": "Australian office serving businesses across Australia and New Zealand. Established to provide local support and build partnerships in the growing APAC e-commerce ecosystem."
       }
     ],
@@ -286,3 +351,10 @@ Additional Context: {CONTEXT}
 
 ## Output
 Return ONLY the JSON structure. No explanations, no markdown formatting, no code blocks—just pure JSON.
+
+**CRITICAL REMINDER**: 
+- Every headquarters and office MUST have latitude and longitude fields
+- Without coordinates, the maps will not display
+- Do not omit coordinates for any location
+- Do not include locations without coordinates
+- Double-check all coordinates are correct decimal numbers

@@ -24,6 +24,53 @@
     };
 
     // ============================================================================
+    // Leaflet Library Loader
+    // ============================================================================
+
+    /**
+     * Wait for Leaflet library to be available
+     * Returns a promise that resolves when window.L is defined
+     */
+    function waitForLeaflet(maxAttempts = 200, delayMs = 50) {
+        return new Promise((resolve, reject) => {
+            // If already loaded, resolve immediately
+            if (window.L) {
+                console.log(`[Leaflet] Library already available`);
+                resolve(window.L);
+                return;
+            }
+
+            let attempts = 0;
+            console.log(`[Leaflet] Starting wait for Leaflet library (max ${maxAttempts} attempts = ${(maxAttempts * delayMs / 1000).toFixed(1)}s)`);
+
+            function checkLeaflet() {
+                if (window.L) {
+                    console.log(`[Leaflet] ✅ Library loaded successfully after ${attempts} attempts (${attempts * delayMs}ms)`);
+                    resolve(window.L);
+                    return;
+                }
+
+                attempts++;
+                if (attempts % 20 === 0) {
+                    console.log(`[Leaflet] Still waiting... ${attempts}/${maxAttempts} attempts`);
+                }
+
+                if (attempts > maxAttempts) {
+                    console.error(`[Leaflet] ❌ Failed to load after ${maxAttempts} attempts (${(maxAttempts * delayMs / 1000).toFixed(1)}s)`);
+                    console.error(`[Leaflet] window.L is:`, window.L);
+                    console.error(`[Leaflet] Leaflet global is:`, typeof Leaflet !== 'undefined' ? Leaflet : 'undefined');
+                    reject(new Error('Leaflet library failed to load'));
+                    return;
+                }
+
+                setTimeout(checkLeaflet, delayMs);
+            }
+
+            checkLeaflet();
+        });
+    }
+
+    // ============================================================================
     // Template Utilities
     // ============================================================================
 
@@ -660,15 +707,105 @@
     }
 
     // ============================================================================
+    // Geocoding Utility (for automatic coordinate lookup)
+    // ============================================================================
+
+    const GEOCODING_CACHE = {};
+
+    async function geocodeLocation(address, city, country) {
+        // Build query string - skip undefined country
+        let queryParts = [];
+        if (address) queryParts.push(address);
+        if (city) queryParts.push(city);
+        if (country) queryParts.push(country);
+
+        const queryString = queryParts.join(', ').trim();
+        const cacheKey = queryString.toLowerCase();
+
+        // Return from cache if available
+        if (GEOCODING_CACHE[cacheKey]) {
+            console.log(`[Geocoding] Cache hit for: ${cacheKey}`, GEOCODING_CACHE[cacheKey]);
+            return GEOCODING_CACHE[cacheKey];
+        }
+
+        try {
+            // Try queries in order of specificity (most specific first)
+            const queries = [
+                queryString, // Full address: "123 Main St, Berlin, Germany"
+                city && country ? `${city}, ${country}` : null, // City + Country: "Berlin, Germany"
+                city ? city : null // Just city: "Berlin"
+            ].filter(q => q); // Remove null values
+
+            for (const query of queries) {
+                console.log(`[Geocoding] Attempting query: ${query}`);
+                const encodedQuery = encodeURIComponent(query);
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                console.log(`[Geocoding] Response for "${query}":`, data);
+
+                if (data && data.length > 0) {
+                    const result = {
+                        latitude: parseFloat(data[0].lat),
+                        longitude: parseFloat(data[0].lon)
+                    };
+                    console.log(`[Geocoding] ✅ Found coordinates for "${query}":`, result);
+                    GEOCODING_CACHE[cacheKey] = result;
+                    return result;
+                } else {
+                    console.log(`[Geocoding] No results for "${query}", trying next query...`);
+                }
+            }
+
+            console.warn(`[Geocoding] ❌ No results found for any query variation: ${queryString}`);
+        } catch (error) {
+            console.error(`[Geocoding] Error geocoding "${queryString}":`, error);
+        }
+
+        return null;
+    }
+
+    // ============================================================================
     // Office Locations Component
     // ============================================================================
 
     class OfficeLocationsSection extends ProfileSectionComponent {
+        connectedCallback() {
+            const dataAttr = this.getAttribute('data');
+
+            if (!dataAttr) {
+                console.warn('[Component] No data attribute found for', this.constructor.name);
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(dataAttr);
+                // Extract the actual data from { type: "...", data: {...} } structure
+                this.data = parsed.data || parsed;
+                this.validateData();
+                // Use async render for geocoding
+                this.renderAsync();
+            } catch (e) {
+                console.error('[Component] Failed to parse section data:', e);
+                console.error('[Component] Component:', this.constructor.name);
+                console.error('[Component] Data preview:', dataAttr.substring(0, 200));
+                this.renderError(e.message);
+            }
+        }
+
+        async renderAsync() {
+            await this.enhanceLocationsWithGeocoding(this.data.headquarters, this.data.offices);
+            this.render();
+        }
+
         render() {
             const { headquarters, offices, sources } = this.data;
 
             this.innerHTML = `
                 <div class="office-locations-section">
+                    ${this.renderCombinedMap(headquarters, offices)}
                     ${this.renderHeadquarters(headquarters)}
                     ${this.renderOffices(offices)}
                     ${TemplateUtils.renderSources(sources)}
@@ -676,16 +813,179 @@
             `;
         }
 
+        async enhanceLocationsWithGeocoding(headquarters, offices) {
+            console.log('[OfficeLocations] Enhancing locations with geocoding...');
+            console.log('[OfficeLocations] Headquarters:', headquarters);
+            console.log('[OfficeLocations] Offices:', offices);
+
+            // Geocode headquarters if needed
+            if (headquarters) {
+                if (headquarters.latitude && headquarters.longitude) {
+                    console.log('[OfficeLocations] ✅ Headquarters already has coordinates from LLM:', { lat: headquarters.latitude, lon: headquarters.longitude });
+                } else {
+                    console.log(`[OfficeLocations] Geocoding headquarters (no LLM coords): ${headquarters.address || headquarters.city}, ${headquarters.country}`);
+                    const coords = await geocodeLocation(headquarters.address, headquarters.city, headquarters.country);
+                    if (coords) {
+                        headquarters.latitude = coords.latitude;
+                        headquarters.longitude = coords.longitude;
+                        console.log('[OfficeLocations] ✅ Headquarters geocoded:', headquarters);
+                    }
+                }
+            }
+
+            // Geocode offices if needed
+            if (offices && Array.isArray(offices)) {
+                for (const office of offices) {
+                    if (office.latitude && office.longitude) {
+                        console.log(`[OfficeLocations] ✅ Office already has coordinates from LLM:`, { city: office.city, lat: office.latitude, lon: office.longitude });
+                    } else {
+                        console.log(`[OfficeLocations] Geocoding office (no LLM coords): ${office.address || office.city}, ${office.country}`);
+                        const coords = await geocodeLocation(office.address, office.city, office.country);
+                        if (coords) {
+                            office.latitude = coords.latitude;
+                            office.longitude = coords.longitude;
+                            console.log('[OfficeLocations] ✅ Office geocoded:', office);
+                        }
+                    }
+                }
+            }
+        }
+
+        renderCombinedMap(headquarters, offices) {
+            const allLocations = [];
+            if (headquarters && headquarters.latitude && headquarters.longitude) {
+                allLocations.push({ ...headquarters, isHeadquarters: true });
+            }
+            if (offices && offices.length > 0) {
+                allLocations.push(...offices.filter(o => o.latitude && o.longitude));
+            }
+
+            if (allLocations.length === 0) return '';
+
+            const mapId = `combined-map-${Math.random().toString(36).substr(2, 9)}`;
+
+            // Schedule map initialization after DOM is ready and Leaflet is loaded
+            // Use setTimeout to defer until DOM is in place, then wait for Leaflet
+            setTimeout(() => this.initCombinedMapWhenReady(mapId, allLocations), 50);
+
+            return `
+                <div class="combined-map-container">
+                    <h3>📍 Global Office Locations</h3>
+                    <div id="${mapId}" class="combined-map" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; min-height: 200px;">
+                        ${allLocations.length} location(s) - Map rendering...
+                    </div>
+                </div>
+            `;
+        }
+
+        async initCombinedMapWhenReady(mapId, locations) {
+            try {
+                await waitForLeaflet(200, 50); // Wait up to 10 seconds
+                this.initCombinedMap(mapId, locations);
+            } catch (error) {
+                console.error(`[OfficeLocations] Failed to initialize combined map for "${mapId}":`, error);
+                // Gracefully degrade - show list of locations instead of interactive map
+                const mapElement = document.getElementById(mapId);
+                if (mapElement) {
+                    console.log(`[OfficeLocations] Rendering fallback for combined map "${mapId}" with ${locations.length} locations`);
+                    const locationsList = locations
+                        .map(l => `<div style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>${l.city}</strong>: ${l.latitude.toFixed(4)}, ${l.longitude.toFixed(4)}</div>`)
+                        .join('');
+                    mapElement.innerHTML = `
+                        <div style="width: 100%; padding: 12px; background: #fff9f0; border: 1px solid #fdd7d7; border-radius: 4px; color: #666; font-size: 12px; text-align: left;">
+                            <strong style="display: block; margin-bottom: 8px;">📍 Office Locations (Interactive map unavailable)</strong>
+                            ${locationsList}
+                        </div>
+                    `;
+                    console.log(`[OfficeLocations] Fallback rendered for combined map "${mapId}"`);
+                }
+            }
+        }
+
+        initCombinedMap(mapId, locations) {
+            const mapElement = document.getElementById(mapId);
+            if (!mapElement) {
+                console.warn(`[OfficeLocations] Combined map element "${mapId}" not found`);
+                return;
+            }
+
+            // Check if already has Leaflet container (don't re-initialize)
+            if (mapElement.classList.contains('leaflet-container')) {
+                console.log(`[OfficeLocations] Combined map "${mapId}" already initialized`);
+                return;
+            }
+
+            // Calculate center and zoom
+            const lats = locations.map(l => l.latitude);
+            const lons = locations.map(l => l.longitude);
+            const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+            const centerLon = (Math.min(...lons) + Math.max(...lons)) / 2;
+
+            // Create map
+            const map = L.map(mapId).setView([centerLat, centerLon], 4);
+
+            // Add OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Add markers for each location
+            locations.forEach(location => {
+                const markerColor = location.isHeadquarters ? '#667eea' : '#3498db';
+                const markerIcon = L.divIcon({
+                    html: `<div style="background-color: ${markerColor}; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">📍</div>`,
+                    iconSize: [30, 30],
+                    className: 'office-marker'
+                });
+
+                const popup = `
+                    <strong>${location.city}${location.country ? ', ' + location.country : ''}</strong><br/>
+                    ${location.address ? location.address + '<br/>' : ''}
+                    ${location.type ? '<em>' + location.type + '</em>' : ''}
+                `;
+
+                L.marker([location.latitude, location.longitude], { icon: markerIcon })
+                    .bindPopup(popup)
+                    .addTo(map);
+            });
+
+            // Fit bounds to show all markers
+            if (locations.length > 0) {
+                const bounds = L.latLngBounds(locations.map(l => [l.latitude, l.longitude]));
+                map.fitBounds(bounds, { padding: [50, 50] });
+            }
+        }
+
+        calculateBounds(locations) {
+            let minLat = locations[0].latitude;
+            let maxLat = locations[0].latitude;
+            let minLon = locations[0].longitude;
+            let maxLon = locations[0].longitude;
+
+            locations.forEach(loc => {
+                minLat = Math.min(minLat, loc.latitude);
+                maxLat = Math.max(maxLat, loc.latitude);
+                minLon = Math.min(minLon, loc.longitude);
+                maxLon = Math.max(maxLon, loc.longitude);
+            });
+
+            return { minLat, maxLat, minLon, maxLon };
+        }
+
         renderHeadquarters(hq) {
             if (!hq) return '';
+
+            const cityDisplay = hq.country ? `${hq.city}, ${hq.country}` : hq.city;
 
             return `
                 <div class="headquarters-card">
                     <div class="location-badge">🏢 Headquarters</div>
-                    <h3 class="location-city">${hq.city}, ${hq.country}</h3>
+                    <h3 class="location-city">${cityDisplay}</h3>
                     ${TemplateUtils.renderIf(hq.address, a => `<p class="location-address">${a}</p>`)}
                     ${TemplateUtils.renderIf(hq.size, s => `<div class="location-size">👥 ${s}</div>`)}
                     ${TemplateUtils.renderIf(hq.description, d => `<p class="location-description">${d}</p>`)}
+                    ${this.renderLocationMap(hq, 'hq-map')}
                 </div>
             `;
         }
@@ -695,23 +995,107 @@
 
             return `
                 <div class="offices-grid">
-                    ${TemplateUtils.renderList(offices, o => this.renderOffice(o))}
+                    ${TemplateUtils.renderList(offices, (o, idx) => this.renderOffice(o, idx))}
                 </div>
             `;
         }
 
-        renderOffice(office) {
+        renderOffice(office, index) {
+            const mapId = `office-map-${index}`;
+            const cityDisplay = office.country ? `${office.city}, ${office.country}` : office.city;
             return `
                 <div class="office-card">
                     <div class="location-header">
-                        <h4 class="location-city">${office.city}, ${office.country}</h4>
+                        <h4 class="location-city">${cityDisplay}</h4>
                         ${TemplateUtils.renderIf(office.type, t => `<span class="location-type-badge">${t}</span>`)}
                     </div>
                     ${TemplateUtils.renderIf(office.address, a => `<p class="location-address">${a}</p>`)}
                     ${TemplateUtils.renderIf(office.size, s => `<div class="location-size">👥 ${s}</div>`)}
                     ${TemplateUtils.renderIf(office.description, d => `<p class="location-description">${d}</p>`)}
+                    ${this.renderLocationMap(office, mapId)}
                 </div>
             `;
+        }
+
+        renderLocationMap(location, mapId) {
+            if (!location.latitude || !location.longitude) return '';
+
+            // Schedule map initialization after DOM is ready and Leaflet is loaded
+            // Use setTimeout to defer until DOM is in place, then wait for Leaflet
+            setTimeout(() => this.initLocationMapWhenReady(mapId, location), 50);
+
+            return `
+                <div class="location-map-container">
+                    <div id="${mapId}" class="location-map" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">
+                        📍 ${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}<br/>
+                        <small>(Map rendering...)</small>
+                    </div>
+                </div>
+            `;
+        }
+
+        async initLocationMapWhenReady(mapId, location) {
+            try {
+                await waitForLeaflet(200, 50); // Wait up to 10 seconds
+                this.initLocationMap(mapId, location);
+            } catch (error) {
+                console.error(`[OfficeLocations] Failed to initialize map for "${mapId}":`, error);
+                // Gracefully degrade - show coordinates instead of interactive map
+                const mapElement = document.getElementById(mapId);
+                if (mapElement) {
+                    console.log(`[OfficeLocations] Rendering fallback for "${mapId}" with location:`, location);
+                    mapElement.innerHTML = `
+                        <div style="padding: 12px; background: #fff9f0; border: 1px solid #fdd7d7; border-radius: 4px; text-align: center; color: #666; font-size: 12px;">
+                            📍 <strong>${location.city || 'Location'}</strong><br/>
+                            Lat: ${location.latitude.toFixed(4)}<br/>
+                            Lon: ${location.longitude.toFixed(4)}<br/>
+                            <small>(Interactive map unavailable)</small>
+                        </div>
+                    `;
+                    console.log(`[OfficeLocations] Fallback rendered for "${mapId}"`);
+                }
+            }
+        }
+
+        initLocationMap(mapId, location) {
+            const mapElement = document.getElementById(mapId);
+            if (!mapElement) {
+                console.warn(`[OfficeLocations] Map element "${mapId}" not found`);
+                return;
+            }
+
+            // Check if already has Leaflet container (don't re-initialize)
+            if (mapElement.classList.contains('leaflet-container')) {
+                console.log(`[OfficeLocations] Map "${mapId}" already initialized`);
+                return;
+            }
+
+            // Create map
+            const map = L.map(mapId).setView([location.latitude, location.longitude], 14);
+
+            // Add OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Add marker
+            const markerIcon = L.divIcon({
+                html: `<div style="background-color: #667eea; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-size: 18px;">📍</div>`,
+                iconSize: [35, 35],
+                className: 'office-marker'
+            });
+
+            const popup = `
+                <strong>${location.city}${location.country ? ', ' + location.country : ''}</strong><br/>
+                ${location.address ? location.address + '<br/>' : ''}
+                ${location.type ? '<em>' + location.type + '</em>' : ''}
+            `;
+
+            L.marker([location.latitude, location.longitude], { icon: markerIcon })
+                .bindPopup(popup)
+                .addTo(map)
+                .openPopup();
         }
     }
 
