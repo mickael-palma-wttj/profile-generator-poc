@@ -28,6 +28,7 @@
             inProgress: '🔄',
             completed: '✅',
             failed: '❌',
+            skipped: '⊘',
             collapsed: '▶',
             expanded: '▼'
         }
@@ -487,7 +488,7 @@
                 classes: { add: ['failed'], remove: ['pending', 'in-progress', 'completed', 'skipped'] }
             },
             skipped: {
-                icon: CONFIG.icons.pending,
+                icon: CONFIG.icons.skipped,
                 text: 'Skipped (no files)',
                 classes: { add: ['skipped'], remove: ['pending', 'in-progress', 'completed', 'failed'] }
             }
@@ -522,27 +523,30 @@
         const completed = sections.filter(s => s.status === 'completed').length;
         const failed = sections.filter(s => s.status === 'failed').length;
         const inProgress = sections.filter(s => s.status === 'in_progress').length;
+        const skipped = sections.filter(s => s.status === 'skipped').length;
 
-        const percentage = Math.round((completed / state.totalSections) * 100);
+        // Calculate total sections excluding skipped ones
+        const totalActive = state.totalSections - skipped;
+        const percentage = Math.round((completed / totalActive) * 100);
 
         const { progressBarFill, progressPercentage, progressStatus } = state.domElements;
         progressBarFill.style.width = `${percentage}%`;
         progressPercentage.textContent = `${percentage}%`;
 
-        progressStatus.textContent = getProgressStatusText(completed, failed, inProgress);
+        progressStatus.textContent = getProgressStatusText(completed, failed, inProgress, skipped, totalActive);
     }
 
     /**
      * Get progress status text based on current state
      */
-    function getProgressStatusText(completed, failed, inProgress) {
+    function getProgressStatusText(completed, failed, inProgress, skipped, totalActive) {
         if (inProgress > 0) {
-            return `${completed}/${state.totalSections} sections completed`;
+            return `${completed}/${totalActive} sections completed`;
         }
-        if (completed === state.totalSections) {
+        if (completed === totalActive) {
             return 'All sections completed!';
         }
-        return `${completed}/${state.totalSections} completed, ${failed} failed`;
+        return `${completed}/${totalActive} completed, ${failed} failed`;
     }
 
 
@@ -781,7 +785,8 @@
             pending: CONFIG.icons.pending,
             in_progress: CONFIG.icons.inProgress,
             completed: CONFIG.icons.completed,
-            failed: CONFIG.icons.failed
+            failed: CONFIG.icons.failed,
+            skipped: CONFIG.icons.skipped
         };
         return iconMap[status] || CONFIG.icons.pending;
     }
