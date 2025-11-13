@@ -45,9 +45,42 @@ module ProfileGenerator
 
       def send_section_update(output_stream, section_name, section_data)
         data = build_section_update_data(section_name, section_data)
+        send_sse_event(output_stream, "section_update", data)
+      end
 
-        output_stream << "event: section_update\n"
+      def send_completion_event(output_stream, session_data)
+        data = { status: "completed", profile: session_data[:profile]&.to_h }
+        send_sse_event(output_stream, "complete", data)
+      end
+
+      def send_error_event(output_stream, session_data)
+        data = { status: "failed", error: safe_utf8_string(session_data[:error]) }
+        send_sse_event(output_stream, "error", data)
+      end
+
+      def completed_or_failed?(output_stream, session_data)
+        if session_data[:status] == "completed"
+          send_completion_event(output_stream, session_data)
+          true
+        elsif session_data[:status] == "failed"
+          send_error_event(output_stream, session_data)
+          true
+        else
+          false
+        end
+      end
+
+      # Helper: Send SSE event with proper formatting
+      def send_sse_event(output_stream, event_type, data)
+        output_stream << "event: #{event_type}\n"
         output_stream << "data: #{JSON.generate(data)}\n\n"
+      end
+
+      def schedule_session_cleanup(session_id)
+        Thread.new do
+          sleep SESSION_CLEANUP_DELAY
+          session_manager.delete_session(session_id)
+        end
       end
 
       def build_section_update_data(section_name, section_data)
@@ -60,42 +93,6 @@ module ProfileGenerator
           humanized_name: safe_utf8_string(section_data[:section]&.name),
           timestamp: section_data[:timestamp]&.iso8601
         }
-      end
-
-      def completed_or_failed?(output_stream, session_data)
-        case session_data[:status]
-        when "completed"
-          send_completion_event(output_stream, session_data)
-          true
-        when "failed"
-          send_error_event(output_stream, session_data)
-          true
-        else
-          false
-        end
-      end
-
-      def send_completion_event(output_stream, session_data)
-        output_stream << "event: complete\n"
-        output_stream << "data: #{JSON.generate({
-                                                  status: 'completed',
-                                                  profile: session_data[:profile]&.to_h
-                                                })}\n\n"
-      end
-
-      def send_error_event(output_stream, session_data)
-        output_stream << "event: error\n"
-        output_stream << "data: #{JSON.generate({
-                                                  status: 'failed',
-                                                  error: safe_utf8_string(session_data[:error])
-                                                })}\n\n"
-      end
-
-      def schedule_session_cleanup(session_id)
-        Thread.new do
-          sleep SESSION_CLEANUP_DELAY
-          session_manager.delete_session(session_id)
-        end
       end
 
       # DRY: Extract repeated UTF-8 encoding logic

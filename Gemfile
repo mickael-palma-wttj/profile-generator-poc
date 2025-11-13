@@ -12,8 +12,8 @@ gem "puma", "~> 6.4"
 gem "rackup", "~> 2.1"
 gem "sinatra", "~> 4.0"
 
-# AI API client
-gem "ruby-anthropic", "~> 0.4.2"
+# AI API client (official Anthropic SDK)
+gem "anthropic", "~> 1.14.0"
 
 # Autoloading
 gem "zeitwerk", "~> 2.6"

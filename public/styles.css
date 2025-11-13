@@ -785,6 +785,19 @@ footer {
     }
 }
 
+.analysis-content {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    border-left: 4px solid #2563eb;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin: 0;
+}
+
 .section-info {
     flex: 1;
     min-width: 0;

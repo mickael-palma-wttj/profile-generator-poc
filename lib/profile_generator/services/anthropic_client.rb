@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require "ruby/anthropic"
+require "anthropic"
+require "json"
+require "fileutils"
 
 module ProfileGenerator
   module Services
@@ -16,6 +18,11 @@ module ProfileGenerator
       DEFAULT_TEMPERATURE = 0.7
       DEFAULT_MAX_RETRIES = 3
       DEFAULT_BASE_DELAY = 1.0
+
+      RETRYABLE_ERROR_PATTERNS = [
+        "rate limit", "429", "500", "502", "503", "504", "529",
+        "timeout", "connection", "overloaded"
+      ].freeze
 
       def initialize(
         api_key: nil,
@@ -50,13 +57,19 @@ module ProfileGenerator
 
         response = nil
         with_retry do
-          response = client.messages(
-            parameters: build_parameters(prompt, system_prompt)
+          response = client.messages.create(
+            model: model,
+            max_tokens: max_tokens,
+            temperature: temperature,
+            system: system_prompt,
+            messages: [
+              { role: "user", content: prompt }
+            ]
           )
           save_debug_response(response, prompt, system_prompt, context) if @debug_mode
           extract_content(response)
         end
-      rescue Anthropic::Error => e
+      rescue Anthropic::Errors::APIError => e
         save_debug_error(e, prompt, system_prompt, context) if @debug_mode
         raise APIError, "Anthropic API error after #{@max_retries} retries: #{e.message}"
       end
@@ -68,14 +81,48 @@ module ProfileGenerator
       def generate_stream(prompt:, system_prompt: nil)
         validate_prompt!(prompt)
 
-        client.messages(
-          parameters: build_parameters(prompt, system_prompt).merge(stream: true)
-        ) do |chunk|
-          content = extract_stream_content(chunk)
-          yield(content) if content
+        client.messages.stream(
+          model: model,
+          max_tokens: max_tokens,
+          temperature: temperature,
+          system: system_prompt,
+          messages: [
+            { role: "user", content: prompt }
+          ]
+        ).text.each do |chunk|
+          yield(chunk) if chunk
         end
-      rescue Anthropic::Error => e
+      rescue Anthropic::Errors::APIError => e
         raise APIError, "Anthropic API error: #{e.message}"
+      end
+
+      # Generate file analysis with special handling for file content blocks
+      # @param prompt_content [Array] Array with text and document blocks
+      # @param company_name [String, nil] Company name for debug logging
+      # @param context [Hash, nil] Optional context for debug logging
+      # @return [Object] Raw API response object
+      def generate_file_analysis(prompt_content:, company_name: nil, context: {})
+        context[:section] ||= "file_analysis"
+        context[:company] ||= company_name || "unknown"
+
+        response = nil
+        with_retry do
+          response = client.messages.create(
+            model: model,
+            max_tokens: 2000,
+            messages: [
+              {
+                role: "user",
+                content: prompt_content
+              }
+            ]
+          )
+          save_debug_response(response, prompt_content, nil, context) if @debug_mode
+          response
+        end
+      rescue Anthropic::Errors::APIError => e
+        save_debug_error(e, prompt_content, nil, context) if @debug_mode
+        raise APIError, "Anthropic API error during file analysis after #{@max_retries} retries: #{e.message}"
       end
 
       private
@@ -84,7 +131,10 @@ module ProfileGenerator
                   :debug_mode, :debug_dir
 
       def client
-        @client ||= Anthropic::Client.new(access_token: api_key)
+        @client ||= Anthropic::Client.new(
+          api_key: api_key,
+          timeout: 120 # 2 minutes timeout for individual requests
+        )
       end
 
       # Retry logic with exponential backoff and jitter
@@ -93,7 +143,7 @@ module ProfileGenerator
         begin
           attempt += 1
           yield
-        rescue Anthropic::Error => e
+        rescue Anthropic::Errors::APIError => e
           raise unless attempt <= max_retries && retryable_error?(e)
 
           delay = calculate_delay(attempt)
@@ -106,16 +156,7 @@ module ProfileGenerator
       # Check if error is retryable (rate limit, server error, timeout, overloaded)
       def retryable_error?(error)
         error_message = error.message.downcase
-        error_message.include?("rate limit") ||
-          error_message.include?("429") ||  # Too Many Requests
-          error_message.include?("500") ||  # Internal Server Error
-          error_message.include?("502") ||  # Bad Gateway
-          error_message.include?("503") ||  # Service Unavailable
-          error_message.include?("504") ||  # Gateway Timeout
-          error_message.include?("529") ||  # Overloaded (Anthropic specific)
-          error_message.include?("timeout") ||
-          error_message.include?("connection") ||
-          error_message.include?("overloaded")
+        RETRYABLE_ERROR_PATTERNS.any? { |pattern| error_message.include?(pattern) }
       end
 
       # Calculate delay with exponential backoff and jitter
@@ -140,44 +181,19 @@ module ProfileGenerator
         raise ArgumentError, "Prompt cannot be empty"
       end
 
-      def build_parameters(prompt, system_prompt)
-        params = {
-          model: model,
-          max_tokens: max_tokens,
-          temperature: temperature,
-          messages: [
-            { role: "user", content: prompt }
-          ]
-        }
-
-        params[:system] = system_prompt if system_prompt && !system_prompt.strip.empty?
-        params
-      end
-
       def extract_content(response)
-        response.dig("content", 0, "text") || ""
+        response.content.first.text
       rescue StandardError => e
         raise APIError, "Failed to extract content from response: #{e.message}"
       end
 
-      def extract_stream_content(chunk)
-        return nil unless chunk.is_a?(Hash)
-        return nil unless chunk["type"] == "content_block_delta"
-
-        chunk.dig("delta", "text")
-      end
-
       # Setup debug directory
       def setup_debug_directory
-        require "fileutils"
         FileUtils.mkdir_p(debug_dir)
       end
 
       # Save raw API response for debugging
       def save_debug_response(response, prompt, system_prompt, context)
-        require "json"
-        require "fileutils"
-
         timestamp = Time.now.strftime("%Y%m%d_%H%M%S_%L")
         company = context[:company] || "unknown"
         section = context[:section] || "unknown"
@@ -193,9 +209,9 @@ module ProfileGenerator
             max_tokens: max_tokens,
             temperature: temperature,
             system_prompt: system_prompt,
-            user_prompt: prompt
+            user_prompt: format_prompt_for_debug(prompt)
           },
-          response: response,
+          response: response.to_h,
           extracted_content: extract_content(response)
         }
 
@@ -205,11 +221,28 @@ module ProfileGenerator
         warn "Failed to save debug response: #{e.message}"
       end
 
+      # Format prompt for debug logging (handles both string and content arrays)
+      def format_prompt_for_debug(prompt)
+        if prompt.is_a?(Array)
+          # File analysis prompt with content blocks
+          prompt.map do |block|
+            if block.is_a?(Hash)
+              if block[:type] == :document
+                "#{block[:type]}: #{block[:source]&.dig(:media_type) || 'unknown'} [base64-encoded]"
+              else
+                block
+              end
+            else
+              block
+            end
+          end
+        else
+          prompt
+        end
+      end
+
       # Save error information for debugging
       def save_debug_error(error, prompt, system_prompt, context)
-        require "json"
-        require "fileutils"
-
         timestamp = Time.now.strftime("%Y%m%d_%H%M%S_%L")
         company = context[:company] || "unknown"
         section = context[:section] || "unknown"
@@ -225,7 +258,7 @@ module ProfileGenerator
             max_tokens: max_tokens,
             temperature: temperature,
             system_prompt: system_prompt,
-            user_prompt: prompt
+            user_prompt: format_prompt_for_debug(prompt)
           },
           error: {
             class: error.class.name,

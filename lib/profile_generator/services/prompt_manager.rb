@@ -88,17 +88,23 @@ module ProfileGenerator
       end
 
       def extract_prompt_content(response)
-        # Langfuse returns different formats based on prompt type
-        case response["type"]
+        extractor = content_extractor_for(response["type"])
+        extractor.call(response)
+      end
+
+      def content_extractor_for(type)
+        case type
         when "text"
-          response["prompt"]
+          ->(response) { response["prompt"] }
         when "chat"
-          # Convert chat messages to a single text prompt
-          messages = response["prompt"]
-          messages.map { |msg| "#{msg['role']}: #{msg['content']}" }.join("\n\n")
+          ->(response) { convert_chat_to_text(response["prompt"]) }
         else
-          raise PromptNotFoundError, "Unsupported prompt type: #{response['type']}"
+          raise PromptNotFoundError, "Unsupported prompt type: #{type}"
         end
+      end
+
+      def convert_chat_to_text(messages)
+        messages.map { |msg| "#{msg['role']}: #{msg['content']}" }.join("\n\n")
       end
 
       def list_langfuse_prompts

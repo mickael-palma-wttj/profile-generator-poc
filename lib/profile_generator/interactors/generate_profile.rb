@@ -19,9 +19,7 @@ module ProfileGenerator
         progress_callback: nil
       )
         @anthropic_client = anthropic_client || build_anthropic_client(max_retries)
-        # Support both legacy prompt_loader and new prompt_manager
-        # prompt_manager takes precedence for flexibility
-        @prompt_loader = prompt_manager || prompt_loader || build_default_prompt_loader
+        @prompt_loader = resolve_prompt_loader(prompt_manager, prompt_loader)
         @generation_logger = generation_logger || Services::GenerationLogger.new
         @max_threads = max_threads
         @max_retries = max_retries
@@ -90,6 +88,13 @@ module ProfileGenerator
 
       attr_reader :anthropic_client, :prompt_loader, :generation_logger
 
+      # Resolve prompt loader with precedence: prompt_manager > prompt_loader > default
+      def resolve_prompt_loader(prompt_manager, prompt_loader)
+        return prompt_manager if prompt_manager
+        return prompt_loader if prompt_loader
+        build_default_prompt_loader
+      end
+
       def build_anthropic_client(max_retries)
         Services::AnthropicClient.new(max_retries: max_retries)
       end
@@ -117,21 +122,34 @@ module ProfileGenerator
       end
 
       def determine_sections(section_names)
-        if section_names.nil? || section_names.empty?
-          # Return all available prompts based on source
-          # For Langfuse, use the local file names for consistency
-          return Services::PromptNameMapper.all_file_names
-        end
+        sections = if section_names.nil? || section_names.empty?
+                     # Return all available prompts based on source
+                     # For Langfuse, use the local file names for consistency
+                     Services::PromptNameMapper.all_file_names
+                   else
+                     section_names
+                   end
 
-        section_names
+        # Exclude file_analysis - it's handled separately by FileAnalyzer in async handler
+        # before GenerateProfile is called, so we don't generate it here
+        sections - ["file_analysis"]
       end
 
-      def execute_generation(company, section_names, parallel)
+      def execute_generation(company, sections_to_generate, parallel)
+        # Wait for file analysis to be available (if files were uploaded)
+        # This ensures other sections can use file analysis context in their prompts
+        wait_for_file_analysis_if_needed
+
         if parallel
-          generate_sections_parallel(company, section_names)
+          generate_sections_parallel(company, sections_to_generate)
         else
-          generate_sections_sequential(company, section_names)
+          generate_sections_sequential(company, sections_to_generate)
         end
+      end
+
+      def wait_for_file_analysis_if_needed
+        waiter = Services::FileAnalysisWaiter.new(logger: @generation_logger)
+        waiter.wait_until_ready
       end
 
       # Sequential generation
@@ -192,7 +210,10 @@ module ProfileGenerator
       def execute_section_with_progress(company, section_name)
         notify_progress(section_name, :in_progress, nil)
         result = generate_section(company: company, section_name: section_name)
+        handle_section_generation_result(section_name, result)
+      end
 
+      def handle_section_generation_result(section_name, result)
         if result.success?
           notify_progress(section_name, :completed, result.value)
           result.value
@@ -243,40 +264,13 @@ module ProfileGenerator
       end
 
       def generate_section_content(prompt_builder, section_name, company)
-        system_prompt = prompt_builder.build_system_prompt(
-          prompt_loader.load(section_name)
-        )
+        template = prompt_loader.load(section_name)
+        system_prompt = prompt_builder.build_system_prompt(template)
         user_prompt = prompt_builder.build_user_prompt
-
         anthropic_client.generate(
           prompt: user_prompt,
           system_prompt: system_prompt,
-          context: {
-            company: company.name,
-            section: section_name
-          }
-        )
-      end
-
-      def handle_section_error(error, company, section_name, retry_attempt)
-        if should_retry?(error, retry_attempt)
-          perform_retry(error, company, section_name, retry_attempt)
-        else
-          build_failure_result(error, section_name, retry_attempt)
-        end
-      end
-
-      def should_retry?(error, retry_attempt)
-        retry_attempt < @max_retries && retryable_error?(error)
-      end
-
-      def perform_retry(error, company, section_name, retry_attempt)
-        @generation_logger.warn("Retryable error: '#{section_name}': #{error.message}")
-        sleep_with_backoff(retry_attempt)
-        generate_section(
-          company: company,
-          section_name: section_name,
-          retry_attempt: retry_attempt + 1
+          context: { company: company.name, section: section_name }
         )
       end
 
@@ -295,30 +289,17 @@ module ProfileGenerator
       end
 
       def retryable_error?(error)
-        return true if error.is_a?(Services::AnthropicClient::APIError)
-
-        error_message = error.message.downcase
-        retryable_patterns.any? { |pattern| error_message.include?(pattern) }
-      end
-
-      def retryable_patterns
-        ["timeout", "connection", "rate limit", "503", "502", "500", "504", "529", "overloaded"]
+        Services::RetryPolicy.retryable?(error)
       end
 
       def sleep_with_backoff(attempt)
-        delay = [1.0 * (2**attempt), 30.0].min
+        delay = Services::BackoffCalculator.calculate(attempt)
         @generation_logger.debug("Waiting #{delay.round(2)}s before retry...")
         sleep(delay)
       end
 
       def humanize_section_name(section_name)
-        # Convert file name to human-readable title
-        # e.g., "company_values" => "Company Values"
-        section_name
-          .tr("_", " ")
-          .split
-          .map(&:capitalize)
-          .join(" ")
+        Services::NameHumanizer.humanize(section_name)
       end
 
       def notify_progress(section_name, status, section, error: nil)

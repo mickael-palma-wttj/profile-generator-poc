@@ -12,15 +12,16 @@
 
     const CONFIG = {
         sectionOrder: [
-            'company_description',   // What the company is/does
-            'their_story',          // Origin and history
-            'company_values',       // Culture and principles
-            'key_numbers',          // Quantitative snapshot
-            'funding_parser',       // Financial backing
-            'leadership',           // Who runs the company
-            'office_locations',     // Geographic presence
-            'perks_and_benefits',   // Employee benefits
-            'remote_policy'         // Work arrangements
+            'file_analysis',            // File reference analysis (if files uploaded)
+            'company_description',      // What the company is/does
+            'their_story',              // Origin and history
+            'company_values',           // Culture and principles
+            'key_numbers',              // Quantitative snapshot
+            'funding_parser',           // Financial backing
+            'leadership',               // Who runs the company
+            'office_locations',         // Geographic presence
+            'perks_and_benefits',       // Employee benefits
+            'remote_policy'             // Work arrangements
         ],
         icons: {
             pending: '⏳',
@@ -146,10 +147,21 @@
             return;
         }
 
-        initializeGenerationUI(companyName, website);
+        // Debug: Check files before UI init
+        const filesInput = document.getElementById('files');
+        console.log('[handleFormSubmit] filesInput:', filesInput);
+        console.log('[handleFormSubmit] filesInput.files:', filesInput?.files);
+        console.log('[handleFormSubmit] filesInput.files.length:', filesInput?.files?.length);
 
         try {
+            // START ASYNC GENERATION FIRST - before clearing the form from DOM
             const data = await startAsyncGeneration(companyName, website);
+
+            // THEN initialize UI (which may clear the form)
+            initializeGenerationUI(companyName, website);
+
+            // THEN setup SSE IMMEDIATELY to catch file_analysis progress
+            // This must be done right after UI init, before any generation starts
             setupServerSentEvents(data.session_id, companyName, website);
         } catch (error) {
             handleError(error.message);
@@ -205,18 +217,49 @@
             // else leave as-is (backend will attempt to canonicalize)
         }
 
+        // Build form data with files BEFORE we clear the DOM
+        // This is critical because initializeGenerationUI might clear the form
+        const formData = new FormData();
+        formData.append('company_name', companyName);
+        formData.append('website', website);
+        formData.append('output_language', outputLanguage);
+
+        // Add uploaded files if present - READ FILES BEFORE ANY DOM CHANGES
+        const filesInput = document.getElementById('files');
+        console.log('[startAsyncGeneration] filesInput:', filesInput);
+        console.log('[startAsyncGeneration] filesInput.files:', filesInput?.files);
+        console.log('[startAsyncGeneration] filesInput.files.length:', filesInput?.files?.length);
+
+        if (filesInput && filesInput.files && filesInput.files.length > 0) {
+            console.log(`[startAsyncGeneration] Adding ${filesInput.files.length} file(s) to FormData`);
+            for (let i = 0; i < filesInput.files.length; i++) {
+                console.log(`[startAsyncGeneration] Adding file ${i}: ${filesInput.files[i].name}`);
+                formData.append('files[]', filesInput.files[i]);
+            }
+        } else {
+            console.warn('[startAsyncGeneration] ⚠️ NO FILES SELECTED - FormData will NOT include files');
+            if (!filesInput) console.warn('[startAsyncGeneration] files input element not found!');
+            if (filesInput && !filesInput.files) console.warn('[startAsyncGeneration] files input has no files property!');
+            if (filesInput && filesInput.files && filesInput.files.length === 0) console.warn('[startAsyncGeneration] No files in FileList - user did not select any files');
+        }
+
+        console.log('[startAsyncGeneration] FormData ready, sending to /generate/async');
+
+        // Debug: Log what's in FormData (note: can't directly inspect FormData entries in all browsers)
+        // So we'll log individual appends
+        console.log('[startAsyncGeneration] FormData contents:');
+        console.log('[startAsyncGeneration] - company_name:', companyName);
+        console.log('[startAsyncGeneration] - website:', website);
+        console.log('[startAsyncGeneration] - output_language:', outputLanguage);
+        console.log('[startAsyncGeneration] - files count:', filesInput?.files?.length || 0);
+
         const response = await fetch('/generate/async', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                company_name: companyName,
-                website: website
-                , output_language: outputLanguage
-            })
+            body: formData
+            // Note: DO NOT set Content-Type header - browser will set it with boundary for multipart/form-data
         });
 
+        console.log('[startAsyncGeneration] Response status:', response.status);
         const data = await response.json();
 
         if (!data.success) {
@@ -282,6 +325,7 @@
      */
     function resetState() {
         state.sectionsData = {};
+        // Count sections: if files are uploaded, include file_analysis; otherwise just the standard sections
         state.totalSections = CONFIG.sectionOrder.length;
 
         // Initialize sticky nav items for all sections
@@ -420,6 +464,11 @@
                 icon: CONFIG.icons.pending,
                 text: 'Pending...',
                 classes: { add: ['pending'], remove: ['in-progress', 'completed', 'failed'] }
+            },
+            analyzing: {
+                icon: CONFIG.icons.inProgress,
+                text: 'Analyzing files...',
+                classes: { add: ['in-progress'], remove: ['pending', 'completed', 'failed'] }
             },
             in_progress: {
                 icon: CONFIG.icons.inProgress,

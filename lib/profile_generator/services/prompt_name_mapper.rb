@@ -9,6 +9,7 @@ module ProfileGenerator
       FILE_TO_LANGFUSE = {
         "company_description" => "CompanyDescription",
         "company_values" => "CompanyValues",
+        "file_analysis" => "FileAnalysis",
         "funding_parser" => "FundingParser",
         "key_numbers" => "KeyNumbers",
         "leadership" => "Leadership",

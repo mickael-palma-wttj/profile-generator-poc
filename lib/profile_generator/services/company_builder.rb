@@ -7,6 +7,8 @@ module ProfileGenerator
     class CompanyBuilder
       class ValidationError < StandardError; end
 
+      COMPANY_NAME_REQUIRED = "Company name is required"
+
       def self.build(params)
         new(params).build
       end
@@ -27,7 +29,7 @@ module ProfileGenerator
       attr_reader :company_name, :website
 
       def validate!
-        raise ValidationError, "Company name is required" if company_name_blank?
+        raise ValidationError, COMPANY_NAME_REQUIRED if company_name_blank?
       end
 
       def company_name_blank?

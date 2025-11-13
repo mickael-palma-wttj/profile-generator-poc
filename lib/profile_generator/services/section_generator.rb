@@ -9,10 +9,12 @@ module ProfileGenerator
         @prompt_loader = prompt_loader
         @logger = logger
         @retryer = retryer
+        @section_name = nil
       end
 
       # Returns a Models::ProfileSection
       def call(company:, section_name:)
+        @section_name = section_name
         prompt_template = @prompt_loader.load(section_name)
         system_prompt, user_prompt = build_prompts(company, prompt_template)
 
@@ -43,7 +45,18 @@ module ProfileGenerator
 
       def build_prompts(company, prompt_template)
         builder = PromptBuilder.new(company)
-        [builder.build_system_prompt(prompt_template), builder.build_user_prompt]
+
+        # File analysis should not include company context - analyze objectively
+        if @section_name == "file_analysis"
+          # For file analysis, use the prompt template as-is without company substitution
+          system_prompt = prompt_template
+          user_prompt = builder.build_file_analysis_user_prompt
+        else
+          system_prompt = builder.build_system_prompt(prompt_template)
+          user_prompt = builder.build_user_prompt
+        end
+
+        [system_prompt, user_prompt]
       end
 
       def call_anthropic(user_prompt, system_prompt, company, section_name)
