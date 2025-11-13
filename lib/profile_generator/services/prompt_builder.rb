@@ -70,7 +70,7 @@ module ProfileGenerator
       end
 
       def file_analysis_context
-        return nil unless has_file_analysis?
+        return nil unless file_analysis?
 
         build_analysis_context
       end
@@ -83,7 +83,7 @@ module ProfileGenerator
         "Respond in #{label} (#{lang_code}) unless otherwise instructed. Keep JSON output structure unchanged."
       end
 
-      def has_file_analysis?
+      def file_analysis?
         analysis = ProfileGenerator.configuration.file_analysis
         analysis.is_a?(Hash) && !analysis.empty?
       end
@@ -101,7 +101,7 @@ module ProfileGenerator
       end
 
       def formatted_analysis_fields
-        ANALYSIS_FIELDS.map { |field| format_analysis_field(field) }.compact
+        ANALYSIS_FIELDS.filter_map { |field| format_analysis_field(field) }
       end
 
       def format_analysis_field(field)

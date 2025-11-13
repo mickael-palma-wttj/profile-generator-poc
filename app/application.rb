@@ -223,20 +223,31 @@ module ProfileGenerator
     def store_analysis_result(session_id, analysis)
       if analysis && !analysis.empty?
         ProfileGenerator.configuration.file_analysis = analysis
-        settings.session_manager.update_section(session_id, "file_analysis", {
-                                                  status: "completed",
-                                                  section: Models::ProfileSection.new(
-                                                    name: "Reference Files Analysis",
-                                                    content: format_analysis_content(analysis),
-                                                    prompt_file: "file_analysis.prompt.md"
-                                                  ),
-                                                  raw_content: analysis.to_json,
-                                                  error: nil,
-                                                  timestamp: Time.now
-                                                })
+        store_analysis_section(session_id, analysis)
       else
         notify_analysis_status(session_id, "completed")
       end
+    end
+
+    # Helper: Store analysis section in session manager
+    def store_analysis_section(session_id, analysis)
+      section = build_analysis_section(analysis)
+      settings.session_manager.update_section(session_id, "file_analysis", {
+                                                status: "completed",
+                                                section: section,
+                                                raw_content: analysis.to_json,
+                                                error: nil,
+                                                timestamp: Time.now
+                                              })
+    end
+
+    # Helper: Build analysis section model
+    def build_analysis_section(analysis)
+      Models::ProfileSection.new(
+        name: "Reference Files Analysis",
+        content: format_analysis_content(analysis),
+        prompt_file: "file_analysis.prompt.md"
+      )
     end
 
     # Helper: Handle analysis errors
@@ -280,7 +291,7 @@ module ProfileGenerator
     # Helper: Cache file contents while Tempfiles are open
     def cache_file_contents(files_param)
       files = extract_uploaded_files(files_param)
-      cached_files = files.each_with_index.map { |file, idx| cache_single_file(file, idx) }.compact
+      cached_files = files.each_with_index.filter_map { |file, idx| cache_single_file(file, idx) }
 
       settings.request_logger.log_files_cached(cached_files.length)
       cached_files
