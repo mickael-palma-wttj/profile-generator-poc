@@ -92,6 +92,7 @@ module ProfileGenerator
       def resolve_prompt_loader(prompt_manager, prompt_loader)
         return prompt_manager if prompt_manager
         return prompt_loader if prompt_loader
+
         build_default_prompt_loader
       end
 

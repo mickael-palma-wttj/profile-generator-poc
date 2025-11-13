@@ -36,42 +36,21 @@ module ProfileGenerator
       def format(content)
         return "" if content.nil? || content.strip.empty?
 
-        # Strip JSON code fences if AI wrapped JSON in ```json...```
-        cleaned_content = strip_json_code_fences(content)
-
-        # Try to detect and parse JSON first
-        if looks_like_json_with_type?(cleaned_content)
-          # New web component format
-          format_as_component(cleaned_content)
-        elsif looks_like_json?(cleaned_content)
-          # Legacy JSON format (for backward compatibility)
-          format_json(content)
-        else
-          # Default to Markdown parsing
-          format_markdown(content)
-        end
+        detector = Services::ContentTypeDetector.new
+        cleaned = strip_json_code_fences(content)
+        format_by_type(cleaned, detector)
       end
 
       private
 
-      # Check if content is JSON with a "type" field (new web component format)
-      def looks_like_json_with_type?(content)
-        stripped = content.strip
-        return false unless stripped.start_with?("{") && stripped.end_with?("}")
-
-        # Actually parse the JSON to check for "type" field
-        begin
-          data = JSON.parse(stripped)
-          data.is_a?(Hash) && data.key?("type")
-        rescue JSON::ParserError
-          false
+      def format_by_type(content, detector)
+        if detector.json_with_type?(content)
+          format_as_component(content)
+        elsif detector.json?(content)
+          format_json(content)
+        else
+          format_markdown(content)
         end
-      end
-
-      def looks_like_json?(content)
-        stripped = content.strip
-        (stripped.start_with?("{") && stripped.end_with?("}")) ||
-          (stripped.start_with?("[") && stripped.end_with?("]"))
       end
 
       # Format JSON as a web component
@@ -113,19 +92,10 @@ module ProfileGenerator
       end
 
       def format_markdown(content)
-        # Clean up the content
-        cleaned = clean_content(content)
-
-        # Strip HTML code fences if present (AI sometimes wraps HTML in ```html)
+        cleaned = Services::ContentCleaner.clean(content)
         cleaned = strip_html_code_fences(cleaned)
-
-        # Handle JSON code blocks - convert them to formatted JSON HTML
         cleaned = process_json_code_blocks(cleaned)
-
-        # Convert Markdown to HTML
         html = @markdown.render(cleaned)
-
-        # Post-process HTML for better styling
         @post_processor.post_process(html)
       end
 
@@ -194,50 +164,11 @@ module ProfileGenerator
         end
       end
 
-      # Try to format incomplete/truncated JSON
       def format_incomplete_json(json_content)
         html = @json_formatter.format_with_truncation_warning(json_content)
         return "<!-- JSON_BLOCK:#{encode_html(html)} -->" if html
 
         nil
-      end
-
-      def encode_html(html)
-        require "base64"
-        Base64.strict_encode64(html)
-      end
-
-      def clean_content(content)
-        # Remove common LLM preambles and meta-commentary
-        cleaned = content
-                  .gsub(/^I'll (research|analyze|provide|create|generate).*?\n\n/m, "")
-                  .gsub(/^(Here's|Here is).*?:\n\n/m, "")
-                  .gsub(/^Let me.*?\n\n/m, "")
-
-        # Remove XML-like tags that LLMs sometimes include (search, thinking, etc.)
-        cleaned = remove_xml_tags(cleaned)
-
-        # Remove horizontal rules used as separators
-        cleaned = cleaned.gsub(/^---+\s*$/m, "")
-
-        cleaned.strip
-      end
-
-      def remove_xml_tags(content)
-        # Remove <search>, <thinking>, <reflection>, <browse>, <url>, <web_search> and similar tags
-        content
-          .gsub(%r{<search>.*?</search>}m, "")
-          .gsub(%r{<thinking>.*?</thinking>}m, "")
-          .gsub(%r{<reflection>.*?</reflection>}m, "")
-          .gsub(%r{<internal>.*?</internal>}m, "")
-          .gsub(%r{<query>.*?</query>}m, "")
-          .gsub(%r{<browse>.*?</browse>}m, "")
-          .gsub(%r{<url>.*?</url>}m, "")
-          .gsub(%r{<web_search>.*?</web_search>}m, "")
-          # Remove standalone tags
-          .gsub(%r{</?(?:search|thinking|reflection|internal|query|browse|url|web_search)>}i, "")
-          # Clean up multiple blank lines left by tag removal
-          .gsub(/\n{3,}/, "\n\n")
       end
 
       # post-processing responsibilities extracted to ContentPostProcessor

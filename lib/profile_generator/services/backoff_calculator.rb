@@ -17,7 +17,7 @@ module ProfileGenerator
       # @param attempt [Integer] The retry attempt number (0-indexed)
       # @return [Float] The delay in seconds
       def calculate(attempt)
-        exponential = BASE_DELAY * (2 ** attempt)
+        exponential = BASE_DELAY * (2**attempt)
         jitter = rand * BASE_DELAY * 0.5
         delay = exponential + jitter
         [delay, MAX_DELAY].min
