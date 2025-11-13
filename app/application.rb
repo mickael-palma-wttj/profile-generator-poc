@@ -148,7 +148,10 @@ module ProfileGenerator
     # Helper: Spawn async background workflow
     def spawn_async_workflow(session_id, company, files_param)
       cached_files = cache_file_contents(files_param)
-      return if cached_files.empty?
+      if cached_files.empty?
+        notify_analysis_status(session_id, "skipped")
+        return
+      end
 
       Thread.new do
         analyze_files_with_progress(session_id, cached_files, company)

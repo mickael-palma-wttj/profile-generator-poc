@@ -463,28 +463,33 @@
             pending: {
                 icon: CONFIG.icons.pending,
                 text: 'Pending...',
-                classes: { add: ['pending'], remove: ['in-progress', 'completed', 'failed'] }
+                classes: { add: ['pending'], remove: ['in-progress', 'completed', 'failed', 'skipped'] }
             },
             analyzing: {
                 icon: CONFIG.icons.inProgress,
                 text: 'Analyzing files...',
-                classes: { add: ['in-progress'], remove: ['pending', 'completed', 'failed'] }
+                classes: { add: ['in-progress'], remove: ['pending', 'completed', 'failed', 'skipped'] }
             },
             in_progress: {
                 icon: CONFIG.icons.inProgress,
                 text: 'Generating...',
-                classes: { add: ['in-progress'], remove: ['pending', 'completed', 'failed'] }
+                classes: { add: ['in-progress'], remove: ['pending', 'completed', 'failed', 'skipped'] }
             },
             completed: {
                 icon: CONFIG.icons.completed,
                 text: 'Completed',
-                classes: { add: ['completed'], remove: ['pending', 'in-progress', 'failed'] },
+                classes: { add: ['completed'], remove: ['pending', 'in-progress', 'failed', 'skipped'] },
                 callback: () => content && addSectionToResults(sectionName, humanizedName, content)
             },
             failed: {
                 icon: CONFIG.icons.failed,
                 text: `Failed: ${error || 'Unknown error'}`,
-                classes: { add: ['failed'], remove: ['pending', 'in-progress', 'completed'] }
+                classes: { add: ['failed'], remove: ['pending', 'in-progress', 'completed', 'skipped'] }
+            },
+            skipped: {
+                icon: CONFIG.icons.pending,
+                text: 'Skipped (no files)',
+                classes: { add: ['skipped'], remove: ['pending', 'in-progress', 'completed', 'failed'] }
             }
         };
 
