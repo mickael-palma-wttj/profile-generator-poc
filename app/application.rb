@@ -85,7 +85,7 @@ module ProfileGenerator
 
       company = build_company_from_params
       session_id = settings.session_manager.create_session(company)
-      spawn_async_workflow(session_id, company, params[:files]) if file_uploads_present?
+      spawn_async_workflow(session_id, company, params[:files])
 
       { success: true, session_id: session_id }.to_json
     rescue Services::CompanyBuilder::ValidationError => e
@@ -149,12 +149,20 @@ module ProfileGenerator
     def spawn_async_workflow(session_id, company, files_param)
       cached_files = cache_file_contents(files_param)
       if cached_files.empty?
-        notify_analysis_status(session_id, "skipped")
+        spawn_generation_without_files(session_id, company)
         return
       end
 
       Thread.new do
         analyze_files_with_progress(session_id, cached_files, company)
+        settings.async_generator.generate(session_id, company)
+      end
+    end
+
+    # Helper: Spawn generation when no files are submitted
+    def spawn_generation_without_files(session_id, company)
+      notify_analysis_status(session_id, "skipped")
+      Thread.new do
         settings.async_generator.generate(session_id, company)
       end
     end
