@@ -1,351 +1,328 @@
-# Funding Parser Prompt (JSON Version)
-
-## Task
-Research and compile detailed funding history and investor information for the specified company.
-
-## Output Format
-Return **ONLY** valid JSON in the following structure. Do NOT include any markdown code fences, explanations, or additional text.
-
-```json
 {
-  "type": "funding_parser",
-  "data": {
-    "totalRaised": "$6.5B",
-    "latestRound": {
-      "amount": "$6.5B",
-      "date": "March 2023"
+  "role": "funding_data_researcher",
+  "task": "Research and compile detailed funding history and investor information",
+  "output_format": {
+    "type": "json_only",
+    "structure": {
+      "type": "funding_parser",
+      "data": {
+        "totalRaised": "string (e.g., '$6.5B')",
+        "latestRound": {
+          "amount": "string (e.g., '$6.5B')",
+          "date": "string (e.g., 'March 2023')"
+        },
+        "valuation": "string (e.g., '$50B')",
+        "status": "string (e.g., 'Private (Series H)')",
+        "rounds": [
+          {
+            "series": "string",
+            "amount": "string",
+            "date": "string",
+            "valuation": "string (optional)",
+            "leadInvestors": ["string"],
+            "description": "string"
+          }
+        ],
+        "keyInvestors": [
+          {
+            "name": "string",
+            "type": "string",
+            "description": "string"
+          }
+        ],
+        "sources": [
+          {
+            "title": "string",
+            "url": "string",
+            "date": "YYYY-MM-DD",
+            "type": "press-release|article|database|sec-filing|investor-announcement"
+          }
+        ]
+      }
     },
-    "valuation": "$50B",
-    "status": "Private (Series H)",
-    "rounds": [
-      {
-        "series": "Seed",
-        "amount": "$2M",
-        "date": "March 2010",
-        "valuation": "$20M",
-        "leadInvestors": ["Y Combinator"],
-        "description": "Initial seed funding to build payments infrastructure"
-      }
-    ],
-    "keyInvestors": [
-      {
-        "name": "Sequoia Capital",
-        "type": "Venture Capital",
-        "description": "Early investor and board member, led multiple rounds"
-      }
-    ],
-    "sources": [
-      {
-        "title": "Source title",
-        "url": "https://example.com/source",
-        "date": "2024-01-15",
-        "type": "press-release|article|database"
-      }
+    "constraints": [
+      "Return ONLY valid JSON",
+      "NO markdown code fences",
+      "NO explanatory text outside JSON",
+      "NO comments in JSON"
     ]
-  }
-}
-```
-
-## Guidelines
-
-### Summary Metrics
-
-**totalRaised** (required)
-- Sum of all disclosed funding amounts
-- Format: $XXM or $XXB
-- Example: "$6.5B"
-
-**latestRound** (required)
-- **amount**: Most recent funding amount
-- **date**: Month and year of latest round
-- Use "March 2023" format
-
-**valuation** (required if available)
-- Current or most recent valuation
-- Format: $XXM or $XXB
-- Note if it's "at least" or estimated
-
-**status** (required)
-- Company stage and funding round
-- Examples: "Private (Series H)", "Public (NASDAQ)", "Private (Growth Stage)"
-
-### Funding Rounds (All known rounds)
-
-List funding rounds in chronological order. For each round:
-
-**series** (required)
-- Type of funding round
-- Examples: "Seed", "Series A", "Series B", "Growth", "IPO"
-
-**amount** (required)
-- Amount raised in this round
-- Format: $XXM or $XXB
-- Use "Undisclosed" if amount not public
-
-**date** (required)
-- Month and year
-- Example: "March 2023"
-
-**valuation** (optional)
-- Post-money valuation if publicly disclosed
-- Format: $XXM or $XXB
-
-**leadInvestors** (required if known)
-- Array of lead investor names
-- Typically 1-3 leads per round
-- Use empty array if unknown
-
-**description** (required)
-- 1-2 sentences describing:
-  - What the funds were used for
-  - Company stage at the time
-  - Significant context (e.g., "during COVID-19", "first institutional funding")
-  - Major achievements or milestones around this time
-
-### Key Investors (5-15 investors)
-
-Focus on most prominent investors:
-- Lead investors from major rounds
-- Strategic investors (corporate VCs)
-- Notable angel investors
-- Board members or highly involved investors
-
-For each investor:
-
-**name** (required)
-- Official name of firm or individual
-
-**type** (required)
-- Classification: "Venture Capital", "Corporate Investor", "Angel Investor", "Private Equity", "Hedge Fund", "Sovereign Wealth Fund"
-
-**description** (required)
-- 1-2 sentences explaining:
-  - Which rounds they participated in
-  - Their level of involvement (board seat, lead investor)
-  - Why they're notable or strategic
-  - Their expertise or portfolio relevance
-
-## Quality Standards
-
-✅ **DO:**
-- List all disclosed funding rounds chronologically
-- Use official amounts from press releases or filings
-- Include context about what stage the company was at
-- Note if funding was during significant events (pandemic, economic downturn)
-- Verify amounts match across sources
-- Include both venture and strategic investors
-
-❌ **DON'T:**
-- Speculate on undisclosed amounts
-- Include rumored or unconfirmed funding
-- List every participating investor (focus on leads and key players)
-- Use outdated valuations without noting the date
-- Confuse pre-money and post-money valuations
-- Include debt financing unless significant
-
-## Funding Round Types
-
-**Early Stage**
-- **Seed**: Initial funding, typically $500K-$5M
-- **Series A**: First institutional round, typically $2M-$15M
-- **Series B**: Growth stage, typically $10M-$50M
-
-**Growth Stage**
-- **Series C+**: Expansion funding, $50M+
-- **Growth/Late Stage**: Large rounds pre-IPO, $100M+
-
-**Other**
-- **Bridge**: Between major rounds
-- **Convertible Note**: Debt that converts to equity
-- **IPO**: Public offering
-- **Secondary**: Existing shares sold, no capital to company
-- **Debt Financing**: Loans, credit facilities
-
-## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
-
-**IMPORTANT**: Match the company's communication style when writing descriptions, but keep financial data objective.
-
-**For funding round descriptions:**
-- Match their narrative style from press releases and announcements
-- If they're **bold/ambitious** → "Accelerating global expansion and product innovation"
-- If they're **technical/precise** → "Funding infrastructure development and scaling engineering team"
-- If they're **mission-driven** → "Advancing our mission to make payments accessible worldwide"
-
-**Keep financial data factual** (amounts, dates, valuations) but infuse their voice into the narrative descriptions.
-
-## Sources (3-10 sources)
-
-**IMPORTANT**: Include citations for funding information.
-
-**For each source:**
-- **title**: Clear description (e.g., "Crunchbase funding data", "Series B press release", "TechCrunch funding announcement")
-- **url**: Full URL to the source
-- **date**: Publication or last updated date (YYYY-MM-DD)
-- **type**: `press-release`, `article`, `database`, `sec-filing`, `investor-announcement`
-
-**What to cite:**
-- Crunchbase or PitchBook for comprehensive funding data
-- Company press releases announcing funding rounds
-- TechCrunch and tech press covering major rounds
-- SEC filings (Form D for US companies)
-- Company website investor relations page
-- Investor firm announcements
-
-**Quality guidelines:**
-- Prefer official press releases for round announcements
-- Use Crunchbase/PitchBook for comprehensive timeline verification
-- Include dates for time-sensitive financial information
-- Cite SEC filings for legally disclosed information
-
-## Example Output
-
-```json
-{
-  "type": "funding_parser",
-  "data": {
-    "totalRaised": "$6.5B",
-    "latestRound": {
-      "amount": "$6.5B",
-      "date": "March 2023"
+  },
+  "data_guidelines": {
+    "summary_metrics": {
+      "totalRaised": {
+        "requirement": "required",
+        "description": "Sum of all disclosed funding amounts",
+        "format": "$XXM or $XXB",
+        "example": "$6.5B"
+      },
+      "latestRound": {
+        "requirement": "required",
+        "fields": {
+          "amount": {
+            "description 'Undisclosed' if amount not public"
+        },
+        "date": {
+          "requirement": "required",
+          "format": "Month YYYY (e.g., 'March 2023')"
+        },
+        "valuation": {
+          "requirement": "optional",
+          "description": "Post-money valuation if publicly disclosed",
+          "format": "$XXM or $XXB"
+        },
+        "leadInvestors": {
+          "requirement": "required if known",
+          "format": "Array of lead investor names",
+          "typical_count": "1-3 leads per round",
+          "if_unknown": "Use empty array []"
+        },
+        "description": {
+          "requirement": "required",
+          "length": "1-2 sentences",
+          "what_to_include": [
+            "What the funds were used for",
+            "Company stage at the time",
+            "Significant context (e.g., 'during COVID-19', 'first institutional funding')",
+            "Major achievements or milestones around this time"
+          ],
+          "tone": "Match company's communication style from press releases"
+        }
+      }
     },
-    "valuation": "$50B",
-    "status": "Private (Series I)",
-    "rounds": [
-      {
-        "series": "Seed",
-        "amount": "$2M",
-        "date": "March 2010",
-        "valuation": "$20M",
-        "leadInvestors": ["Y Combinator", "Peter Thiel"],
-        "description": "Initial seed funding from Y Combinator's S10 batch. Used to build initial payments API and sign first beta customers."
+    "key_investors": {
+      "count": "5-15 investors",
+      "selection_criteria": [
+        "Lead investors from major rounds",
+        "Strategic investors (corporate VCs)",
+        "Notable angel investors",
+        "Board members or highly involved investors",
+        "Investors with significant stakes"
+      ],
+      "fields": {
+        "name": {
+          "requirement": "required",
+          "description": "Official name of firm or individual"
+        },
+        "type": {
+          "requirement": "required",
+          "options": [
+            "Venture Capital",
+            "Corporate Investor",
+            "Angel Investor",
+            "Private Equity",
+            "Hedge Fund",
+            "Sovereign Wealth Fund",
+            "Accelerator"
+          ]
+        },
+        "description": {
+          "requirement": "required",
+          "length": "1-2 sentences",
+          "what_to_include": [
+            "Which rounds they participated in",
+            "Level of involvement (board seat, lead investor)",
+            "Why they're notable or strategic",
+            "Their expertise or portfolio relevance"
+          ]
+        }
+      }
+    },
+    "sources": {
+      "count": "3-10 citations",
+      "requirements": [
+        "Prefer official press releases for round announcements",
+        "Use Crunchbase/PitchBook for comprehensive timeline verification",
+        "Include dates for time-sensitive financial information",
+        "Cite SEC filings for legally disclosed information"
+      ],
+      "what_to_cite": [
+        "Crunchbase or PitchBook for comprehensive funding data",
+        "Company press releases announcing funding rounds",
+        "Tech press (TechCrunch, etc.) covering major rounds",
+        "SEC filings (Form D for US companies)",
+        "Company investor relations page",
+        "Investor firm announcements"
+      ],
+      "fields": {
+        "title": {
+          "description": "Clear description of source",
+          "examples": [
+            "Crunchbase funding data",
+            "Series B press release",
+            "TechCrunch funding announcement",
+            "SEC Form D filing"
+          ]
+        },
+        "url": {
+          "description": "Full URL to the source"
+        },
+        "date": {
+          "format": "YYYY-MM-DD",
+          "description": "Publication or last updated date"
+        },
+        "type": {
+          "options": [
+            "press-release",
+            "article",
+            "database",
+            "sec-filing",
+            "investor-announcement"
+          ]
+        }
+      }
+    }
+  },
+  "funding_round_types": {
+    "early_stage": {
+      "Seed": {
+        "description": "Initial funding",
+        "typical_range": "$500K-$5M"
       },
-      {
-        "series": "Series A",
-        "amount": "$18M",
-        "date": "February 2012",
-        "valuation": "$100M",
-        "leadInvestors": ["Sequoia Capital", "Andreessen Horowitz"],
-        "description": "Led by Sequoia and a16z to expand engineering team and launch publicly after successful beta. First major institutional funding round."
+      "Series A": {
+        "description": "First institutional round",
+        "typical_range": "$2M-$15M"
       },
-      {
-        "series": "Series B",
-        "amount": "$20M",
-        "date": "July 2012",
-        "valuation": "$500M",
-        "leadInvestors": ["Sequoia Capital"],
-        "description": "Follow-on round just 5 months after Series A to accelerate growth and international expansion. Sequoia increased their position."
+      "Series B": {
+        "description": "Growth stage",
+        "typical_range": "$10M-$50M"
+      }
+    },
+    "growth_stage": {
+      "Series C+": {
+        "description": "Expansion funding",
+        "typical_range": "$50M+"
       },
-      {
-        "series": "Series C",
-        "amount": "$80M",
-        "date": "January 2014",
-        "valuation": "$1.75B",
-        "leadInvestors": ["Khosla Ventures"],
-        "description": "Unicorn round to fund global expansion and launch new products like Stripe Atlas. Company was processing billions annually."
-      },
-      {
-        "series": "Series D",
-        "amount": "$150M",
-        "date": "November 2016",
-        "valuation": "$9.2B",
-        "leadInvestors": ["General Catalyst", "CapitalG"],
-        "description": "Growth funding led by Google's CapitalG to expand beyond payments into billing, fraud prevention, and infrastructure."
-      },
-      {
-        "series": "Series G",
-        "amount": "$600M",
-        "date": "September 2019",
-        "valuation": "$35B",
-        "leadInvestors": ["Andreessen Horowitz", "Sequoia"],
-        "description": "Major growth round making Stripe one of the most valuable private companies globally. Funded expansion into banking and financial services."
-      },
-      {
-        "series": "Series H",
-        "amount": "$600M",
-        "date": "March 2021",
-        "valuation": "$95B",
-        "leadInvestors": ["Allianz X", "Fidelity"],
-        "description": "Pandemic-era funding round as online payments surged. Peak valuation for the company during tech boom."
-      },
-      {
-        "series": "Series I",
+      "Growth/Late Stage": {
+        "description": "Large rounds pre-IPO",
+        "typical_range": "$100M+"
+      }
+    },
+    "other_types": {
+      "Bridge": "Between major rounds",
+      "Convertible Note": "Debt that converts to equity",
+      "IPO": "Public offering",
+      "Secondary": "Existing shares sold, no capital to company",
+      "Debt Financing": "Loans, credit facilities (include only if significant)"
+    }
+  },
+  "tone_matching": {
+    "instruction": "Match company's communication style in descriptions while keeping financial data objective",
+    "application": {
+      "financial_data": "Keep objective (amounts, dates, valuations)",
+      "narrative_descriptions": "Infuse company's voice from press releases"
+    },
+    "style_adaptations": {
+      "bold_ambitious": "Example: 'Accelerating global expansion and product innovation'",
+      "technical_precise": "Example: 'Funding infrastructure development and scaling engineering team'",
+      "mission_driven": "Example: 'Advancing our mission to make payments accessible worldwide'",
+      "growth_focused": "Example: 'Fueling rapid market expansion and customer acquisition'",
+      "product_centric": "Example: 'Building next-generation features and platform capabilities'"
+    },
+    "note": "Match tone in descriptions, but DO NOT include tone analysis in JSON output"
+  },
+  "quality_standards": {
+    "do": [
+      "List all disclosed funding rounds chronologically",
+      "Use official amounts from press releases or filings",
+      "Include context about company stage at each round",
+      "Note if funding occurred during significant events (pandemic, economic downturn)",
+      "Verify amounts match across multiple sources",
+      "Include both venture and strategic investors",
+      "Distinguish between pre-money and post-money valuations",
+      "Note if valuations are estimated or confirmed"
+    ],
+    "dont": [
+      "Speculate on undisclosed amounts",
+      "Include rumored or unconfirmed funding",
+      "List every participating investor (focus on leads and key players)",
+      "Use outdated valuations without noting the date",
+      "Confuse pre-money and post-money valuations",
+      "Include debt financing unless significant",
+      "Make assumptions about fund usage without source",
+      "Include secondary sales unless notable"
+    ]
+  },
+  "research_sources": {
+    "primary": [
+      "Company press releases and announcements",
+      "SEC filings (Form D, S-1, 10-K)",
+      "Company investor relations page",
+      "Investor firm announcements"
+    ],
+    "secondary": [
+      "Crunchbase",
+      "PitchBook",
+      "TechCrunch and tech press",
+      "Bloomberg and financial news",
+      "Company blog posts"
+    ],
+    "validation": [
+      "Cross-reference amounts across multiple sources",
+      "Verify dates match between sources",
+      "Check for official press releases over media reports",
+      "Confirm investor names and roles"
+    ]
+  },
+  "example": {
+    "type": "funding_parser",
+    "data": {
+      "totalRaised": "$6.5B",
+      "latestRound": {
         "amount": "$6.5B",
-        "date": "March 2023",
-        "valuation": "$50B",
-        "leadInvestors": ["Thrive Capital", "General Catalyst"],
-        "description": "Down round reflecting broader tech market correction. Used for acquisitions and extending runway in higher interest rate environment."
-      }
-    ],
-    "keyInvestors": [
-      {
-        "name": "Sequoia Capital",
-        "type": "Venture Capital",
-        "description": "Early investor who led Series A and B rounds. Partner Michael Moritz joined the board and has been involved since 2012. One of Stripe's most significant backers."
+        "date": "March 2023"
       },
-      {
-        "name": "Andreessen Horowitz",
-        "type": "Venture Capital",
-        "description": "Co-led Series A and participated in multiple subsequent rounds. General Partner Chris Dixon joined the board representing a16z's significant stake."
-      },
-      {
-        "name": "Thrive Capital",
-        "type": "Venture Capital",
-        "description": "Led the $6.5B Series I round in 2023. Josh Kushner's firm that previously backed Instagram, GitHub, and Oscar Health."
-      },
-      {
-        "name": "General Catalyst",
-        "type": "Venture Capital",
-        "description": "Long-term investor participating in Series D, E, and most recent Series I. Known for backing infrastructure companies like Stripe, Airbnb, and Snap."
-      },
-      {
-        "name": "CapitalG",
-        "type": "Corporate Investor",
-        "description": "Google's growth equity fund that led Series D. Brings strategic value through Google Cloud partnerships and technical expertise."
-      },
-      {
-        "name": "Peter Thiel",
-        "type": "Angel Investor",
-        "description": "Early angel investor in the seed round. PayPal co-founder saw Stripe as next evolution of online payments."
-      },
-      {
-        "name": "Elon Musk",
-        "type": "Angel Investor",
-        "description": "Participated in early funding rounds. Former PayPal executive who recognized Stripe's potential to modernize payments infrastructure."
-      },
-      {
-        "name": "Y Combinator",
-        "type": "Venture Capital",
-        "description": "Backed Stripe in their S10 batch in 2010. Provided initial seed funding and mentorship during the company's earliest days."
-      }
-    ],
-    "sources": [
-      {
-        "title": "Crunchbase: Stripe Funding Rounds",
-        "url": "https://www.crunchbase.com/organization/stripe/funding",
-        "date": "2024-01-15",
-        "type": "database"
-      },
-      {
-        "title": "Stripe Series I Press Release",
-        "url": "https://stripe.com/newsroom/news/series-i",
-        "date": "2023-03-14",
-        "type": "press-release"
-      },
-      {
-        "title": "TechCrunch: Stripe raises $6.5B at $50B valuation",
-        "url": "https://techcrunch.com/2023/03/14/stripe-series-i",
-        "date": "2023-03-14",
-        "type": "article"
-      }
-    ]
-  }
+      "valuation": "$50B",
+      "status": "Private (Series I)",
+      "rounds": [
+        {
+          "series": "Seed",
+          "amount": "$2M",
+          "date": "March 2010",
+          "valuation": "$20M",
+          "leadInvestors": ["Y Combinator", "Peter Thiel"],
+          "description": "Initial seed funding from Y Combinator's S10 batch. Used to build initial payments API and sign first beta customers."
+        },
+        {
+          "series": "Series A",
+          "amount": "$18M",
+          "date": "February 2012",
+          "valuation": "$100M",
+          "leadInvestors": ["Sequoia Capital", "Andreessen Horowitz"],
+          "description": "Led by Sequoia and a16z to expand engineering team and launch publicly after successful beta. First major institutional funding round."
+        }
+      ],
+      "keyInvestors": [
+        {
+          "name": "Sequoia Capital",
+          "type": "Venture Capital",
+          "description": "Early investor who led Series A and B rounds. Partner Michael Moritz joined the board and has been involved since 2012. One of Stripe's most significant backers."
+        },
+        {
+          "name": "Peter Thiel",
+          "type": "Angel Investor",
+          "description": "Early angel investor in the seed round. PayPal co-founder saw Stripe as next evolution of online payments."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Crunchbase: Stripe Funding Rounds",
+          "url": "https://www.crunchbase.com/organization/stripe/funding",
+          "date": "2024-01-15",
+          "type": "database"
+        },
+        {
+          "title": "Stripe Series I Press Release",
+          "url": "https://stripe.com/newsroom/news/series-i",
+          "date": "2023-03-14",
+          "type": "press-release"
+        }
+      ]
+    }
+  },
+  "input_variables": {
+    "company_name": "{COMPANY_NAME}",
+    "website": "{WEBSITE}",
+    "additional_context": "{CONTEXT}"
+  },
+  "final_instruction": "Return ONLY the JSON structure with comprehensive funding data. No markdown, no explanations, no code blocks—pure JSON only."
 }
-```
-
-## Company Context
-Company Name: {COMPANY_NAME}
-Website: {WEBSITE}
-Additional Context: {CONTEXT}
-
-## Output
-Return ONLY the JSON structure. No explanations, no markdown formatting, no code blocks—just pure JSON.

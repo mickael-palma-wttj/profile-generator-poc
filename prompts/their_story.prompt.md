@@ -1,272 +1,454 @@
-# Their Story Prompt (JSON Version)
-
-## Task
-Research and generate a compelling narrative about the company's founding, origins, and journey.
-
-## Output Format
-Return **ONLY** valid JSON in the following structure. Do NOT include any markdown code fences, explanations, or additional text.
-
-```json
 {
-  "type": "their_story",
-  "data": {
-    "foundingStory": "3-4 paragraphs telling the story of how and why the company was founded. Include the problem they saw, what motivated them, and how they got started.",
-    "founders": [
-      {
-        "name": "Founder Name",
-        "role": "Co-Founder & CEO",
-        "background": "Brief description of their background before founding the company (1-2 sentences)",
-        "image": "https://example.com/image.jpg"
+  "role": "company_story_researcher",
+  "task": "Research and generate a compelling narrative about company founding, origins, and journey",
+  "output_format": {
+    "type": "json_only",
+    "structure": {
+      "type": "their_story",
+      "data": {
+        "foundingStory": "string (3-4 paragraphs)",
+        "founders": [
+          {
+            "name": "string",
+            "role": "string",
+            "background": "string (1-2 sentences)",
+            "image": "string (URL, optional)"
+          }
+        ],
+        "ahaMoment": {
+          "icon": "emoji",
+          "title": "string (3-6 words)",
+          "description": "string (2-3 sentences)"
+        },
+        "milestones": [
+          {
+            "year": "string (YYYY)",
+            "title": "string (3-6 words)",
+            "description": "string (1-2 sentences)"
+          }
+        ],
+        "sources": [
+          {
+            "title": "string",
+            "url": "string",
+            "date": "YYYY-MM-DD",
+            "type": "website|article|press-release|interview|blog-post|podcast|video"
+          }
+        ]
       }
-    ],
-    "ahaMoment": {
-      "icon": "💡",
-      "title": "The Aha Moment",
-      "description": "Description of the key insight or moment that led to the company's creation"
     },
-    "milestones": [
-      {
-        "year": "2023",
-        "title": "Company Founded",
-        "description": "Brief description of this milestone"
-      }
-    ],
-    "sources": [
-      {
-        "title": "Source title",
-        "url": "https://example.com/source",
-        "date": "2024-01-15",
-        "type": "website|article|press-release|interview|blog-post"
-      }
+    "constraints": [
+      "Return ONLY valid JSON",
+      "NO markdown code fences",
+      "NO explanatory text outside JSON",
+      "NO comments in JSON"
     ]
-  }
-}
-```
-
-## Guidelines
-
-### Founding Story (3-4 paragraphs)
-Tell a compelling narrative that includes:
-
-**Paragraph 1: The Problem**
-- What problem did the founders experience or observe?
-- Why did existing solutions fall short?
-- What was the pain point that motivated them?
-
-**Paragraph 2: The Insight**
-- What unique insight did they have?
-- What made them think they could solve it differently?
-- What was their background that prepared them for this?
-
-**Paragraph 3: The Beginning**
-- How did they actually get started?
-- First product, first customer, early days
-- Key decisions or pivots in the early journey
-
-**Paragraph 4 (optional): The Evolution**
-- How has the company evolved since founding?
-- Major inflection points or transformations
-- Where they are today vs. where they started
-
-### Founders (1-5 founders)
-For each founder:
-- **Name**: Full name
-- **Role**: Current or founding role
-- **Background**: What they did before (education, previous companies, expertise)
-- **Image**: URL to professional photo (if publicly available) or omit field
-- Focus on most prominent or active founders if there are many
-
-### Aha Moment
-- **Icon**: Choose relevant emoji (💡 🚀 ⚡ 🎯 💥)
-- **Title**: Short, punchy headline (3-6 words)
-- **Description**: 2-3 sentences describing the pivotal insight or moment
-- Should feel like a "eureka" moment or turning point
-
-### Milestones (5-10 milestones)
-Choose significant moments in chronological order:
-- Company founded
-- First product launch
-- First major customer or milestone
-- Funding rounds (if significant)
-- Major product launches
-- International expansion
-- Key partnerships or acquisitions
-- Major rebrands or pivots
-- Recent achievements
-
-For each milestone:
-- **Year**: Year it happened
-- **Title**: Short description (3-6 words)
-- **Description**: 1-2 sentences providing context
-
-## Tone of Voice (Internal Guidance - Do NOT include in JSON output)
-
-**IMPORTANT**: Analyze the company's tone of voice and use it to write the story, but do NOT include tone of voice details in the JSON response.
-
-**Before writing, match the company's storytelling style:**
-
-1. **Analyze their voice**:
-   - Read their About page, blog posts, founder interviews
-   - Notice: Do they tell emotional stories or stick to facts? Are they inspirational or humble? Bold or understated?
-   
-2. **Match their narrative style**:
-   - If they're **bold and visionary** → Use aspirational language, paint the big picture ("They set out to change how the world...")
-   - If they're **humble and human** → Focus on personal struggles and authenticity ("Like many founders, they faced...")
-   - If they're **technical and precise** → Keep it factual, focus on the problem and solution ("They identified a gap in...")
-   - If they're **playful and creative** → Include their characteristic personality and warmth
-
-3. **Write the story in their voice**:
-   - The founding story should sound like THEY would tell it
-   - Use their typical word choices and phrasing patterns
-   - Match their level of formality, emotion, and detail
-
-## Quality Standards
-
-✅ **DO:**
-- Make it read like a compelling story, not a Wikipedia entry
-- Include specific details that make it memorable
-- Show the human side - struggles, uncertainties, breakthroughs
-- Connect the founding story to the company's current mission
-- Use quotes from founders if publicly available
-- Include interesting anecdotes or lesser-known facts
-- **Write in the company's authentic voice and storytelling style**
-
-❌ **DON'T:**
-- Make it dry or corporate-sounding
-- Include every single detail or milestone (be selective)
-- Speculate or make up details you can't verify
-- Focus only on successes - challenges make stories compelling
-- Use generic startup language ("disrupting the industry")
-- Write in a generic voice that could apply to any company
-
-## Research Sources
-
-1. Company's "About" or "Our Story" page
-2. Founder interviews in tech press (TechCrunch, Forbes, etc.)
-3. Company blog posts about history and culture
-4. Podcast appearances by founders
-6. LinkedIn profiles for founder backgrounds
-6. Press releases for milestone dates
-7. Wikipedia for timeline verification
-
-## Sources (3-10 sources)
-
-**IMPORTANT**: Include citations for the founding story, founder backgrounds, and milestones.
-
-**For each source:**
-- **title**: Clear description (e.g., "Founder interview on TechCrunch", "Company origin story blog post")
-- **url**: Full URL to the source
-- **date**: Publication or last updated date (YYYY-MM-DD)
-- **type**: `website`, `article`, `press-release`, `interview`, `blog-post`, `podcast`, `video`
-
-**What to cite:**
-- Company's "About" or "Our Story" page (for founding story)
-- Founder interviews in tech press or podcasts
-- Company blog posts about history and culture
-- LinkedIn profiles for founder backgrounds
-- Press releases for milestone dates
-- Wikipedia for timeline verification (but verify with primary sources)
-
-**Quality guidelines:**
-- Prioritize founder interviews and first-person accounts
-- Include at least one source from the company itself
-- Include publication dates for all time-sensitive information
-- Prefer sources that include direct quotes from founders
-
-## Example Output
-
-```json
-{
-  "type": "their_story",
-  "data": {
-    "foundingStory": "In 2009, brothers Patrick and John Collison were running their first startup when they experienced firsthand how difficult it was to accept payments online. Integrating with traditional payment processors meant weeks of paperwork, complex technical requirements, and partnerships with multiple banks. For two developers who just wanted to start selling software, it felt absurdly complicated.\n\nThe brothers realized the problem wasn't unique to them—every developer building an online business faced the same frustrating barriers. They saw an opportunity to abstract away all the complexity of payments infrastructure behind a simple API. What if accepting payments could be as easy as adding a few lines of code? This insight became the foundation of Stripe.\n\nIn 2010, Patrick and John started building what would become Stripe in their apartment. They focused on creating an elegant developer experience first, then handling all the banking relationships and compliance requirements behind the scenes. Their early beta attracted developers from startups like Lyft, Pinterest, and Shopify who were hungry for a better payments solution. Within a year of launch, Stripe was processing millions in transactions.\n\nWhat started as a simple payments API has evolved into comprehensive economic infrastructure for the internet. Today, Stripe powers payments for millions of businesses and processes hundreds of billions of dollars annually, but the core mission remains the same: make it easier for businesses to start, run, and scale online.",
-    "founders": [
-      {
-        "name": "Patrick Collison",
-        "role": "Co-Founder & CEO",
-        "background": "Began programming at age 10, won Young Scientist of the Year award at 16, founded previous startup Auctomatic (acquired) at 17, attended MIT briefly before founding Stripe"
+  },
+  "content_guidelines": {
+    "founding_story": {
+      "requirement": "required",
+      "length": "3-4 paragraphs",
+      "purpose": "Tell a compelling narrative that reads like a story, not a Wikipedia entry",
+      "structure": {
+        "paragraph_1_the_problem": {
+          "focus": "The problem that motivated founding",
+          "what_to_include": [
+            "What problem did the founders experience or observe?",
+            "Why did existing solutions fall short?",
+            "What was the pain point that motivated them?",
+            "Personal experience or market observation"
+          ]
+        },
+        "paragraph_2_the_insight": {
+          "focus": "The unique insight or approach",
+          "what_to_include": [
+            "What unique insight did they have?",
+            "What made them think they could solve it differently?",
+            "What was their background that prepared them for this?",
+            "The 'aha moment' or realization"
+          ]
+        },
+        "paragraph_3_the_beginning": {
+          "focus": "How they actually got started",
+          "what_to_include": [
+            "How did they actually get started?",
+            "First product, first customer, early days",
+            "Key decisions or pivots in the early journey",
+            "Early traction or challenges"
+          ]
+        },
+        "paragraph_4_the_evolution": {
+          "focus": "Growth and transformation (optional)",
+          "what_to_include": [
+            "How has the company evolved since founding?",
+            "Major inflection points or transformations",
+            "Where they are today vs. where they started",
+            "Connection to current mission"
+          ]
+        }
       },
-      {
-        "name": "John Collison",
-        "role": "Co-Founder & President",
-        "background": "Won Young Scientist of the Year award at 19, studied physics at Harvard, worked on Auctomatic before co-founding Stripe at age 20"
-      }
-    ],
-    "ahaMoment": {
-      "icon": "💡",
-      "title": "Payments Should Be Simple",
-      "description": "The Collison brothers realized that accepting payments online was unnecessarily complex. They saw that if they could handle all the banking relationships and compliance behind a simple API, they could remove this barrier for millions of developers and businesses trying to build online."
+      "storytelling_principles": [
+        "Make it read like a compelling story",
+        "Include specific details that make it memorable",
+        "Show the human side - struggles, uncertainties, breakthroughs",
+        "Connect founding story to current mission",
+        "Use quotes from founders if publicly available",
+        "Include interesting anecdotes or lesser-known facts",
+        "Write in the company's authentic voice"
+      ]
     },
-    "milestones": [
-      {
-        "year": "2010",
-        "title": "Stripe Founded",
-        "description": "Patrick and John Collison start building Stripe after experiencing payment integration pain firsthand"
-      },
-      {
-        "year": "2011",
-        "title": "Public Launch",
-        "description": "Stripe opens to the public after a year in private beta with early customers like Lyft and Pinterest"
-      },
-      {
-        "year": "2012",
-        "title": "First Major Funding",
-        "description": "Raised $20M Series A led by Sequoia Capital and Andreessen Horowitz"
-      },
-      {
-        "year": "2014",
-        "title": "International Expansion",
-        "description": "Launched in 9 European countries, beginning global expansion beyond the US"
-      },
-      {
-        "year": "2016",
-        "title": "Stripe Atlas Launched",
-        "description": "Released Atlas to help entrepreneurs worldwide incorporate and start a business from anywhere"
-      },
-      {
-        "year": "2018",
-        "title": "Expanded Beyond Payments",
-        "description": "Launched Stripe Billing, Terminal, and Radar to become a full financial services platform"
-      },
-      {
-        "year": "2021",
-        "title": "$600B+ in Volume",
-        "description": "Processed over $600 billion in payments for millions of businesses worldwide"
-      },
-      {
-        "year": "2023",
-        "title": "Stripe Treasury & Banking",
-        "description": "Launched comprehensive banking-as-a-service infrastructure for platforms"
+    "founders": {
+      "count": "1-5 founders",
+      "selection": "Focus on most prominent or active founders if there are many",
+      "fields": {
+        "name": {
+          "requirement": "required",
+          "format": "Full name as professionally used"
+        },
+        "role": {
+          "requirement": "required",
+          "format": "Current or founding role",
+          "examples": [
+            "Co-Founder & CEO",
+            "Co-Founder & CTO",
+            "Founder & Chief Product Officer",
+            "Co-Founder (Former CEO)"
+          ]
+        },
+        "background": {
+          "requirement": "required",
+          "length": "1-2 sentences",
+          "what_to_include": [
+            "Education (if notable)",
+            "Previous companies or roles",
+            "Relevant expertise or experience",
+            "Notable achievements before founding"
+          ],
+          "example": "Began programming at age 10, won Young Scientist of the Year award at 16, founded previous startup Auctomatic (acquired) at 17, attended MIT briefly before founding Stripe"
+        },
+        "image": {
+          "requirement": "optional",
+          "format": "URL to professional photo",
+          "condition": "Include if publicly available, omit field if not"
+        }
       }
+    },
+    "aha_moment": {
+      "requirement": "required",
+      "purpose": "Capture the pivotal insight or turning point",
+      "fields": {
+        "icon": {
+          "requirement": "required",
+          "format": "Single relevant emoji",
+          "options": [
+            "💡 (insight/idea)",
+            "🚀 (launch/breakthrough)",
+            "⚡ (spark/realization)",
+            "🎯 (focus/clarity)",
+            "💥 (impact/moment)",
+            "🔍 (discovery)",
+            "✨ (innovation)"
+          ]
+        },
+        "title": {
+          "requirement": "required",
+          "length": "3-6 words",
+          "style": "Short, punchy headline",
+          "examples": [
+            "Payments Should Be Simple",
+            "The API Epiphany",
+            "Seeing the Gap",
+            "A Better Way Forward"
+          ]
+        },
+        "description": {
+          "requirement": "required",
+          "length": "2-3 sentences",
+          "purpose": "Describe the pivotal insight or moment",
+          "style": "Should feel like a 'eureka' moment or turning point",
+          "example": "The Collison brothers realized that accepting payments online was unnecessarily complex. They saw that if they could handle all the banking relationships and compliance behind a simple API, they could remove this barrier for millions of developers and businesses trying to build online."
+        }
+      }
+    },
+    "milestones": {
+      "count": "5-10 milestones",
+      "order": "Chronological (earliest to most recent)",
+      "selection_criteria": [
+        "Company founded",
+        "First product launch",
+        "First major customer or user milestone",
+        "Significant funding rounds",
+        "Major product launches or expansions",
+        "International expansion",
+        "Key partnerships or acquisitions",
+        "Major rebrands or pivots",
+        "Recent achievements or records"
+      ],
+      "fields": {
+        "year": {
+          "requirement": "required",
+          "format": "YYYY",
+          "example": "2023"
+        },
+        "title": {
+          "requirement": "required",
+          "length": "3-6 words",
+          "style": "Concise description of milestone",
+          "examples": [
+            "Company Founded",
+            "Public Launch",
+            "First Major Funding",
+            "International Expansion",
+            "Product Milestone"
+          ]
+        },
+        "description": {
+          "requirement": "required",
+          "length": "1-2 sentences",
+          "purpose": "Provide context about significance",
+          "what_to_include": [
+            "What happened",
+            "Why it was significant",
+            "Impact or scale if relevant"
+          ]
+        }
+      }
+    },
+    "sources": {
+      "count": "3-10 citations",
+      "priority": "Founder interviews and first-person accounts",
+      "requirements": [
+        "Prioritize founder interviews and first-person accounts",
+        "Include at least one source from the company itself",
+        "Include publication dates for all time-sensitive information",
+        "Prefer sources that include direct quotes from founders"
+      ],
+      "what_to_cite": [
+        "Company's 'About' or 'Our Story' page (for founding story)",
+        "Founder interviews in tech press (TechCrunch, Forbes, etc.)",
+        "Podcast appearances by founders",
+        "Company blog posts about history and culture",
+        "LinkedIn profiles for founder backgrounds",
+        "Press releases for milestone dates",
+        "Wikipedia for timeline verification (but verify with primary sources)",
+        "Video interviews or talks"
+      ],
+      "fields": {
+        "title": {
+          "description": "Clear description of source",
+          "examples": [
+            "Founder interview on TechCrunch",
+            "Company origin story blog post",
+            "How I Built This podcast episode",
+            "Company About page"
+          ]
+        },
+        "url": {
+          "description": "Full URL to the source"
+        },
+        "date": {
+          "format": "YYYY-MM-DD",
+          "description": "Publication or last updated date"
+        },
+        "type": {
+          "options": [
+            "website",
+            "article",
+            "press-release",
+            "interview",
+            "blog-post",
+            "podcast",
+            "video"
+          ]
+        }
+      }
+    }
+  },
+  "tone_matching": {
+    "criticality": "ESSENTIAL - The story must be written in the company's authentic voice",
+    "instruction": "Analyze company's tone and use it to write the story, but DO NOT include tone analysis in JSON output",
+    "process": {
+      "step_1_analyze": {
+        "what_to_read": [
+          "Company About page",
+          "Blog posts",
+          "Founder interviews",
+          "Press releases"
+        ],
+        "what_to_notice": [
+          "Do they tell emotional stories or stick to facts?",
+          "Are they inspirational or humble?",
+          "Bold or understated?",
+          "Technical or accessible?",
+          "Playful or serious?"
+        ]
+      },
+      "step_2_match": {
+        "narrative_styles": {
+          "bold_visionary": {
+            "approach": "Use aspirational language, paint the big picture",
+            "examples": [
+              "They set out to change how the world...",
+              "Their vision was ambitious...",
+              "They saw an opportunity to transform..."
+            ]
+          },
+          "humble_human": {
+            "approach": "Focus on personal struggles and authenticity",
+            "examples": [
+              "Like many founders, they faced...",
+              "The early days were challenging...",
+              "They learned through trial and error..."
+            ]
+          },
+          "technical_precise": {
+            "approach": "Keep factual, focus on problem and solution",
+            "examples": [
+              "They identified a gap in...",
+              "The technical challenge was...",
+              "They built a solution that..."
+            ]
+          },
+          "playful_creative": {
+            "approach": "Include characteristic personality and warmth",
+            "examples": [
+              "They had a crazy idea...",
+              "It started with a simple question...",
+              "What began as an experiment..."
+            ]
+          }
+        }
+      },
+      "step_3_write": {
+        "principles": [
+          "The founding story should sound like THEY would tell it",
+          "Use their typical word choices and phrasing patterns",
+          "Match their level of formality, emotion, and detail",
+          "Maintain consistency with their brand voice throughout"
+        ]
+      }
+    },
+    "note": "Match tone throughout all content, but DO NOT include tone analysis in JSON output"
+  },
+  "quality_standards": {
+    "do": [
+      "Make it read like a compelling story, not a Wikipedia entry",
+      "Include specific details that make it memorable",
+      "Show the human side - struggles, uncertainties, breakthroughs",
+      "Connect the founding story to the company's current mission",
+      "Use quotes from founders if publicly available",
+      "Include interesting anecdotes or lesser-known facts",
+      "Write in the company's authentic voice and storytelling style",
+      "Be selective about which milestones to include (quality over quantity)",
+      "Verify all facts and dates from multiple sources"
     ],
-    "sources": [
-      {
-        "title": "Patrick Collison interview on How I Built This",
-        "url": "https://www.npr.org/2018/08/02/podcast-interview",
-        "date": "2018-08-02",
-        "type": "podcast"
-      },
-      {
-        "title": "Stripe: Our Story",
-        "url": "https://stripe.com/about",
-        "date": "2024-01-15",
-        "type": "company-page"
-      },
-      {
-        "title": "TechCrunch: Stripe's origin story",
-        "url": "https://techcrunch.com/2011/03/28/stripe-launches",
-        "date": "2011-03-28",
-        "type": "article"
-      }
+    "dont": [
+      "Make it dry or corporate-sounding",
+      "Include every single detail or milestone (be selective)",
+      "Speculate or make up details you can't verify",
+      "Focus only on successes - challenges make stories compelling",
+      "Use generic startup language ('disrupting the industry')",
+      "Write in a generic voice that could apply to any company",
+      "Copy press release language verbatim",
+      "Include unverifiable anecdotes",
+      "Ignore the company's actual storytelling style"
     ]
-  }
+  },
+  "research_process": {
+    "steps": [
+      "1. Read company's About/Our Story page thoroughly",
+      "2. Find and read founder interviews (TechCrunch, podcasts, etc.)",
+      "3. Review company blog posts about history and culture",
+      "4. Check founder LinkedIn profiles for background details",
+      "5. Research milestone dates from press releases",
+      "6. Look for founder quotes and anecdotes",
+      "7. Verify timeline from multiple sources",
+      "8. Identify the company's storytelling style and voice",
+      "9. Note interesting details that make the story unique",
+      "10. Cross-reference all facts across sources"
+    ],
+    "voice_analysis": [
+      "Read multiple pieces of company content",
+      "Identify patterns in language and tone",
+      "Note their approach to storytelling (emotional vs factual)",
+      "Observe how founders talk about the company",
+      "Match their level of formality and style"
+    ]
+  },
+  "example": {
+    "type": "their_story",
+    "data": {
+      "foundingStory": "In 2009, brothers Patrick and John Collison were running their first startup when they experienced firsthand how difficult it was to accept payments online. Integrating with traditional payment processors meant weeks of paperwork, complex technical requirements, and partnerships with multiple banks. For two developers who just wanted to start selling software, it felt absurdly complicated.\n\nThe brothers realized the problem wasn't unique to them—every developer building an online business faced the same frustrating barriers. They saw an opportunity to abstract away all the complexity of payments infrastructure behind a simple API. What if accepting payments could be as easy as adding a few lines of code? This insight became the foundation of Stripe.\n\nIn 2010, Patrick and John started building what would become Stripe in their apartment. They focused on creating an elegant developer experience first, then handling all the banking relationships and compliance requirements behind the scenes. Their early beta attracted developers from startups like Lyft, Pinterest, and Shopify who were hungry for a better payments solution. Within a year of launch, Stripe was processing millions in transactions.\n\nWhat started as a simple payments API has evolved into comprehensive economic infrastructure for the internet. Today, Stripe powers payments for millions of businesses and processes hundreds of billions of dollars annually, but the core mission remains the same: make it easier for businesses to start, run, and scale online.",
+      "founders": [
+        {
+          "name": "Patrick Collison",
+          "role": "Co-Founder & CEO",
+          "background": "Began programming at age 10, won Young Scientist of the Year award at 16, founded previous startup Auctomatic (acquired) at 17, attended MIT briefly before founding Stripe"
+        },
+        {
+          "name": "John Collison",
+          "role": "Co-Founder & President",
+          "background": "Won Young Scientist of the Year award at 19, studied physics at Harvard, worked on Auctomatic before co-founding Stripe at age 20"
+        }
+      ],
+      "ahaMoment": {
+        "icon": "💡",
+        "title": "Payments Should Be Simple",
+        "description": "The Collison brothers realized that accepting payments online was unnecessarily complex. They saw that if they could handle all the banking relationships and compliance behind a simple API, they could remove this barrier for millions of developers and businesses trying to build online."
+      },
+      "milestones": [
+        {
+          "year": "2010",
+          "title": "Stripe Founded",
+          "description": "Patrick and John Collison start building Stripe after experiencing payment integration pain firsthand"
+        },
+        {
+          "year": "2011",
+          "title": "Public Launch",
+          "description": "Stripe opens to the public after a year in private beta with early customers like Lyft and Pinterest"
+        },
+        {
+          "year": "2012",
+          "title": "First Major Funding",
+          "description": "Raised $20M Series A led by Sequoia Capital and Andreessen Horowitz"
+        },
+        {
+          "year": "2014",
+          "title": "International Expansion",
+          "description": "Launched in 9 European countries, beginning global expansion beyond the US"
+        },
+        {
+          "year": "2023",
+          "title": "Stripe Treasury & Banking",
+          "description": "Launched comprehensive banking-as-a-service infrastructure for platforms"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Patrick Collison interview on How I Built This",
+          "url": "https://www.npr.org/2018/08/02/podcast-interview",
+          "date": "2018-08-02",
+          "type": "podcast"
+        },
+        {
+          "title": "Stripe: Our Story",
+          "url": "https://stripe.com/about",
+          "date": "2024-01-15",
+          "type": "website"
+        },
+        {
+          "title": "TechCrunch: Stripe's origin story",
+          "url": "https://techcrunch.com/2011/03/28/stripe-launches",
+          "date": "2011-03-28",
+          "type": "article"
+        }
+      ]
+    }
+  },
+  "input_variables": {
+    "company_name": "{COMPANY_NAME}",
+    "website": "{WEBSITE}",
+    "additional_context": "{CONTEXT}"
+  },
+  "final_instruction": "Return ONLY the JSON structure with a compelling, well-researched founding story written in the company's authentic voice. No markdown, no explanations, no code blocks—pure JSON only."
 }
-```
-
-## Company Context
-Company Name: {COMPANY_NAME}
-Website: {WEBSITE}
-Additional Context: {CONTEXT}
-
-## Output
-Return ONLY the JSON structure. No explanations, no markdown formatting, no code blocks—just pure JSON.
