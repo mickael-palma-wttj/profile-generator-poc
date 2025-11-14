@@ -1265,6 +1265,168 @@
     }
 
     // ============================================================================
+    // File Analysis Section Component
+    // ============================================================================
+
+    class FileAnalysisSection extends ProfileSectionComponent {
+        render() {
+            // Normalize data: ensure arrays are arrays, not comma-separated strings
+            const normalizedData = this.normalizeData(this.data);
+            const {
+                tone_of_voice,
+                brand_personality,
+                key_themes = [],
+                messaging_style,
+                target_audience,
+                core_values = [],
+                language_patterns,
+                industry_focus,
+                summary
+            } = normalizedData;
+
+            this.innerHTML = `
+                <div class="file-analysis-section">
+                    <div class="file-analysis-intro">
+                        <p><strong>Brand Voice & Tone Analysis</strong> based on uploaded company materials. This analysis reveals the distinctive characteristics of how the company communicates, their brand personality, and messaging approach.</p>
+                    </div>
+
+                    <!-- Tone of Voice Section -->
+                    <div class="tone-section">
+                        <h3>🎯 Tone of Voice</h3>
+                        <div class="tone-content">
+                            <p>${tone_of_voice || ''}</p>
+                        </div>
+                    </div>
+
+                    <!-- Brand Personality Section -->
+                    <div class="brand-section">
+                        <h3>✨ Brand Personality</h3>
+                        <div class="personality-traits">
+                            ${this.renderPersonalityTraits(brand_personality)}
+                        </div>
+                    </div>
+
+                    <!-- Key Themes Section -->
+                    ${Array.isArray(key_themes) && key_themes.length > 0 ? `
+                        <div class="themes-section">
+                            <h3>🎨 Key Themes</h3>
+                            <div class="themes-list">
+                                ${key_themes.map((theme, idx) => this.renderThemeCard(theme, idx)).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Messaging Style Section -->
+                    ${TemplateUtils.renderIf(messaging_style, style => `
+                        <div class="messaging-section">
+                            <h3>💬 Messaging Style</h3>
+                            <p class="messaging-description">${style}</p>
+                        </div>
+                    `)}
+
+                    <!-- Target Audience Section -->
+                    ${TemplateUtils.renderIf(target_audience, audience => `
+                        <div class="audience-section">
+                            <h3>👥 Target Audience</h3>
+                            <p class="audience-description">${audience}</p>
+                        </div>
+                    `)}
+
+                    <!-- Core Values Section -->
+                    ${Array.isArray(core_values) && core_values.length > 0 ? `
+                        <div class="values-analysis-section">
+                            <h3>💎 Core Values</h3>
+                            <div class="values-badges">
+                                ${core_values.map(value => `<span class="value-badge">${value}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- Language Patterns Section -->
+                    ${TemplateUtils.renderIf(language_patterns, patterns => `
+                        <div class="language-section">
+                            <h3>🔤 Language Patterns</h3>
+                            <p class="language-description">${patterns}</p>
+                        </div>
+                    `)}
+
+                    <!-- Industry Focus Section -->
+                    ${TemplateUtils.renderIf(industry_focus, industry => `
+                        <div class="industry-section">
+                            <h3>🏢 Industry Focus</h3>
+                            <p class="industry-description">${industry}</p>
+                        </div>
+                    `)}
+
+                    <!-- Summary Section -->
+                    ${TemplateUtils.renderIf(summary, sum => `
+                        <div class="summary-section">
+                            <h3>📋 Summary & Guidelines</h3>
+                            <p class="summary-content">${sum}</p>
+                        </div>
+                    `)}
+                </div>
+            `;
+        }
+
+        normalizeData(data) {
+            // Convert comma-separated strings to arrays for array fields
+            return {
+                ...data,
+                key_themes: this.ensureArray(data.key_themes),
+                core_values: this.ensureArray(data.core_values)
+            };
+        }
+
+        ensureArray(value) {
+            if (!value) return [];
+            // If already an array, return as-is
+            if (Array.isArray(value)) return value;
+            // If string, try to split by comma
+            if (typeof value === 'string') {
+                const trimmed = value.trim();
+                if (trimmed.length === 0) return [];
+                // Split by comma, clean up, and filter empty strings
+                return trimmed
+                    .split(',')
+                    .map(item => item.trim())
+                    .filter(item => item.length > 0);
+            }
+            // For any other type, return empty array
+            return [];
+        }
+
+        renderPersonalityTraits(brandPersonality) {
+            if (!brandPersonality) return '';
+
+            // Split by comma and clean up
+            const traits = brandPersonality
+                .split(',')
+                .map(t => t.trim())
+                .filter(t => t.length > 0)
+                .slice(0, 4); // Limit to 4 traits for layout
+
+            return traits.map(trait => `
+                <div class="trait-badge">
+                    <p class="trait-text">${trait}</p>
+                </div>
+            `).join('');
+        }
+
+        renderThemeCard(theme, index) {
+            const icons = ['🎯', '💡', '🚀', '🌟', '⚡'];
+            const icon = icons[index % icons.length];
+
+            return `
+                <div class="theme-card">
+                    <div class="theme-icon">${icon}</div>
+                    <p class="theme-text">${theme}</p>
+                </div>
+            `;
+        }
+    }
+
+    // ============================================================================
     // Component Registration
     // ============================================================================
 
@@ -1277,6 +1439,7 @@
     customElements.define('office-locations-section', OfficeLocationsSection);
     customElements.define('perks-benefits-section', PerksBenefitsSection);
     customElements.define('remote-policy-section', RemotePolicySection);
+    customElements.define('file-analysis-section', FileAnalysisSection);
 
     // Export for testing
     if (typeof module !== 'undefined' && module.exports) {
@@ -1291,8 +1454,10 @@
             LeadershipSection,
             OfficeLocationsSection,
             PerksBenefitsSection,
-            RemotePolicySection
+            RemotePolicySection,
+            FileAnalysisSection
         };
     }
+
 
 })();

@@ -80,7 +80,8 @@ module ProfileGenerator
           "leadership" => "leadership-section",
           "office_locations" => "office-locations-section",
           "perks_and_benefits" => "perks-benefits-section",
-          "remote_policy" => "remote-policy-section"
+          "remote_policy" => "remote-policy-section",
+          "file_analysis" => "file-analysis-section"
         }
 
         mapping[type] || "generic-section"

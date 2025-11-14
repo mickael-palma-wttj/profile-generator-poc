@@ -183,11 +183,20 @@ module ProfileGenerator
       handle_analysis_error(session_id, e)
     end
 
-    # Helper: Format analysis content as JSON
+    # Helper: Format analysis content as web component HTML
     def format_analysis_content(analysis)
-      json_string = JSON.pretty_generate(analysis)
-      escaped_json = CGI.escapeHTML(json_string)
-      "<pre class=\"analysis-content\"><code>#{escaped_json}</code></pre>"
+      # Build JSON without pretty-printing to avoid Markdown treating it as code block
+      component_data = {
+        type: "file_analysis",
+        data: analysis
+      }
+      json_string = JSON.generate(component_data)
+
+      # Escape single quotes for HTML attribute
+      escaped_json = json_string.gsub("'", "&apos;")
+
+      # Return web component HTML directly (bypasses markdown processing)
+      %(<file-analysis-section data='#{escaped_json}'></file-analysis-section>)
     end
 
     # Helper: Analyze files synchronously (for sync endpoint)

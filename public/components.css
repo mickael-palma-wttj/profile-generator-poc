@@ -1408,3 +1408,324 @@
         display: none;
     }
 }
+
+/* ============================================================================
+   File Analysis Component
+   ============================================================================ */
+
+.file-analysis-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.file-analysis-intro {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(155, 89, 182, 0.05));
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+}
+
+.file-analysis-intro p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+/* Tone of Voice Section */
+.tone-section {
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.tone-section h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.tone-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    opacity: 0.95;
+}
+
+.tone-content p {
+    margin: 0;
+}
+
+/* Brand Personality Section */
+.brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.brand-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.3rem;
+}
+
+.personality-traits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.trait-badge {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.trait-badge:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(155, 89, 182, 0.05));
+}
+
+.trait-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+/* Key Themes Section */
+.themes-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.themes-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.3rem;
+}
+
+.themes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.theme-card {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(46, 204, 113, 0.05));
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.theme-card:hover {
+    transform: translateX(4px);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(46, 204, 113, 0.12));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.theme-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.theme-text {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Messaging Style Section */
+.messaging-section {
+    padding: 2rem;
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.messaging-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+}
+
+.messaging-description {
+    margin: 0;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Target Audience Section */
+.audience-section {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(52, 152, 219, 0.1));
+    border-radius: 8px;
+    border-left: 4px solid #9b59b6;
+}
+
+.audience-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+}
+
+.audience-description {
+    margin: 0;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Core Values Section */
+.values-analysis-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.values-analysis-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.3rem;
+}
+
+.values-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.value-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 50px;
+    font-weight: 600;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.value-badge:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.value-badge::before {
+    content: "✓";
+    font-size: 1.2rem;
+}
+
+/* Language Patterns Section */
+.language-section {
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.language-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+}
+
+.language-description {
+    margin: 0;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Industry Focus Section */
+.industry-section {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1));
+    border-radius: 8px;
+    border-left: 4px solid #2ecc71;
+}
+
+.industry-section h3 {
+    color: #27ae60;
+    margin: 0 0 1rem 0;
+}
+
+.industry-description {
+    margin: 0;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Summary Section - Premium Highlight */
+.summary-section {
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.summary-section h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.3rem;
+    color: white;
+    text-align: center;
+}
+
+.summary-content {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.9;
+    opacity: 0.95;
+    text-align: center;
+}
+
+.summary-content strong {
+    color: #ffd700;
+    font-weight: 700;
+}
+
+/* Responsive Design for File Analysis */
+@media (max-width: 768px) {
+    .personality-traits {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .themes-list {
+        grid-template-columns: 1fr;
+    }
+
+    .values-badges {
+        flex-direction: column;
+    }
+
+    .value-badge {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tone-section,
+    .summary-section {
+        padding: 1.5rem;
+    }
+
+    .file-analysis-section {
+        gap: 1.5rem;
+    }
+}
