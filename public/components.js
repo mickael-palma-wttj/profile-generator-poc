@@ -304,73 +304,51 @@
     class CompanyDescriptionSection extends ProfileSectionComponent {
         render() {
             const {
-                tagline,
-                overview,
-                industry,
-                founded,
-                headquarters,
-                companySize,
-                website,
-                keyProducts,
-                targetMarket,
-                businessModel,
+                title,
+                content,
                 sources
             } = this.data;
 
             this.innerHTML = `
                 <div class="company-description-section">
-                    ${TemplateUtils.renderIf(tagline, t => `<div class="tagline">${t}</div>`)}
+                    ${TemplateUtils.renderIf(title, t => `<h2 class="company-title">${t}</h2>`)}
                     
-                    ${TemplateUtils.renderIf(overview, o => `
-                        <div class="company-overview">
-                            <p>${o}</p>
+                    ${TemplateUtils.renderIf(content, c => `
+                        <div class="company-content">
+                            ${this.renderFormattedContent(c)}
                         </div>
                     `)}
 
-                    <div class="company-quick-facts">
-                        ${this.renderQuickFacts({ industry, founded, headquarters, companySize, website })}
-                    </div>
-
-                    ${this.renderKeyProducts(keyProducts)}
-                    ${TemplateUtils.renderIf(targetMarket, tm =>
-                TemplateUtils.renderSection('Target Market', `<p>${tm}</p>`)
-            )}
-                    ${TemplateUtils.renderIf(businessModel, bm =>
-                TemplateUtils.renderSection('Business Model', `<p>${bm}</p>`)
-            )}
                     ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
 
-        renderQuickFacts({ industry, founded, headquarters, companySize, website }) {
-            const facts = [
-                industry && TemplateUtils.renderFact(DEFAULT_ICONS.industry, 'Industry', industry),
-                founded && TemplateUtils.renderFact(DEFAULT_ICONS.founded, 'Founded', founded),
-                headquarters && TemplateUtils.renderFact(DEFAULT_ICONS.headquarters, 'Headquarters', headquarters),
-                companySize && TemplateUtils.renderFact(DEFAULT_ICONS.size, 'Company Size', companySize),
-                website && TemplateUtils.renderFact(DEFAULT_ICONS.website, 'Website', website, true)
-            ].filter(Boolean);
+        renderFormattedContent(content) {
+            // Split content by newlines and render as paragraphs/sections
+            const sections = content.split('\n\n');
+            return sections.map(section => {
+                const trimmed = section.trim();
+                if (!trimmed) return '';
 
-            return facts.join('');
-        }
+                // Check if this is a section header (ends with colon)
+                if (trimmed.match(/^[A-Z][^:]*:$/)) {
+                    return `<h3 class="content-section-header">${trimmed}</h3>`;
+                }
 
-        renderKeyProducts(products) {
-            if (!products || products.length === 0) return '';
+                // Check if this is a list (lines starting with dashes, asterisks, or "Key")
+                if (trimmed.includes('\n') && (trimmed.includes('-') || trimmed.includes('Key') || trimmed.includes('•'))) {
+                    const items = trimmed.split('\n').filter(line => line.trim());
+                    return `
+                        <ul class="content-list">
+                            ${items.map(item => `<li>${item.replace(/^[-•*]\s*/, '').trim()}</li>`).join('')}
+                        </ul>
+                    `;
+                }
 
-            return `
-                <div class="key-products">
-                    <h3>Key Products & Services</h3>
-                    <div class="products-grid">
-                        ${TemplateUtils.renderList(products, p => `
-                            <div class="product-card">
-                                <h4>${p.name}</h4>
-                                <p>${p.description}</p>
-                            </div>
-                        `)}
-                    </div>
-                </div>
-            `;
+                // Otherwise render as paragraph
+                return `<p class="content-paragraph">${trimmed}</p>`;
+            }).join('');
         }
     }
 

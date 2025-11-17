@@ -15,6 +15,9 @@ gem "sinatra", "~> 4.0"
 # AI API client (official Anthropic SDK)
 gem "anthropic", "~> 1.14.0"
 
+# SSL/TLS
+gem "openssl", "~> 3.1"
+
 # Autoloading
 gem "zeitwerk", "~> 2.6"
 

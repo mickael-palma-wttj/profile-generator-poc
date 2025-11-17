@@ -6,21 +6,8 @@
     "structure": {
       "type": "company_description",
       "data": {
-        "tagline": "string (10-20 words, specific and compelling)",
-        "overview": "string (2-3 paragraphs, 3-5 sentences each)",
-        "quickFacts": [
-          {
-            "label": "string",
-            "value": "string"
-          }
-        ],
-        "keyProducts": [
-          {
-            "name": "string",
-            "description": "string (1-2 sentences)"
-          }
-        ],
-        "targetMarket": "string (2-3 sentences)",
+        "title": "About us",
+        "content": "string (merged: tagline 10-20 words + overview 3 paragraphs + quickFacts 4-8 facts + keyProducts 2-5 products + targetMarket 2-3 sentences)",
         "sources": [
           {
             "title": "string",
@@ -38,141 +25,12 @@
       "NO comments in JSON"
     ]
   },
-  "content_guidelines": {
-    "tagline": {
-      "length": "10-20 words",
-      "purpose": "Immediately convey what the company does",
-      "style": "Specific, not generic",
-      "example": "Stripe builds economic infrastructure for the internet, enabling businesses of all sizes to accept payments and manage their finances online"
-    },
-    "overview": {
-      "structure": [
-        "Paragraph 1: Core business, products/services, primary value proposition",
-        "Paragraph 2: Problem solved, unique approach, differentiation",
-        "Paragraph 3: Mission, vision, market position, or impact"
-      ],
-      "length": "Each paragraph 3-5 sentences",
-      "style": "Substantive with specific details, avoid corporate platitudes"
-    },
-    "quickFacts": {
-      "count": "4-8 facts",
-      "common_fields": [
-        "Founded (year)",
-        "Headquarters (city, state/country)",
-        "Industry (specific classification)",
-        "Company Size (employee count)",
-        "Type (Public/Private/Series X)",
-        "Funding (if significant)",
-        "Revenue (if public)",
-        "Valuation (if known)"
-      ]
-    },
-    "keyProducts": {
-      "count": "2-5 flagship products",
-      "format": "Official name + 1-2 sentence description",
-      "focus": "Customer-understandable benefits"
-    },
-    "targetMarket": {
-      "length": "2-3 sentences",
-      "include": [
-        "Customer segments",
-        "Company sizes",
-        "Industries",
-        "Geographies",
-        "Use cases"
-      ]
-    },
-    "sources": {
-      "count": "3-10 citations",
-      "requirements": [
-        "At least one primary source (company materials)",
-        "At least one third-party validation",
-        "Prefer sources from last 12 months",
-        "Include publication dates",
-        "Use accessible URLs"
-      ],
-      "what_to_cite": [
-        "Company website/about page (mission, overview, products)",
-        "Press releases (funding, milestones)",
-        "News articles (context, validation)",
-        "Financial reports (valuation, revenue, headcount)",
-        "Company blog (product launches, updates)",
-        "Careers page (culture, team size, locations)"
-      ]
-    }
-  },
-  "tone_matching": {
-    "instruction": "Analyze and match the company's authentic voice",
-    "process": [
-      "1. Research company materials (homepage, about page, blog, social media)",
-      "2. Identify communication style (formal/casual, technical/accessible, sentence structure, use of humor/metaphors)",
-      "3. Apply their voice to all written content"
-    ],
-    "style_examples": {
-      "developer_focused": "Use precise language, avoid marketing fluff (e.g., 'Simple APIs that developers love')",
-      "community_focused": "Use warm, human language (e.g., 'Belong anywhere')",
-      "approachable": "Use conversational tone (e.g., 'Your connected workspace')",
-      "bold_aspirational": "Use confident, future-focused language"
-    },
-    "note": "Match tone in content, but DO NOT include tone analysis in JSON output"
-  },
-  "quality_standards": {
-    "do": [
-      "Use concrete facts and specific details",
-      "Research current information",
-      "Use official product names",
-      "Include quantifiable metrics",
-      "Highlight unique differentiators"
-    ],
-    "dont": [
-      "Use vague corporate language ('leading provider of innovative solutions')",
-      "Include outdated information",
-      "Make unverifiable claims",
-      "Copy marketing copy verbatim",
-      "Confuse with competitors"
-    ]
-  },
-  "research_sources": [
-    "Company official website (About, Products)",
-    "Recent press releases and news articles",
-    "Crunchbase or similar databases",
-    "Company blog and annual reports",
-    "LinkedIn company page",
-    "Product documentation pages"
-  ],
+  "content": "TAGLINE: 10-20 words, specific and compelling, convey what company does.\nOVERVIEW: 3 paragraphs (3-5 sentences each): core business/value, problem/differentiation, mission/position. Substantive, no platitudes.\nQUICK FACTS: 4-8 facts (founded, headquarters, industry, size, type, funding, revenue, valuation) woven naturally into content as flowing paragraph.\nKEY PRODUCTS: 2-5 flagship products with 1-2 sentence descriptions, customer benefits, integrated as flowing paragraph.\nTARGET MARKET: 2-3 sentences covering segments, company sizes, industries, geographies, use cases, integrated as flowing paragraph.\nSOURCES: 3-10 citations (minimum 1 primary, 1 third-party, prefer last 12 months).\nTONE: Match company's authentic voice—research materials, identify style, apply consistently.\nQUALITY: Use concrete facts, current research, official names, quantifiable metrics, unique differentiators. Avoid vague corporate language, outdated info, unverifiable claims.",
   "example": {
     "type": "company_description",
     "data": {
-      "tagline": "Stripe builds economic infrastructure for the internet, enabling businesses of all sizes to accept payments and manage their finances online",
-      "overview": "Stripe is a financial technology company that provides payment processing software and APIs for e-commerce websites and mobile applications. Founded in 2010, Stripe has grown to serve millions of businesses worldwide, from startups to Fortune 500 companies, processing hundreds of billions of dollars in transactions annually.\n\nWhat sets Stripe apart is its developer-first approach. Rather than requiring businesses to navigate complex banking relationships and compliance requirements, Stripe provides simple APIs that developers can integrate in hours, not months. The platform handles the complexity of global payments, including multiple currencies, payment methods, fraud prevention, and regulatory compliance.\n\nStripe's mission is to increase the GDP of the internet by making it easier for businesses to start, run, and scale online. Beyond payments, they've expanded into a full financial services platform including billing, invoicing, capital lending, corporate cards, and banking-as-a-service infrastructure.",
-      "quickFacts": [
-        {"label": "Founded", "value": "2010"},
-        {"label": "Headquarters", "value": "San Francisco, CA"},
-        {"label": "Industry", "value": "Financial Technology / Payments"},
-        {"label": "Company Size", "value": "8,000+ employees"},
-        {"label": "Type", "value": "Private (Series H)"},
-        {"label": "Valuation", "value": "$50B (2023)"},
-        {"label": "Annual Revenue", "value": "$14B+ (2023)"}
-      ],
-      "keyProducts": [
-        {
-          "name": "Stripe Payments",
-          "description": "Core payment processing API that enables businesses to accept credit cards, digital wallets, and local payment methods with a few lines of code"
-        },
-        {
-          "name": "Stripe Billing",
-          "description": "Subscription management and recurring billing platform for SaaS companies and subscription businesses"
-        },
-        {
-          "name": "Stripe Connect",
-          "description": "Marketplace and platform payments infrastructure that enables businesses to pay sellers, service providers, and contractors"
-        },
-        {
-          "name": "Stripe Treasury",
-          "description": "Banking-as-a-service platform that lets businesses embed financial services directly into their products"
-        }
-      ],
-      "targetMarket": "Stripe primarily serves online businesses ranging from startups to Fortune 500 companies. Their customers span e-commerce, SaaS, marketplaces, and platforms across all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs.",
+      "title": "About us",
+      "content": "Stripe builds economic infrastructure for the internet, enabling businesses of all sizes to accept payments and manage their finances online.\n\nStripe is a financial technology company that provides payment processing software and APIs for e-commerce websites and mobile applications. Founded in 2010, Stripe has grown to serve millions of businesses worldwide, from startups to Fortune 500 companies, processing hundreds of billions of dollars in transactions annually. The company is headquartered in San Francisco, CA, and has expanded to over 8,000 employees with a valuation of $50B as of 2023 and annual revenue exceeding $14B.\n\nWhat sets Stripe apart is its developer-first approach. Rather than requiring businesses to navigate complex banking relationships and compliance requirements, Stripe provides simple APIs that developers can integrate in hours, not months. The platform handles the complexity of global payments, including multiple currencies, payment methods, fraud prevention, and regulatory compliance. Core offerings include Stripe Payments for payment processing, Stripe Billing for subscription management, Stripe Connect for marketplace infrastructure, and Stripe Treasury for embedded financial services—each designed to simplify complex payment workflows.\n\nStripe's mission is to increase the GDP of the internet by making it easier for businesses to start, run, and scale online. The company primarily serves online businesses ranging from startups to Fortune 500 companies across e-commerce, SaaS, marketplaces, and platforms spanning all industries. They're particularly strong with developer-focused companies and businesses with complex payment needs globally.",
       "sources": [
         {
           "title": "Stripe About Page",
