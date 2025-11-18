@@ -1201,11 +1201,12 @@
             };
 
             const icon = modelIcons[model] || '💼';
+            const escapedModel = TemplateUtils.escapeHtml(model);
 
             return `
                 <div class="model-badge">
                     <span class="model-icon">${icon}</span>
-                    <span class="model-name">${model}</span>
+                    <span class="model-name">${escapedModel}</span>
                 </div>
             `;
         }
@@ -1241,7 +1242,7 @@
                     <div class="tone-section">
                         <h3>🎯 Tone of Voice</h3>
                         <div class="tone-content">
-                            <p>${tone_of_voice || ''}</p>
+                            <p>${TemplateUtils.escapeHtml(tone_of_voice || '')}</p>
                         </div>
                     </div>
 
@@ -1267,7 +1268,7 @@
                     ${TemplateUtils.renderIf(messaging_style, style => `
                         <div class="messaging-section">
                             <h3>💬 Messaging Style</h3>
-                            <p class="messaging-description">${style}</p>
+                            <p class="messaging-description">${TemplateUtils.escapeHtml(style)}</p>
                         </div>
                     `)}
 
@@ -1275,7 +1276,7 @@
                     ${TemplateUtils.renderIf(target_audience, audience => `
                         <div class="audience-section">
                             <h3>👥 Target Audience</h3>
-                            <p class="audience-description">${audience}</p>
+                            <p class="audience-description">${TemplateUtils.escapeHtml(audience)}</p>
                         </div>
                     `)}
 
@@ -1284,7 +1285,7 @@
                         <div class="values-analysis-section">
                             <h3>💎 Core Values</h3>
                             <div class="values-badges">
-                                ${core_values.map(value => `<span class="value-badge">${value}</span>`).join('')}
+                                ${core_values.map(value => `<span class="value-badge">${TemplateUtils.escapeHtml(value)}</span>`).join('')}
                             </div>
                         </div>
                     ` : ''}
@@ -1293,7 +1294,7 @@
                     ${TemplateUtils.renderIf(language_patterns, patterns => `
                         <div class="language-section">
                             <h3>🔤 Language Patterns</h3>
-                            <p class="language-description">${patterns}</p>
+                            <p class="language-description">${TemplateUtils.escapeHtml(patterns)}</p>
                         </div>
                     `)}
 
@@ -1301,7 +1302,7 @@
                     ${TemplateUtils.renderIf(industry_focus, industry => `
                         <div class="industry-section">
                             <h3>🏢 Industry Focus</h3>
-                            <p class="industry-description">${industry}</p>
+                            <p class="industry-description">${TemplateUtils.escapeHtml(industry)}</p>
                         </div>
                     `)}
 
@@ -1309,7 +1310,7 @@
                     ${TemplateUtils.renderIf(summary, sum => `
                         <div class="summary-section">
                             <h3>📋 Summary & Guidelines</h3>
-                            <p class="summary-content">${sum}</p>
+                            <p class="summary-content">${TemplateUtils.escapeHtml(sum)}</p>
                         </div>
                     `)}
                 </div>
@@ -1355,7 +1356,7 @@
 
             return traits.map(trait => `
                 <div class="trait-badge">
-                    <p class="trait-text">${trait}</p>
+                    <p class="trait-text">${TemplateUtils.escapeHtml(trait)}</p>
                 </div>
             `).join('');
         }
@@ -1367,7 +1368,7 @@
             return `
                 <div class="theme-card">
                     <div class="theme-icon">${icon}</div>
-                    <p class="theme-text">${theme}</p>
+                    <p class="theme-text">${TemplateUtils.escapeHtml(theme)}</p>
                 </div>
             `;
         }
