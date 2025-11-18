@@ -1153,92 +1153,61 @@
 
     class RemotePolicySection extends ProfileSectionComponent {
         render() {
-            const { workLocation, equipment, schedule, tools, culture, sources } = this.data;
+            const { models, summary, policy_details, sources } = this.data;
 
             this.innerHTML = `
                 <div class="remote-policy-section">
-                    ${this.renderWorkLocation(workLocation)}
-                    ${this.renderEquipment(equipment)}
-                    ${this.renderSchedule(schedule)}
-                    ${this.renderTools(tools)}
-                    ${this.renderCulture(culture)}
+                    ${this.renderModels(models)}
+                    ${TemplateUtils.renderIf(summary, s => `
+                        <div class="policy-summary">
+                            <h3>Remote Work Philosophy</h3>
+                            <p>${s}</p>
+                        </div>
+                    `)}
+                    ${TemplateUtils.renderIf(policy_details, p => `
+                        <div class="policy-details-block">
+                            <h3>Policy Details</h3>
+                            <p>${p}</p>
+                        </div>
+                    `)}
                     ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
         }
 
-        renderWorkLocation(location) {
-            if (!location) return '';
+        renderModels(models) {
+            if (!models || models.length === 0) return '';
+
+            // Ensure models is an array
+            const modelArray = Array.isArray(models) ? models : [models];
 
             return `
-                <div class="policy-block">
-                    <h3>📍 Work Location Policy</h3>
-                    ${this.renderTextField('Policy', location.policy)}
-                    ${this.renderTextField('Office Expectation', location.officeExpectation)}
-                    ${this.renderTextField('Work From Anywhere', location.workFromAnywhere)}
+                <div class="remote-models">
+                    <h3>Remote Work Models</h3>
+                    <div class="models-grid">
+                        ${modelArray.map(model => this.renderModelBadge(model)).join('')}
+                    </div>
                 </div>
             `;
         }
 
-        renderEquipment(equipment) {
-            if (!equipment) return '';
+        renderModelBadge(model) {
+            const modelIcons = {
+                'Office-First': '🏢',
+                'Hybrid-Required': '🔄',
+                'Hybrid-Flexible': '⚡',
+                'Remote-First': '🌍',
+                'Fully Remote': '🚀'
+            };
+
+            const icon = modelIcons[model] || '💼';
 
             return `
-                <div class="policy-block">
-                    <h3>💻 Equipment & Setup</h3>
-                    ${this.renderTextField('Budget', equipment.budget)}
-                    ${this.renderTextField('Provided Equipment', equipment.provided)}
-                    ${this.renderTextField('Support', equipment.support)}
+                <div class="model-badge">
+                    <span class="model-icon">${icon}</span>
+                    <span class="model-name">${model}</span>
                 </div>
             `;
-        }
-
-        renderSchedule(schedule) {
-            if (!schedule) return '';
-
-            return `
-                <div class="policy-block">
-                    <h3>⏰ Schedule & Hours</h3>
-                    ${this.renderTextField('Flexibility', schedule.flexibility)}
-                    ${this.renderTextField('Core Hours', schedule.coreHours)}
-                    ${this.renderTextField('Asynchronous Work', schedule.asynchronous)}
-                </div>
-            `;
-        }
-
-        renderTools(tools) {
-            if (!tools) return '';
-
-            return `
-                <div class="policy-block">
-                    <h3>🛠️ Tools & Technology</h3>
-                    ${this.renderTextField('Communication', tools.communication)}
-                    ${this.renderTextField('Collaboration', tools.collaboration)}
-                    ${this.renderTextField('Socializing', tools.socializing)}
-                </div>
-            `;
-        }
-
-        renderCulture(culture) {
-            if (!culture) return '';
-
-            return `
-                <div class="policy-block">
-                    <h3>🌟 Remote Culture</h3>
-                    ${this.renderTextField('In-Person Events', culture.inPerson)}
-                    ${this.renderTextField('Remote Culture', culture.remoteCulture)}
-                    ${this.renderTextField('Inclusion', culture.inclusion)}
-                </div>
-            `;
-        }
-
-        renderTextField(label, value) {
-            return TemplateUtils.renderIf(value, v => `
-                <div class="policy-text-section">
-                    <h4>${label}:</h4>
-                    <p>${v}</p>
-                </div>
-            `);
         }
     }
 

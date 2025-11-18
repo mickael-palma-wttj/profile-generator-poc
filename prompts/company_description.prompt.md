@@ -7,7 +7,7 @@
       "type": "company_description",
       "data": {
         "title": "About us",
-        "content": "string (merged: tagline 10-20 words + overview 3 paragraphs + quickFacts 4-8 facts + keyProducts 2-5 products + targetMarket 2-3 sentences)",
+        "content": "string (merged: tagline 10-20 words + overview 3 paragraphs + quickFacts 2-3 facts + keyProducts 2-3 products + targetMarket 1 sentence)",
         "sources": [
           {
             "title": "string",
@@ -25,7 +25,7 @@
       "NO comments in JSON"
     ]
   },
-  "content": "TAGLINE: 10-20 words, specific and compelling, convey what company does.\nOVERVIEW: 3 paragraphs (3-5 sentences each): core business/value, problem/differentiation, mission/position. Substantive, no platitudes.\nQUICK FACTS: 4-8 facts (founded, headquarters, industry, size, type, funding, revenue, valuation) woven naturally into content as flowing paragraph.\nKEY PRODUCTS: 2-5 flagship products with 1-2 sentence descriptions, customer benefits, integrated as flowing paragraph.\nTARGET MARKET: 2-3 sentences covering segments, company sizes, industries, geographies, use cases, integrated as flowing paragraph.\nSOURCES: 3-10 citations (minimum 1 primary, 1 third-party, prefer last 12 months).\nTONE: Match company's authentic voice—research materials, identify style, apply consistently.\nQUALITY: Use concrete facts, current research, official names, quantifiable metrics, unique differentiators. Avoid vague corporate language, outdated info, unverifiable claims.",
+  "content": "TAGLINE: 10-20 words, specific and compelling, convey what company does.\nOVERVIEW: 3 paragraphs (3-5 sentences each): core business/value, problem/differentiation, mission/position. Substantive, no platitudes.\nQUICK FACTS: 2-3 facts (founded, headquarters, industry, size, type, funding, revenue, valuation) woven naturally into content as flowing paragraph.\nKEY PRODUCTS: 2-3 flagship products with 1 sentence descriptions, customer benefits, integrated as flowing paragraph.\nTARGET MARKET: 1 sentence covering segments, company sizes, industries, geographies, use cases, integrated as flowing paragraph.\nSOURCES: 3-10 citations (minimum 1 primary, 1 third-party, prefer last 12 months).\nTONE: Match company's authentic voice—research materials, identify style, apply consistently.\nQUALITY: Use concrete facts, current research, official names, quantifiable metrics, unique differentiators. Avoid vague corporate language, outdated info, unverifiable claims.",
   "example": {
     "type": "company_description",
     "data": {

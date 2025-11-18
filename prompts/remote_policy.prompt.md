@@ -6,33 +6,9 @@
     "structure": {
       "type": "remote_policy",
       "data": {
-        "model": "string (Office-First|Hybrid-Required|Hybrid-Flexible|Remote-First|Fully Remote)",
+        "models": ["string"],
         "summary": "string (2-3 sentences)",
-        "workLocation": {
-          "policy": "string (1-2 sentences)",
-          "officeExpectation": "string",
-          "workFromAnywhere": "string"
-        },
-        "equipment": {
-          "budget": "string",
-          "provided": "string",
-          "support": "string"
-        },
-        "schedule": {
-          "flexibility": "string",
-          "coreHours": "string",
-          "asynchronous": "string"
-        },
-        "tools": {
-          "communication": "string",
-          "collaboration": "string",
-          "socializing": "string"
-        },
-        "culture": {
-          "inPerson": "string",
-          "remoteCulture": "string",
-          "inclusion": "string"
-        },
+        "policy_details": "string (1-2 sentences)",
         "sources": [
           {
             "title": "string",
@@ -51,9 +27,10 @@
     ]
   },
   "content_guidelines": {
-    "model": {
+    "models": {
       "requirement": "required",
-      "description": "Choose the category that best describes overall remote work policy",
+      "format": "array of strings",
+      "description": "Select ALL applicable remote work models that the company offers. This MUST be an array. Include multiple models if the company provides different arrangements for different roles or if employees can choose between options.",
       "options": {
         "Office-First": {
           "definition": "Primarily in-office with limited remote options",
@@ -95,7 +72,12 @@
             "Example: Entire company is remote with co-working stipends"
           ]
         }
-      }
+      },
+      "selection_examples": [
+        "Single model: [\"Hybrid-Required\"]",
+        "Multiple models: [\"Hybrid-Flexible\", \"Fully Remote\"]",
+        "Company with different options by role: [\"Office-First\", \"Hybrid-Required\", \"Fully Remote\"]"
+      ]
     },
     "summary": {
       "requirement": "required",
@@ -107,166 +89,20 @@
         "Reasoning behind their approach",
         "Long-term commitment or temporary"
       ],
-      "example": "Stripe operates a hybrid-flexible model where employees can choose to work from offices, fully remotely, or a mix of both. The company maintains offices in major tech hubs but has invested heavily in remote infrastructure to support distributed collaboration. Teams gather in person quarterly for planning and team building, but day-to-day work is optimized for flexibility."
+      "example": "Qonto prioritizes in-person collaboration as essential for building strong teams and delivering results faster. While office presence is the preferred default, the company offers structured flexibility through hybrid work (up to 2 remote days/week) and exceptional full-remote arrangements for roles where it serves both employee needs and business goals. This approach balances team connection with the ability to attract top talent from diverse locations."
     },
-    "work_location": {
-      "policy": {
-        "requirement": "required",
-        "length": "1-2 sentences",
-        "what_to_include": [
-          "Where employees can work from",
-          "Percentage of remote workers if known",
-          "Office availability"
-        ],
-        "example": "Employees can work from any Stripe office, their home, or co-working spaces. Remote work is supported globally with teams distributed across North America, Europe, and parts of Asia."
-      },
-      "office_expectation": {
-        "requirement": "required",
-        "what_to_include": [
-          "Is office attendance required?",
-          "How often are people expected in office?",
-          "Team-specific variations",
-          "Flexibility level"
-        ],
-        "example": "No mandatory office attendance, though teams coordinate regular in-person days. Some teams opt for weekly or monthly in-office days for collaboration."
-      },
-      "work_from_anywhere": {
-        "requirement": "required",
-        "what_to_include": [
-          "Can employees work from anywhere in the world?",
-          "Geographic restrictions or requirements",
-          "Countries where employment is supported",
-          "International travel policies",
-          "Digital nomad arrangements"
-        ],
-        "example": "Employees must be located in countries where Stripe has legal entities for employment. Within those countries, work from anywhere is supported. International travel for remote work up to 90 days per year is allowed with approval."
-      }
-    },
-    "equipment": {
-      "budget": {
-        "requirement": "required",
-        "what_to_include": [
-          "Initial home office setup budget amount",
-          "Annual refresh or upgrade budget",
-          "Specific dollar amounts when known"
-        ],
-        "example": "$1,500 initial setup budget plus $500 annually for replacements"
-      },
-      "provided": {
-        "requirement": "required",
-        "what_to_include": [
-          "Standard equipment provided to all employees",
-          "Computer/laptop options",
-          "Monitors and accessories",
-          "Additional equipment available on request"
-        ],
-        "example": "MacBook Pro or PC of choice, external monitors, keyboard, mouse, headphones, and webcam. Additional equipment like monitor arms or desk accessories available on request."
-      },
-      "support": {
-        "requirement": "required",
-        "what_to_include": [
-          "IT support availability",
-          "Equipment repair/replacement process",
-          "Ergonomic consultations",
-          "Response time for issues"
-        ],
-        "example": "24/7 IT support via Slack or phone. Equipment repair or replacement shipped next-day. Ergonomic consultations available for home office optimization."
-      }
-    },
-    "schedule": {
-      "flexibility": {
-        "requirement": "required",
-        "what_to_include": [
-          "How flexible are working hours?",
-          "Are there set hours or full flexibility?",
-          "Expectations around availability"
-        ],
-        "example": "Fully flexible schedule with no set hours. Employees work when they're most productive, with core collaboration windows for team sync."
-      },
-      "core_hours": {
-        "requirement": "required",
-        "what_to_include": [
-          "Required meeting windows or core hours",
-          "Time zone considerations",
-          "How global teams handle timezone differences",
-          "Meeting rotation for fairness"
-        ],
-        "example": "Teams establish core overlap hours based on their distribution, typically 10am-2pm in their primary time zone. Global teams rotate meeting times to share timezone burden."
-      },
-      "asynchronous": {
-        "requirement": "required",
-        "what_to_include": [
-          "How company handles async work",
-          "Documentation practices",
-          "Meeting recording policies",
-          "Default communication modes"
-        ],
-        "example": "Strong async culture with detailed written documentation and recorded meetings. Default to async communication via Notion and Slack, with synchronous meetings reserved for brainstorming or complex discussions."
-      }
-    },
-    "tools": {
-      "communication": {
-        "requirement": "required",
-        "what_to_include": [
-          "Primary tools for chat, email, video",
-          "Guidelines for tool usage",
-          "Video meeting norms"
-        ],
-        "focus": "Primary tools only, not exhaustive list",
-        "example": "Slack for instant messaging, Zoom for video calls, Gmail for email. Company encourages thoughtful use of communication channels based on urgency."
-      },
-      "collaboration": {
-        "requirement": "required",
-        "what_to_include": [
-          "Tools for documentation",
-          "Project management platforms",
-          "Design and code collaboration tools",
-          "Integration between tools"
-        ],
-        "example": "Notion for documentation, Figma for design, GitHub for code, Linear for task management. All meetings recorded and shared for async viewing."
-      },
-      "socializing": {
-        "requirement": "required",
-        "what_to_include": [
-          "How remote teams socialize",
-          "Virtual social events",
-          "Tools for connection",
-          "Frequency of social activities"
-        ],
-        "example": "Virtual coffee chats through Donut, monthly team trivia nights, Slack channels for hobbies and interests, and quarterly in-person team gatherings."
-      }
-    },
-    "culture": {
-      "in_person": {
-        "requirement": "required",
-        "what_to_include": [
-          "How often do people gather in person?",
-          "Types of in-person events",
-          "Who covers costs?",
-          "Mandatory vs optional gatherings"
-        ],
-        "example": "Quarterly team offsites for planning and bonding, optional monthly office days, and annual all-company gathering. Travel and accommodation fully covered."
-      },
-      "remote_culture": {
-        "requirement": "required",
-        "what_to_include": [
-          "How culture is maintained remotely",
-          "Communication practices",
-          "Transparency initiatives",
-          "Virtual events and rituals"
-        ],
-        "example": "Strong documentation culture ensures information is accessible to all. Regular all-hands meetings, transparent internal communications, and intentional virtual social events keep remote employees connected."
-      },
-      "inclusion": {
-        "requirement": "required",
-        "what_to_include": [
-          "How remote employees are included",
-          "Equal access to opportunities",
-          "Meeting practices for hybrid teams",
-          "Tracking of remote employee experience"
-        ],
-        "example": "Remote employees have equal access to growth opportunities and leadership visibility. All meetings are video-first even if some attendees are in office. Company tracks promotion rates to ensure remote employees aren't disadvantaged."
-      }
+    "policy_details": {
+      "requirement": "required",
+      "length": "1-2 sentences",
+      "what_to_include": [
+        "Number of remote days allowed (per week/month/year)",
+        "Geographic restrictions (timezone requirements, country limitations)",
+        "Where employees can work from",
+        "Percentage of remote workers if known",
+        "Office availability and locations",
+        "Any role-specific variations"
+      ],
+      "example": "Employees can work remotely up to 2 days per week, plus 12 bonus remote days per year from within +/- 3 hours of CET. Full remote arrangements are available by exception for specific roles."
     },
     "sources": {
       "count": "2-8 citations",
@@ -321,7 +157,7 @@
     }
   },
   "tone_matching": {
-    "instruction": "Match company's tone when describing remote work policies",
+    "instruction": "Match company's tone when describing remote work policies in the summary and policy_details fields",
     "style_adaptations": {
       "employee_centric": {
         "companies": "GitLab, Buffer",
@@ -343,8 +179,7 @@
         "example": "Work from wherever you're happiest - we care about output, not location"
       }
     },
-    "principle": "Match how the company communicates about work culture and benefits. Avoid generic HR language—use their authentic voice.",
-    "note": "Match tone throughout, but DO NOT include tone analysis in JSON output"
+    "principle": "Match how the company communicates about work culture and benefits. Avoid generic HR language—use their authentic voice."
   },
   "quality_standards": {
     "do": [
@@ -357,7 +192,8 @@
       "Verify information from multiple sources",
       "Include employee perspective from reviews",
       "Note percentage of remote workers if known",
-      "Specify budget amounts and timeframes"
+      "Specify budget amounts and timeframes",
+      "Return models as an array, even if only one model applies"
     ],
     "dont": [
       "Copy marketing language about 'flexible culture'",
@@ -368,7 +204,8 @@
       "List every communication tool (focus on primary ones)",
       "Include speculative or unverified policies",
       "Use generic descriptions without specifics",
-      "Ignore timezone or location restrictions"
+      "Ignore timezone or location restrictions",
+      "Return models as a string or pipe-separated value - it must always be an array"
     ]
   },
   "research_process": {
@@ -394,53 +231,29 @@
       "Verify in-person gathering frequency and coverage"
     ]
   },
+  "edge_cases": {
+    "no_information_found": "Return JSON with models: [\"Office-First\"], explain in summary that no remote work policy was found, and include sources showing this (e.g., job postings requiring office presence)",
+    "policy_recently_changed": "Note this in summary and include sources from both before and after the change",
+    "policy_differs_by_role": "Include all applicable models in the array and explain variations in policy_details",
+    "conflicting_information": "Prioritize official company sources but note discrepancies in policy_details"
+  },
   "example": {
     "type": "remote_policy",
     "data": {
-      "model": "Hybrid-Flexible",
-      "summary": "Stripe operates a hybrid-flexible model where employees can choose to work from offices, fully remotely, or a mix of both based on their personal preference and team needs. The company maintains offices in major cities globally but has invested significantly in remote infrastructure to ensure distributed teams can collaborate effectively. Remote work is viewed as a long-term commitment, not a pandemic-era temporary measure.",
-      "workLocation": {
-        "policy": "Employees can work from any Stripe office, their home, or co-working spaces. The company supports fully remote work for most roles, with roughly 40% of employees working remotely full-time. Office presence is optional and based on team coordination and individual preference.",
-        "officeExpectation": "No mandatory office attendance requirements. Teams coordinate their own in-office days based on when face-to-face collaboration is most valuable. Some teams opt for monthly in-office weeks for planning sprints, while others meet quarterly. Individual contributors have full flexibility to work remotely 100% of the time if they choose.",
-        "workFromAnywhere": "Employees must be located in countries where Stripe has legal entities (US, Canada, UK, Ireland, France, Germany, Singapore, Australia, and others). Within approved countries, employees can work from anywhere. Short-term international work travel is supported up to 90 days per year with manager approval. Digital nomad arrangements considered case-by-case for certain roles."
-      },
-      "equipment": {
-        "budget": "$1,500 initial budget for home office setup, plus $500 annually for equipment refresh or upgrades",
-        "provided": "All employees receive a MacBook Pro (or Windows laptop of choice), external monitor(s), desk accessories, keyboard, mouse, headphones, and webcam. Additional ergonomic equipment like standing desks, monitor arms, or specialized chairs can be requested through IT. Remote employees also get shipped an equipment kit with cables, adapters, and accessories.",
-        "support": "24/7 IT support available via Slack and phone for all equipment issues. Next-day replacement shipping for any malfunctioning equipment. Ergonomic consultations available to optimize home office setup. Annual equipment refresh program allows upgrading devices."
-      },
-      "schedule": {
-        "flexibility": "Fully flexible working hours with no set schedule requirements. Employees work when they're most productive, whether that's early morning, late night, or standard business hours. The only expectation is delivering results and being available during agreed-upon team overlap windows.",
-        "coreHours": "Teams establish core collaboration hours based on their geographic distribution, typically 3-4 hours of overlap when most team members are expected to be available for meetings. For globally distributed teams, meeting times rotate to share the timezone burden fairly. Most teams keep core hours between 10am-2pm in their primary timezone.",
-        "asynchronous": "Strong asynchronous work culture with extensive use of written documentation and recorded meetings. Default to async communication through Notion docs, detailed Slack messages, and recorded Loom videos. All meetings are recorded and shared for teammates who can't attend live. Decision-making processes are documented transparently so remote employees never feel out of the loop."
-      },
-      "tools": {
-        "communication": "Slack for team chat and quick questions, Zoom for video meetings, Gmail for email. Guidelines encourage thoughtful channel choice: Slack for urgent, email for non-urgent, Notion for anything that needs to persist. All meetings are video-on by default to maintain connection.",
-        "collaboration": "Notion for documentation and knowledge management, Figma for design collaboration, GitHub for code and technical documentation, Linear for project tracking, Miro for virtual whiteboarding. All tools integrated to enable seamless remote collaboration.",
-        "socializing": "Donut bot randomly pairs employees for virtual coffee chats, monthly team trivia and game nights, dedicated Slack channels for hobbies (#cooking, #bookclub, #fitness), virtual happy hours, and async social threads for sharing life updates. Remote employees are explicitly included in all social initiatives."
-      },
-      "culture": {
-        "inPerson": "Quarterly team offsites where distributed teams gather for 2-3 days of planning, team building, and social time. All travel and accommodation costs covered by company. Annual all-company gathering brings entire organization together for strategy sharing and celebration. Office-based teams often organize monthly social events that remote employees can join if they happen to be in town.",
-        "remoteCulture": "Culture is maintained through transparent communication, strong documentation practices, and intentional inclusion of remote employees. All-hands meetings every two weeks keep everyone aligned on company direction. Internal blog shares wins, challenges, and learnings across teams. Employee resource groups help remote workers build connections beyond their immediate teams.",
-        "inclusion": "Remote employees have equal access to growth opportunities with promotion rates tracked to ensure no location bias. All meetings default to video even if some participants are in office together to keep remote attendees equally engaged. Leadership makes concerted effort to highlight work from distributed teams. Remote employees report feeling equally valued and included based on internal surveys."
-      },
+      "models": ["Hybrid-Flexible", "Fully Remote"],
+      "summary": "Qonto prioritizes in-person collaboration as essential for building strong teams and delivering results faster. While office presence is the preferred default, the company offers structured flexibility through hybrid work (up to 2 remote days/week) and exceptional full-remote arrangements for roles where it serves both employee needs and business goals. This approach balances team connection with the ability to attract top talent from diverse locations.",
+      "policy_details": "Employees can work remotely up to 2 days per week, plus 12 bonus remote days per year from within +/- 3 hours of CET. Full remote arrangements are available by exception for specific roles.",
       "sources": [
         {
-          "title": "Remote Work at Stripe - Careers Page",
-          "url": "https://stripe.com/careers/remote-work",
+          "title": "Remote Work at Qonto - Careers Page",
+          "url": "https://qonto.com/en/careers",
           "date": "2024-01-15",
           "type": "company-page"
         },
         {
-          "title": "Stripe Employee Reviews - Remote Work",
-          "url": "https://glassdoor.com/stripe-reviews-remote",
-          "date": "2024-03-20",
-          "type": "employee-review"
-        },
-        {
-          "title": "How Stripe Built a Hybrid-First Culture",
-          "url": "https://stripe.com/blog/hybrid-work-culture",
-          "date": "2023-09-10",
+          "title": "Embracing hybrid work at Qonto: our vision for balance and success",
+          "url": "https://medium.com/qonto-way/embracing-hybrid-work-at-qonto-our-vision-for-balance-and-success-865b346633f2",
+          "date": "2024-10-15",
           "type": "blog-post"
         }
       ]
@@ -451,5 +264,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure with comprehensive, verified remote work policy information. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "Research {COMPANY_NAME} using the process above and return ONLY the JSON structure with comprehensive, verified remote work policy information. CRITICAL: The 'models' field MUST be an array of strings, even if there's only one model (e.g., [\"Hybrid-Required\"] NOT \"Hybrid-Required\"). No markdown code blocks, no explanations, no code fences—pure JSON only."
 }
