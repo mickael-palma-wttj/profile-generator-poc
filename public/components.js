@@ -436,15 +436,33 @@
 
     class CompanyValuesSection extends ProfileSectionComponent {
         render() {
-            const { introduction, values, sources } = this.data;
+            const {
+                title,
+                values_source_type,
+                introduction,
+                values,
+                sources
+            } = this.data;
 
             this.innerHTML = `
                 <div class="company-values-section">
-                    ${TemplateUtils.renderIf(introduction, i => `<p class="values-intro">${i}</p>`)}
-                    <div class="values-grid">
-                        ${TemplateUtils.renderList(values, v => this.renderValue(v))}
-                    </div>
+                    ${TemplateUtils.renderIf(title, t => `<h2 class="values-title">${t}</h2>`)}
+                    
+                    ${TemplateUtils.renderIf(introduction, i => `<p class="values-intro">${TemplateUtils.escapeHtml(i)}</p>`)}
+                    
+                    ${this.renderValuesGrid(values)}
+                    
                     ${TemplateUtils.renderSources(sources)}
+                </div>
+            `;
+        }
+
+        renderValuesGrid(values) {
+            if (!values || values.length === 0) return '';
+
+            return `
+                <div class="values-grid">
+                    ${values.map(v => this.renderValue(v)).join('')}
                 </div>
             `;
         }
@@ -452,28 +470,9 @@
         renderValue(value) {
             return `
                 <div class="value-card">
-                    <div class="value-header">
-                        <span class="value-icon">${value.icon || DEFAULT_ICONS.value}</span>
-                        <h3>${value.title}</h3>
-                    </div>
-                    ${TemplateUtils.renderIf(value.tagline, t => `<div class="value-tagline">${t}</div>`)}
-                    <div class="value-description">
-                        <p>${value.description}</p>
-                    </div>
-                    ${this.renderExamples(value.examples)}
-                </div>
-            `;
-        }
-
-        renderExamples(examples) {
-            if (!examples || examples.length === 0) return '';
-
-            return `
-                <div class="value-examples">
-                    <strong>In practice:</strong>
-                    <ul>
-                        ${TemplateUtils.renderList(examples, ex => `<li>${ex}</li>`)}
-                    </ul>
+                    <h3 class="value-title">${TemplateUtils.escapeHtml(value.title)}</h3>
+                    ${TemplateUtils.renderIf(value.tagline, t => `<div class="value-tagline">${TemplateUtils.escapeHtml(t)}</div>`)}
+                    <p class="value-description">${TemplateUtils.escapeHtml(value.description)}</p>
                 </div>
             `;
         }

@@ -304,13 +304,22 @@
     gap: 2rem;
 }
 
+.values-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--primary-color);
+}
+
 .values-intro {
     font-size: 1.1rem;
     line-height: 1.7;
     color: var(--text-secondary);
     text-align: center;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 1.5rem;
 }
 
 .values-grid {
@@ -332,57 +341,25 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.value-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.value-icon {
-    font-size: 2rem;
-}
-
-.value-header h3 {
-    margin: 0;
+.value-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
     color: var(--primary-color);
 }
 
 .value-tagline {
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 1rem;
+    margin: 0.75rem 0;
     font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 .value-description {
+    margin: 0;
     line-height: 1.7;
     color: var(--text-primary);
-}
-
-.value-description p {
-    margin: 0.5rem 0;
-}
-
-.value-examples {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.value-examples strong {
-    color: var(--primary-color);
-    font-size: 0.9rem;
-}
-
-.value-examples ul {
-    margin: 0.5rem 0 0 0;
-    padding-left: 1.5rem;
-}
-
-.value-examples li {
-    color: var(--text-secondary);
-    margin: 0.25rem 0;
 }
 
 /* ============================================================================

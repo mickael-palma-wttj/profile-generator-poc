@@ -1,19 +1,39 @@
 {
   "role": "company_culture_researcher",
-  "task": "Generate structured company values and culture information",
+  "task": "PRIMARY: Retrieve and accurately reproduce companies' stated values when they are explicitly published. SECONDARY: Only if no stated values exist, generate structured company values based on observable culture patterns.",
+  "retrieval_priority": {
+    "instruction": "ALWAYS prioritize finding and using officially stated company values",
+    "process": [
+      "1. Search official company sources (careers page, about page, culture deck, company handbook)",
+      "2. Look for explicitly labeled 'Values', 'Principles', 'Operating Principles', or 'Core Values'",
+      "3. If found, reproduce them accurately using the exact titles and core messaging",
+      "4. ONLY if no stated values exist after thorough search, proceed to generate values based on observable culture"
+    ],
+    "accuracy_requirements": [
+      "Use the exact value titles as stated by the company",
+      "Preserve the company's original phrasing and key terminology",
+      "Maintain the order of values as presented by the company when possible",
+      "If the company provides descriptions, incorporate their language and examples",
+      "Clearly cite the source where stated values were found"
+    ],
+    "when_to_generate": [
+      "No values page exists on official company website",
+      "Company has not published explicit values in any public documentation",
+      "Only vague mission statements exist without specific values enumerated"
+    ]
+  },
   "output_format": {
     "type": "json_only",
     "structure": {
       "type": "company_values",
       "data": {
+        "values_source_type": "stated|generated",
         "introduction": "string (1-2 sentences)",
         "values": [
           {
-            "icon": "emoji",
             "title": "string (2-4 words)",
             "tagline": "string (one powerful sentence)",
-            "description": "string (2-3 paragraphs)",
-            "examples": ["string (2-4 concrete examples)"]
+            "description": "string (2-3 sentences)"
           }
         ],
         "sources": [
@@ -30,7 +50,8 @@
       "Return ONLY valid JSON",
       "NO markdown code fences",
       "NO explanatory text outside JSON",
-      "NO comments in JSON"
+      "NO comments in JSON",
+      "Include 'values_source_type' field to indicate if values are 'stated' or 'generated'"
     ]
   },
   "content_guidelines": {
@@ -38,37 +59,35 @@
       "length": "1-2 sentences",
       "purpose": "Set the tone for understanding the company's culture",
       "style": "Concise but meaningful",
-      "example": "At Stripe, values aren't just words on a wall—they're the operating principles that guide every decision from product development to customer support."
+      "for_stated_values": "Reference that these are the company's official stated values",
+      "for_generated_values": "Acknowledge values are derived from observable culture patterns",
+      "example_stated": "Stripe has explicitly defined five operating principles that guide every decision, from product development to customer support.",
+      "example_generated": "While Airbnb hasn't published formal values recently, their culture consistently demonstrates these core principles across operations and communications."
     },
     "values": {
-      "count": "4-6 values",
-      "selection_criteria": [
+      "count": "Match company's stated count if values are stated; 4-6 values if generated",
+      "purpose": "STATED: Accurately reproduce the company's published values. GENERATED: Write compelling values that match observable company culture",
+      "for_stated_values": [
+        "Use exact value titles as published by the company",
+        "Preserve the company's original language and key phrases",
+        "If company provides descriptions, adapt them into the required format",
+        "Maintain fidelity to the company's intended meaning",
+        "Do not add values not stated by the company",
+        "Do not omit values that the company has stated"
+      ],
+      "for_generated_values": [
         "Distinctive: Unique to this company's culture",
         "Actionable: Can be practiced daily",
         "Evident: Observable in company behavior",
         "Important: Actually guides decision-making"
       ],
       "components": {
-        "icon": {
-          "requirement": "required",
-          "format": "Single emoji representing the value",
-          "examples": {
-            "focus": "🎯",
-            "resilience": "💪",
-            "collaboration": "🤝",
-            "ambition": "🚀",
-            "quality": "💎",
-            "speed": "⚡",
-            "innovation": "💡",
-            "growth": "🌱",
-            "trust": "🔒",
-            "impact": "🌍"
-          }
-        },
         "title": {
           "requirement": "required",
           "length": "2-4 words",
           "style": "Memorable and distinctive",
+          "for_stated": "Use EXACT title from company source",
+          "for_generated": "Create distinctive title based on observable culture",
           "examples": [
             "Customer Obsession",
             "Bias for Action",
@@ -82,43 +101,39 @@
           "requirement": "required",
           "format": "One powerful sentence",
           "style": "Actionable and specific to this company",
+          "for_stated": "Adapt from company's description while preserving core message",
+          "for_generated": "Create based on observable company behavior",
           "example": "We don't just serve customers; we anticipate their needs before they know them"
         },
         "description": {
           "requirement": "required",
-          "length": "2-3 substantial paragraphs",
-          "structure": [
-            "Paragraph 1: What this value means at this specific company",
-            "Paragraph 2: How it manifests in day-to-day work and decision-making",
-            "Paragraph 3 (optional): Why this value matters for the company's mission"
-          ],
-          "style": "Specific, not generic; rich with detail and context"
-        },
-        "examples": {
-          "requirement": "required",
-          "count": "2-4 examples",
-          "format": "Concrete manifestations of the value",
-          "types": [
-            "Processes",
-            "Policies",
-            "Rituals",
-            "Behaviors",
-            "Decisions"
-          ],
-          "example": "Engineering teams run their own on-call rotations, reinforcing ownership of production code"
+          "length": "2-3 sentences",
+          "style": "Specific, not generic; details the value",
+          "for_stated": "Incorporate company's own language and examples when available",
+          "for_generated": "Base on specific observable behaviors and culture patterns",
+          "example": "Put yourself in our customers' shoes; aim at delivering both quality and speed: this what customers want and love; prioritize customers over processes"
         }
       }
     },
     "sources": {
       "count": "3-8 citations",
       "requirements": [
-        "Prioritize official company sources for stated values",
-        "Include third-party sources for validation",
+        "MUST include official source if values are stated (careers page, values page, culture deck)",
+        "For stated values: Cite the exact page where values are published",
+        "Include third-party sources for validation and context",
         "Cite specific pages rather than just homepage",
-        "Use recent sources to ensure values are current"
+        "Use recent sources to ensure values are current",
+        "For generated values: Include diverse sources showing observable culture"
+      ],
+      "priority_order_for_stated_values": [
+        "1. Official company values/culture page (REQUIRED if exists)",
+        "2. Company handbook or culture deck (if public)",
+        "3. Official careers/about pages",
+        "4. Company blog posts about culture and values"
       ],
       "what_to_cite": [
         "Official careers/about pages",
+        "Dedicated company values or culture pages",
         "Company blog posts about culture",
         "Leadership interviews discussing principles",
         "Employee reviews (Glassdoor/Comparably)",
@@ -128,6 +143,7 @@
     }
   },
   "common_value_themes": {
+    "note": "Use these ONLY for generated values when no stated values exist",
     "customer_focus": [
       "Customer obsession",
       "User-first",
@@ -183,8 +199,9 @@
     "instruction": "Analyze and match the company's voice when writing about values",
     "process": [
       "1. Read careers page, culture blog posts, and about section",
-      "2. Identify style: inspirational/pragmatic, formal/casual, idealistic/grounded",
-      "3. Apply their voice to all value descriptions"
+      "2. For stated values: Preserve the company's original tone and language",
+      "3. For generated values: Identify style (inspirational/pragmatic, formal/casual, idealistic/grounded)",
+      "4. Apply their voice to all value descriptions"
     ],
     "style_adaptations": {
       "bold_aspirational": "Use inspiring, future-focused language ('We're building the future of...')",
@@ -195,64 +212,105 @@
     "language_matching": [
       "Use their terminology (e.g., 'team members' vs 'employees')",
       "Match their characteristic phrases",
-      "Adopt their action verbs (e.g., 'shipping' vs 'delivering')"
+      "Adopt their action verbs (e.g., 'shipping' vs 'delivering')",
+      "For stated values: Preserve company's exact terminology"
     ],
     "note": "Match tone in content, but DO NOT include tone analysis in JSON output"
   },
   "quality_standards": {
     "do": [
-      "Research actual company values from careers pages and blog posts",
+      "FIRST: Thoroughly search for officially stated company values",
+      "Retrieve stated values precisely and accurately when clearly published",
+      "Use exact value titles when values are stated by the company",
+      "Preserve the company's original language and messaging for stated values",
       "Include company-specific language and terminology",
       "Make descriptions rich with detail and context",
       "Show how values interconnect and reinforce each other",
       "Include both aspirational and practical elements",
-      "Write value descriptions in the company's authentic voice"
+      "Write value descriptions in the company's authentic voice",
+      "Clearly indicate whether values are 'stated' or 'generated' in output"
     ],
     "dont": [
-      "Use generic corporate speak ('we value integrity and teamwork')",
-      "Include values that could apply to any company",
+      "DO NOT invent or generate values when values are explicitly stated by the company",
+      "DO NOT modify, add to, or omit stated company values",
+      "DO NOT use generic value titles when company has specific stated titles",
+      "Use generic corporate speak ('we value integrity and teamwork') for generated values",
+      "Include values that could apply to any company when generating",
       "Write surface-level descriptions without substance",
       "Contradict information from other sections",
-      "Include more than 6 values",
+      "Include more than 6 values (unless company states more)",
       "Write in a generic voice that doesn't reflect the company's culture"
     ]
   },
-  "example": {
+  "example_stated_values": {
     "type": "company_values",
     "data": {
-      "introduction": "Stripe's values are the foundation of how the company operates, from building payments infrastructure to supporting millions of businesses worldwide.",
+      "values_source_type": "stated",
+      "introduction": "Amazon has explicitly defined 16 Leadership Principles that serve as the backbone of their culture and decision-making across all levels of the organization.",
       "values": [
         {
-          "icon": "👥",
-          "title": "Users First",
-          "tagline": "We succeed when our users succeed, whether they're processing their first payment or their billionth",
-          "description": "At Stripe, putting users first means obsessing over every detail of the developer and user experience. This isn't about customer service scripts—it's about building products that developers love to integrate and businesses trust to handle their most critical transactions.\n\nThis value manifests in how teams prioritize work. When choosing between features, the question isn't 'what's easiest to build?' but 'what will have the biggest impact on our users?' Engineering teams regularly shadow customer success calls to hear pain points firsthand. Product managers spend time in user communities, not just analyzing dashboards.\n\nUsers First also means making hard decisions that benefit users long-term, even if they're costly short-term. Stripe's commitment to API stability and backwards compatibility, extensive documentation, and generous support for developers building on the platform all stem from this core value.",
-          "examples": [
-            "Engineering teams maintain API compatibility for years, even when it complicates internal systems",
-            "Customer-facing teams have authority to make decisions that benefit users without lengthy approval chains",
-            "Regular 'Bug Bash' events where entire company focuses on fixing user-reported issues",
-            "Comprehensive documentation is written alongside code, not as an afterthought"
-          ]
+          "title": "Customer Obsession",
+          "tagline": "Leaders start with the customer and work backwards, earning and keeping customer trust",
+          "description": "At Amazon, customer obsession means starting with the customer and working backwards. Leaders work vigorously to earn and keep customer trust, and while they pay attention to competitors, they obsess over customers."
+        },
+        {
+          "title": "Ownership",
+          "tagline": "Leaders are owners who think long term and never say 'that's not my job'",
+          "description": "Leaders are owners who act on behalf of the entire company, beyond just their own team. They never say 'that's not my job' and think long term, not sacrificing long-term value for short-term results."
         }
       ],
       "sources": [
         {
-          "title": "Stripe Careers: Our Values",
-          "url": "https://stripe.com/jobs/culture",
-          "date": "2024-02-10",
+          "title": "Amazon Leadership Principles",
+          "url": "https://www.amazon.jobs/en/principles",
+          "date": "2024-01-15",
           "type": "company-page"
         },
         {
-          "title": "Stripe Blog: Operating Principles",
-          "url": "https://stripe.com/blog/operating-principles",
-          "date": "2023-11-15",
+          "title": "Amazon About: Our Culture",
+          "url": "https://www.aboutamazon.com/about-us/leadership-principles",
+          "date": "2024-01-10",
+          "type": "company-page"
+        },
+        {
+          "title": "Glassdoor: Amazon Reviews",
+          "url": "https://www.glassdoor.com/Reviews/Amazon",
+          "date": "2024-02-01",
+          "type": "employee-review"
+        }
+      ]
+    }
+  },
+  "example_generated_values": {
+    "type": "company_values",
+    "data": {
+      "values_source_type": "generated",
+      "introduction": "While not formally published as a values list, Notion's culture consistently demonstrates these core principles across their product philosophy and company communications.",
+      "values": [
+        {
+          "title": "Craft and Quality",
+          "tagline": "Every pixel, every interaction, every detail matters in creating tools people love",
+          "description": "Notion's obsession with craft is evident in every aspect of their product. From the smooth animations to the thoughtful keyboard shortcuts, quality isn't just a goal—it's the standard. The team believes that software should feel delightful to use, not just functional."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Notion Careers: Life at Notion",
+          "url": "https://www.notion.so/careers",
+          "date": "2024-01-20",
+          "type": "company-page"
+        },
+        {
+          "title": "Notion Blog: Building Notion",
+          "url": "https://www.notion.so/blog/topic/building-notion",
+          "date": "2023-12-05",
           "type": "blog-post"
         },
         {
-          "title": "Glassdoor: Stripe Company Reviews",
-          "url": "https://www.glassdoor.com/Reviews/Stripe",
-          "date": "2024-01-20",
-          "type": "employee-review"
+          "title": "The Verge: Inside Notion's Design Philosophy",
+          "url": "https://www.theverge.com/notion-design",
+          "date": "2023-11-12",
+          "type": "article"
         }
       ]
     }
@@ -262,5 +320,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure following the exact format shown in the example. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "CRITICAL: First, exhaustively search for stated company values on official sources. If found, reproduce them accurately with exact titles and core messaging. Only generate values if no stated values exist. Return ONLY the JSON structure following the exact format shown in the examples. No markdown, no explanations, no code blocks—pure JSON only."
 }
