@@ -392,52 +392,140 @@
     transform: scale(1.05);
 }
 
-.stat-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.9;
-}
-
 .stat-value {
     font-size: 2.5rem;
     font-weight: 700;
-    margin: 0.5rem 0;
+    margin: 0 0 0.75rem 0;
 }
 
 .stat-label {
     font-size: 1rem;
     font-weight: 500;
     opacity: 0.95;
-    margin-bottom: 0.5rem;
-}
-
-.stat-context {
-    font-size: 0.875rem;
-    opacity: 0.85;
-}
-
-.numbers-context {
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    border-left: 4px solid var(--primary-color);
-}
-
-.numbers-context p {
     margin: 0;
-    line-height: 1.7;
-}
-
-.last-updated {
-    text-align: center;
-    color: var(--text-secondary);
 }
 
 /* ============================================================================
-   Funding Component
+   Breakdowns Section
    ============================================================================ */
 
-.funding-section {
+.breakdowns-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.breakdown-card {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.breakdown-label {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.breakdown-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.breakdown-chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pie-chart {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.breakdown-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.legend-category {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.legend-percentage {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.breakdown-warning {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* Responsive breakdowns */
+@media (max-width: 1024px) {
+    .breakdowns-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .breakdown-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .breakdown-chart-container {
+        order: 1;
+    }
+
+    .breakdown-legend {
+        order: 2;
+    }
+
+    .pie-chart {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+============================================================================*/ .funding-section {
     display: flex;
     flex-direction: column;
     gap: 2rem;

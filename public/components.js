@@ -484,24 +484,23 @@
 
     class KeyNumbersSection extends ProfileSectionComponent {
         render() {
-            const { stats, context, lastUpdated, sources } = this.data;
+            const { basic_stats, breakdowns, sources } = this.data;
 
             this.innerHTML = `
                 <div class="key-numbers-section">
-                    <div class="stats-grid">
-                        ${TemplateUtils.renderList(stats, s => this.renderStat(s))}
-                    </div>
-                    ${TemplateUtils.renderIf(context, c => `
-                        <div class="numbers-context">
-                            <p>${c}</p>
-                        </div>
-                    `)}
-                    ${TemplateUtils.renderIf(lastUpdated, u => `
-                        <div class="last-updated">
-                            <small>Last updated: ${u}</small>
-                        </div>
-                    `)}
+                    ${this.renderBasicStats(basic_stats)}
+                    ${this.renderBreakdowns(breakdowns)}
                     ${TemplateUtils.renderSources(sources)}
+                </div>
+            `;
+        }
+
+        renderBasicStats(stats) {
+            if (!stats || stats.length === 0) return '';
+
+            return `
+                <div class="stats-grid">
+                    ${stats.map(s => this.renderStat(s)).join('')}
                 </div>
             `;
         }
@@ -509,10 +508,104 @@
         renderStat(stat) {
             return `
                 <div class="stat-card">
-                    ${TemplateUtils.renderIf(stat.icon, i => `<div class="stat-icon">${i}</div>`)}
-                    <div class="stat-value">${stat.value}</div>
-                    <div class="stat-label">${stat.label}</div>
-                    ${TemplateUtils.renderIf(stat.context, c => `<div class="stat-context">${c}</div>`)}
+                    <div class="stat-value">${TemplateUtils.escapeHtml(stat.value)}</div>
+                    <div class="stat-label">${TemplateUtils.escapeHtml(stat.label)}</div>
+                </div>
+            `;
+        }
+
+        renderBreakdowns(breakdowns) {
+            if (!breakdowns || breakdowns.length === 0) return '';
+
+            return `
+                <div class="breakdowns-section">
+                    ${breakdowns.map(b => this.renderBreakdown(b)).join('')}
+                </div>
+            `;
+        }
+
+        renderBreakdown(breakdown) {
+            if (!breakdown.items || breakdown.items.length === 0) return '';
+
+            const totalPercentage = breakdown.items.reduce((sum, item) => sum + (item.percentage || 0), 0);
+            const chartId = `pie-chart-${Math.random().toString(36).substr(2, 9)}`;
+
+            return `
+                <div class="breakdown-card">
+                    <h3 class="breakdown-label">${TemplateUtils.escapeHtml(breakdown.label)}</h3>
+                    <div class="breakdown-content">
+                        <div class="breakdown-chart-container">
+                            <svg id="${chartId}" class="pie-chart" viewBox="0 0 200 200">
+                                ${this.renderPieChart(breakdown.items)}
+                            </svg>
+                        </div>
+                        <div class="breakdown-legend">
+                            ${breakdown.items.map(item => this.renderLegendItem(item)).join('')}
+                        </div>
+                    </div>
+                    ${totalPercentage !== 100 ? `<div class="breakdown-warning">⚠️ Percentages sum to ${totalPercentage}% (expected 100%)</div>` : ''}
+                </div>
+            `;
+        }
+
+        renderPieChart(items) {
+            let cumulativePercentage = 0;
+            const colors = [
+                '#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe',
+                '#43e97b', '#fa709a', '#fee140', '#30cfd0', '#330867'
+            ];
+
+            return items.map((item, index) => {
+                const percentage = item.percentage || 0;
+                const startAngle = (cumulativePercentage / 100) * 360;
+                const endAngle = ((cumulativePercentage + percentage) / 100) * 360;
+                cumulativePercentage += percentage;
+
+                const largeArc = percentage > 50 ? 1 : 0;
+                const startRad = (startAngle - 90) * (Math.PI / 180);
+                const endRad = (endAngle - 90) * (Math.PI / 180);
+
+                const x1 = 100 + 100 * Math.cos(startRad);
+                const y1 = 100 + 100 * Math.sin(startRad);
+                const x2 = 100 + 100 * Math.cos(endRad);
+                const y2 = 100 + 100 * Math.sin(endRad);
+
+                const pathData = `M 100 100 L ${x1} ${y1} A 100 100 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                const color = colors[index % colors.length];
+
+                return `<path d="${pathData}" fill="${color}" stroke="white" stroke-width="2"></path>`;
+            }).join('');
+        }
+
+        renderLegendItem(item) {
+            const percentage = item.percentage || 0;
+            const colors = [
+                '#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe',
+                '#43e97b', '#fa709a', '#fee140', '#30cfd0', '#330867'
+            ];
+
+            // Find color index based on cumulative percentage
+            let colorIndex = 0;
+            let cumulative = 0;
+            const items = Array.isArray(this.data.breakdowns) ?
+                this.data.breakdowns.find(b => b.items && b.items.includes(item))?.items || [] : [];
+
+            for (let i = 0; i < items.length; i++) {
+                if (items[i] === item) {
+                    colorIndex = i;
+                    break;
+                }
+            }
+
+            const color = colors[colorIndex % colors.length];
+
+            return `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${color}"></div>
+                    <div class="legend-text">
+                        <div class="legend-category">${TemplateUtils.escapeHtml(item.category)}</div>
+                        <div class="legend-percentage">${item.percentage}%</div>
+                    </div>
                 </div>
             `;
         }
