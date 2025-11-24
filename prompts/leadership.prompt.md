@@ -10,19 +10,11 @@
         "leaders": [
           {
             "name": "string",
-            "title": "string",
+            "role": "string",
             "tenure": "string (YYYY - Present or YYYY - YYYY)",
             "background": "string (2-3 sentences)",
             "achievements": ["string (2-5 items)"],
-            "quote": "string (optional)",
             "linkedin": "string (optional URL)"
-          }
-        ],
-        "boardMembers": [
-          {
-            "name": "string",
-            "role": "string",
-            "affiliation": "string"
           }
         ],
         "sources": [
@@ -72,9 +64,9 @@
           "requirement": "required",
           "format": "Full name as used professionally"
         },
-        "title": {
+        "role": {
           "requirement": "required",
-          "format": "Current official title",
+          "format": "Current official role",
           "specificity": "Be specific (e.g., 'VP of Engineering' not 'Engineering Lead')",
           "examples": [
             "Co-Founder & CEO",
@@ -121,64 +113,10 @@
           "good_example": "Led engineering team growth from 20 to 500+ engineers while maintaining quality",
           "bad_example": "Grew engineering team"
         },
-        "quote": {
-          "requirement": "optional",
-          "purpose": "Reveal their philosophy or vision",
-          "requirements": [
-            "Must be verifiable from public sources",
-            "Should be meaningful and revealing",
-            "From interviews, blog posts, talks, or press",
-            "Leave out if no good quote is available"
-          ],
-          "what_makes_good_quote": [
-            "Reveals their thinking or philosophy",
-            "Specific to the company or industry",
-            "Memorable and insightful",
-            "Not generic corporate speak"
-          ]
-        },
         "linkedin": {
           "requirement": "optional",
           "format": "Full LinkedIn profile URL",
           "condition": "Only include if profile is public and current"
-        }
-      }
-    },
-    "board_members": {
-      "count": "3-10 members",
-      "selection_priority": [
-        "Independent directors",
-        "Investor representatives with board seats",
-        "Strategic advisors with board seats",
-        "Chairman or lead independent director",
-        "Notable industry figures"
-      ],
-      "fields": {
-        "name": {
-          "requirement": "required",
-          "format": "Full name"
-        },
-        "role": {
-          "requirement": "required",
-          "options": [
-            "Board Member",
-            "Independent Director",
-            "Board Observer",
-            "Chairman",
-            "Lead Independent Director",
-            "Board Advisor"
-          ]
-        },
-        "affiliation": {
-          "requirement": "required",
-          "description": "Their primary company, firm, or previous role",
-          "examples": [
-            "Sequoia Capital",
-            "Former Salesforce CEO",
-            "Independent",
-            "Andreessen Horowitz",
-            "Former Google Cloud CEO"
-          ]
         }
       }
     },
@@ -252,7 +190,7 @@
   "quality_standards": {
     "do": [
       "Focus on current leadership (last update within 6 months)",
-      "Use official titles from company website or LinkedIn",
+      "Use official roles from company website or LinkedIn",
       "Include diverse leadership when present",
       "Highlight unique or impressive backgrounds",
       "Verify all information from multiple sources",
@@ -276,7 +214,7 @@
   "research_process": {
     "steps": [
       "1. Check company's official leadership/team page",
-      "2. Verify current titles and tenures via LinkedIn",
+      "2. Verify current roles and tenures via LinkedIn",
       "3. Research backgrounds and previous roles",
       "4. Find press releases for major appointments",
       "5. Search for interviews, podcasts, and talks for quotes",
@@ -285,7 +223,7 @@
       "8. Verify information is current (within 6 months)"
     ],
     "verification": [
-      "Confirm titles match across company website and LinkedIn",
+      "Confirm roles match across company website and LinkedIn",
       "Verify tenure dates from press releases or LinkedIn",
       "Cross-check achievements against company announcements",
       "Validate board composition from official sources",
@@ -299,7 +237,7 @@
       "leaders": [
         {
           "name": "Patrick Collison",
-          "title": "Co-Founder & CEO",
+          "role": "Co-Founder & CEO",
           "tenure": "2010 - Present",
           "background": "Co-founded Stripe at age 19 after previously founding Auctomatic (acquired by Live Current Media for $5M). Studied physics at MIT before leaving to focus on Stripe. Known for his intellectual curiosity and long-term thinking about payments and internet infrastructure.",
           "achievements": [
@@ -308,12 +246,11 @@
             "Championed expansion into adjacent financial services including banking, billing, and embedded finance",
             "Built reputation as one of tech's most thoughtful CEOs through essays and interviews on progress and technology"
           ],
-          "quote": "We think of Stripe as the economic infrastructure for the internet. Our goal is to increase the GDP of the internet by making it easier to start, run, and scale online businesses.",
           "linkedin": "https://linkedin.com/in/patrickcollison"
         },
         {
           "name": "Dhivya Suryadevara",
-          "title": "Chief Financial Officer",
+          "role": "Chief Financial Officer",
           "tenure": "2020 - Present",
           "background": "Former CFO of General Motors where she oversaw $145B in annual revenue. MBA from Harvard Business School and deep experience in financial operations, capital allocation, and international business. Brings Fortune 500 operational expertise to Stripe's high-growth environment.",
           "achievements": [
@@ -323,23 +260,6 @@
             "Previously at GM, led restructuring of international operations and $20B+ in capital allocation"
           ],
           "linkedin": "https://linkedin.com/in/dhivya-suryadevara"
-        }
-      ],
-      "boardMembers": [
-        {
-          "name": "Michael Moritz",
-          "role": "Board Member",
-          "affiliation": "Sequoia Capital"
-        },
-        {
-          "name": "Marc Andreessen",
-          "role": "Board Member",
-          "affiliation": "Andreessen Horowitz"
-        },
-        {
-          "name": "Diane Greene",
-          "role": "Board Member",
-          "affiliation": "Former Google Cloud CEO"
         }
       ],
       "sources": [

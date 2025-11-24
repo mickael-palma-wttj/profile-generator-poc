@@ -709,15 +709,12 @@
 
     class LeadershipSection extends ProfileSectionComponent {
         render() {
-            const { introduction, leaders, organizationStructure, sources } = this.data;
+            const { introduction, leaders, sources } = this.data;
 
             this.innerHTML = `
                 <div class="leadership-section">
-                    ${TemplateUtils.renderIf(introduction, i => `<p class="leadership-intro">${i}</p>`)}
+                    ${TemplateUtils.renderIf(introduction, i => `<p class="leadership-intro">${TemplateUtils.escapeHtml(i)}</p>`)}
                     ${this.renderLeaders(leaders)}
-                    ${TemplateUtils.renderIf(organizationStructure, s =>
-                TemplateUtils.renderSection('Organization Structure', `<p>${s}</p>`)
-            )}
                     ${TemplateUtils.renderSources(sources)}
                 </div>
             `;
@@ -728,7 +725,7 @@
 
             return `
                 <div class="leaders-grid">
-                    ${TemplateUtils.renderList(leaders, l => this.renderLeader(l))}
+                    ${leaders.map(l => this.renderLeader(l)).join('')}
                 </div>
             `;
         }
@@ -737,42 +734,37 @@
             return `
                 <div class="leader-card">
                     <div class="leader-header">
-                        <div class="leader-name">${leader.name}</div>
-                        <div class="leader-title">${leader.title}</div>
+                        <h3 class="leader-name">${TemplateUtils.escapeHtml(leader.name)}</h3>
+                        <div class="leader-role">${TemplateUtils.escapeHtml(leader.role)}</div>
+                        ${TemplateUtils.renderIf(leader.tenure, t => `<div class="leader-tenure">${TemplateUtils.escapeHtml(t)}</div>`)}
                     </div>
+                    
                     ${TemplateUtils.renderIf(leader.background, b => `
-                        <p class="leader-background">${b}</p>
+                        <p class="leader-background">${TemplateUtils.escapeHtml(b)}</p>
                     `)}
-                    ${this.renderLeaderHighlights(leader.keyContributions)}
-                    ${this.renderSocialLinks(leader.linkedin, leader.twitter)}
+                    
+                    ${this.renderAchievements(leader.achievements)}
+                    
+                    ${TemplateUtils.renderIf(leader.linkedin, url => `
+                        <a href="${url}" target="_blank" rel="noopener noreferrer" class="leader-linkedin-link">
+                            🔗 LinkedIn Profile
+                        </a>
+                    `)}
                 </div>
             `;
         }
 
-        renderLeaderHighlights(contributions) {
-            if (!contributions || contributions.length === 0) return '';
+        renderAchievements(achievements) {
+            if (!achievements || achievements.length === 0) return '';
 
             return `
-                <div class="leader-highlights">
-                    <strong>Key Contributions:</strong>
-                    <ul>
-                        ${TemplateUtils.renderList(contributions, c => `<li>${c}</li>`)}
+                <div class="leader-achievements">
+                    <h4>Key Achievements</h4>
+                    <ul class="achievements-list">
+                        ${achievements.map(a => `<li>${TemplateUtils.escapeHtml(a)}</li>`).join('')}
                     </ul>
                 </div>
             `;
-        }
-
-        renderSocialLinks(linkedin, twitter) {
-            const links = [];
-
-            if (linkedin) {
-                links.push(`<a href="${linkedin}" target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn</a>`);
-            }
-            if (twitter) {
-                links.push(`<a href="${twitter}" target="_blank" rel="noopener noreferrer" class="social-link">Twitter</a>`);
-            }
-
-            return links.length > 0 ? `<div class="leader-social">${links.join(' • ')}</div>` : '';
         }
     }
 
