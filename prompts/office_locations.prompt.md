@@ -14,7 +14,8 @@
           "latitude": "number (REQUIRED)",
           "longitude": "number (REQUIRED)",
           "size": "string (optional)",
-          "description": "string (1-2 sentences)"
+          "description": "string (1-2 sentences)",
+          "image": "string (URL, optional)"
         },
         "offices": [
           {
@@ -25,10 +26,10 @@
             "latitude": "number (REQUIRED)",
             "longitude": "number (REQUIRED)",
             "size": "string (optional)",
-            "description": "string (1-2 sentences)"
+            "description": "string (1-2 sentences)",
+            "image": "string (URL, optional)"
           }
         ],
-        "remotePresence": "string (2-3 sentences, required if applicable)",
         "sources": [
           {
             "title": "string",
@@ -125,6 +126,11 @@
           "condition": "Only include if publicly disclosed",
           "examples": ["185,000 sq ft", "15,000 sq m", "50,000 m²"]
         },
+        "image": {
+          "requirement": "optional",
+          "format": "URL to professional photo",
+          "condition": "Include if publicly available, omit field if not"
+        },
         "description": {
           "requirement": "required",
           "length": "1-2 sentences",
@@ -196,6 +202,11 @@
           "requirement": "optional",
           "condition": "Include if publicly disclosed"
         },
+        "image": {
+          "requirement": "optional",
+          "format": "URL to professional photo",
+          "condition": "Include if publicly available, omit field if not"
+        },
         "description": {
           "requirement": "required",
           "length": "1-2 sentences",
@@ -208,23 +219,6 @@
           ]
         }
       }
-    },
-    "remote_presence": {
-      "requirement": "required if applicable",
-      "length": "2-3 sentences",
-      "what_to_include": [
-        "Remote work policy (fully remote, hybrid, office-first)",
-        "Geographic distribution of remote workers",
-        "Remote-first infrastructure and culture",
-        "How remote work is supported (stipends, offsites, tools)",
-        "Percentage or number of remote workers if known"
-      ],
-      "include_if_office_centric": "Yes - state the office-centric policy",
-      "examples": [
-        "Stripe operates a hybrid model with employees working from offices or remotely. The company has hundreds of fully remote employees across the US and Europe, with infrastructure built to support distributed collaboration. Remote workers receive home office stipends and gather quarterly for team offsites.",
-        "The company is office-first with most employees working from physical locations at least 3 days per week. Limited remote positions are available for specific roles, primarily in engineering and product.",
-        "Fully remote company with no physical offices. 500+ employees distributed across 30+ countries use async communication tools and gather twice yearly for company-wide retreats."
-      ]
     },
     "sources": {
       "count": "2-8 citations",
@@ -374,7 +368,6 @@
           "description": "Stripe's second-largest office outside the US, housing engineering, product, and sales teams. Critical hub for serving UK and European markets with dedicated teams for local payment methods and financial regulations."
         }
       ],
-      "remotePresence": "Stripe operates a flexible hybrid model where employees can work from offices or remotely based on team needs. The company has hundreds of fully remote employees across North America and Europe, with robust infrastructure for distributed collaboration including async communication tools and quarterly team offsites. Remote employees receive home office stipends and regular opportunities to visit offices for team gatherings.",
       "sources": [
         {
           "title": "Stripe Careers: Locations",
