@@ -15,7 +15,7 @@
         "breakdowns": [
           {
             "label": "string (breakdown category name)",
-            "type": "string (gender|ethnicity|location)",
+            "type": "string (gender|ethnicity|location|team)",
             "items": [
               {
                 "category": "string (category name)",
@@ -41,7 +41,7 @@
       "NO comments in JSON",
       "For breakdowns: percentages MUST add up to 100 (allow 99-101 range for rounding)",
       "Use basic_stats for: Employees, Average age, Creation year, Turnover rate, Annual Revenue",
-      "Use breakdowns for: Gender breakdown, Ethnicity breakdown, Work location breakdown"
+      "Use breakdowns for: Gender breakdown, Ethnicity breakdown, Work location breakdown, Team breakdown"
     ]
   },
   "allowed_metrics": {
@@ -53,7 +53,8 @@
       "Annual revenue",
       "Ethnicity breakdown",
       "Gender breakdown",
-      "Work location breakdown"
+      "Work location breakdown",
+      "Team breakdown"
     ],
     "critical_rule": "DO NOT generate any metrics outside this list. If you cannot find data for a metric, omit it rather than inventing data or including different metrics."
   },
@@ -138,6 +139,26 @@
           { "category": "Remote", "percentage": 20 }
         ]
       ]
+    },
+    "team_breakdown": {
+      "label": "Team breakdown",
+      "type": "breakdown",
+      "format": "Array of objects with category and percentage (must sum to 100%)",
+      "examples": [
+        [
+          { "category": "Engineering", "percentage": 40 },
+          { "category": "Product & Design", "percentage": 20 },
+          { "category": "Sales & Marketing", "percentage": 25 },
+          { "category": "Operations & Support", "percentage": 15 }
+        ],
+        [
+          { "category": "Product", "percentage": 35 },
+          { "category": "Engineering", "percentage": 30 },
+          { "category": "Sales", "percentage": 20 },
+          { "category": "Marketing", "percentage": 10 },
+          { "category": "Other", "percentage": 5 }
+        ]
+      ]
     }
   },
   "stat_components": {
@@ -171,11 +192,11 @@
       "description": "Demographic or categorical breakdowns that sum to 100%",
       "label": {
         "requirement": "required",
-        "values": ["Gender breakdown", "Ethnicity breakdown", "Work location breakdown"]
+        "values": ["Gender breakdown", "Ethnicity breakdown", "Work location breakdown", "Team breakdown"]
       },
       "type": {
         "requirement": "required",
-        "values": ["gender", "ethnicity", "location"]
+        "values": ["gender", "ethnicity", "location", "team"]
       },
       "items": {
         "requirement": "required",
@@ -346,6 +367,16 @@
             { "category": "On-site", "percentage": 45 },
             { "category": "Hybrid", "percentage": 45 },
             { "category": "Remote", "percentage": 10 }
+          ]
+        },
+        {
+          "label": "Team breakdown",
+          "type": "team",
+          "items": [
+            { "category": "Engineering", "percentage": 40 },
+            { "category": "Product & Design", "percentage": 20 },
+            { "category": "Sales & Marketing", "percentage": 25 },
+            { "category": "Operations & Support", "percentage": 15 }
           ]
         }
       ],
