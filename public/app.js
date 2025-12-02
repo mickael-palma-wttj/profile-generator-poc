@@ -21,7 +21,8 @@
             'leadership',               // Who runs the company
             'office_locations',         // Geographic presence
             'perks_and_benefits',       // Employee benefits
-            'remote_policy'             // Work arrangements
+            'remote_policy',            // Work arrangements
+            'what_we_are_looking_for'   // Ideal candidate traits
         ],
         icons: {
             pending: '⏳',

@@ -81,6 +81,7 @@ module ProfileGenerator
           "office_locations" => "office-locations-section",
           "perks_and_benefits" => "perks-benefits-section",
           "remote_policy" => "remote-policy-section",
+          "what_we_are_looking_for" => "what-we-are-looking-for-section",
           "file_analysis" => "file-analysis-section"
         }
 

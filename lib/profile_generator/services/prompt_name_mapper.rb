@@ -16,7 +16,8 @@ module ProfileGenerator
         "office_locations" => "OfficeLocations",
         "perks_and_benefits" => "PerksAndBenefits",
         "remote_policy" => "RemotePolicy",
-        "their_story" => "TheirStory"
+        "their_story" => "TheirStory",
+        "what_we_are_looking_for" => "WhatWeAreLookingFor"
       }.freeze
 
       # Reverse mapping from Langfuse names (PascalCase) to local file names (snake_case)

@@ -1988,3 +1988,71 @@
         gap: 1.5rem;
     }
 }
+
+/* ============================================================================
+   What We Are Looking For Component
+   ============================================================================ */
+
+.what-we-are-looking-for-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.wwalf-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.wwalf-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.wwalf-section-header {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0.5rem 0 0 0;
+}
+
+.wwalf-paragraph {
+    margin: 0;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.wwalf-paragraph:first-of-type {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* Responsive Design for What We Are Looking For */
+@media (max-width: 768px) {
+    .wwalf-content {
+        padding: 1.5rem;
+    }
+
+    .wwalf-title {
+        font-size: 1.5rem;
+    }
+
+    .wwalf-paragraph {
+        font-size: 1rem;
+    }
+
+    .wwalf-paragraph:first-of-type {
+        font-size: 1.05rem;
+    }
+}

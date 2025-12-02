@@ -1297,6 +1297,47 @@
     }
 
     // ============================================================================
+    // What We Are Looking For Component
+    // ============================================================================
+
+    class WhatWeAreLookingForSection extends ProfileSectionComponent {
+        render() {
+            const { title, content, sources } = this.data;
+
+            this.innerHTML = `
+                <div class="what-we-are-looking-for-section">
+                    ${TemplateUtils.renderIf(title, t => `<h2 class="wwalf-title">${TemplateUtils.escapeHtml(t)}</h2>`)}
+                    
+                    ${TemplateUtils.renderIf(content, c => `
+                        <div class="wwalf-content">
+                            ${this.renderFormattedContent(c)}
+                        </div>
+                    `)}
+
+                    ${TemplateUtils.renderSources(sources)}
+                </div>
+            `;
+        }
+
+        renderFormattedContent(content) {
+            // Split content by double newlines for paragraphs
+            const paragraphs = content.split('\n\n');
+            return paragraphs.map(paragraph => {
+                const trimmed = paragraph.trim();
+                if (!trimmed) return '';
+
+                // Check if this looks like a section header (short text ending with colon or ?)
+                if (trimmed.match(/^[A-ZÀ-Ú][^.!?\n]{0,50}[?:]$/)) {
+                    return `<h3 class="wwalf-section-header">${TemplateUtils.escapeHtml(trimmed)}</h3>`;
+                }
+
+                // Render as paragraph
+                return `<p class="wwalf-paragraph">${TemplateUtils.escapeHtml(trimmed)}</p>`;
+            }).join('');
+        }
+    }
+
+    // ============================================================================
     // File Analysis Section Component
     // ============================================================================
 
@@ -1471,6 +1512,7 @@
     customElements.define('office-locations-section', OfficeLocationsSection);
     customElements.define('perks-benefits-section', PerksBenefitsSection);
     customElements.define('remote-policy-section', RemotePolicySection);
+    customElements.define('what-we-are-looking-for-section', WhatWeAreLookingForSection);
     customElements.define('file-analysis-section', FileAnalysisSection);
 
     // Export for testing
@@ -1487,6 +1529,7 @@
             OfficeLocationsSection,
             PerksBenefitsSection,
             RemotePolicySection,
+            WhatWeAreLookingForSection,
             FileAnalysisSection
         };
     }
