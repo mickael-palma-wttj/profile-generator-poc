@@ -15,7 +15,7 @@
         "breakdowns": [
           {
             "label": "string (breakdown category name)",
-            "type": "string (gender|ethnicity|location|team)",
+            "type": "string (gender|ethnicity|location)",
             "items": [
               {
                 "category": "string (category name)",
@@ -41,7 +41,7 @@
       "NO comments in JSON",
       "For breakdowns: percentages MUST add up to 100 (allow 99-101 range for rounding)",
       "Use basic_stats for: Employees, Average age, Creation year, Turnover rate, Annual Revenue",
-      "Use breakdowns for: Gender breakdown, Ethnicity breakdown, Work location breakdown, Team breakdown"
+      "Use breakdowns for: Gender breakdown, Ethnicity breakdown, Work location breakdown"
     ]
   },
   "allowed_metrics": {
@@ -53,8 +53,7 @@
       "Annual revenue",
       "Ethnicity breakdown",
       "Gender breakdown",
-      "Work location breakdown",
-      "Team breakdown"
+      "Work location breakdown"
     ],
     "critical_rule": "DO NOT generate any metrics outside this list. If you cannot find data for a metric, omit it rather than inventing data or including different metrics."
   },
@@ -139,26 +138,6 @@
           { "category": "Remote", "percentage": 20 }
         ]
       ]
-    },
-    "team_breakdown": {
-      "label": "Team breakdown",
-      "type": "breakdown",
-      "format": "Array of objects with category and percentage (must sum to 100%)",
-      "examples": [
-        [
-          { "category": "Engineering", "percentage": 40 },
-          { "category": "Product & Design", "percentage": 20 },
-          { "category": "Sales & Marketing", "percentage": 25 },
-          { "category": "Operations & Support", "percentage": 15 }
-        ],
-        [
-          { "category": "Product", "percentage": 35 },
-          { "category": "Engineering", "percentage": 30 },
-          { "category": "Sales", "percentage": 20 },
-          { "category": "Marketing", "percentage": 10 },
-          { "category": "Other", "percentage": 5 }
-        ]
-      ]
     }
   },
   "stat_components": {
@@ -177,7 +156,8 @@
       },
       "label": {
         "requirement": "required",
-        "length": "1-4 words",
+        "length": "1-4 words - NON-NEGOTIABLE",
+        "critical_instruction": "MUST use EXACT label from allowed list. Do not modify or create alternative labels.",
         "style": "Clear, concise description with proper capitalization",
         "allowed_labels": [
           "Employees",
@@ -185,28 +165,32 @@
           "Creation year",
           "Turnover rate",
           "Annual Revenue"
-        ]
+        ],
+        "strict_matching": "Labels must match exactly - including capitalization and spacing"
       }
     },
     "breakdowns": {
       "description": "Demographic or categorical breakdowns that sum to 100%",
       "label": {
         "requirement": "required",
-        "values": ["Gender breakdown", "Ethnicity breakdown", "Work location breakdown", "Team breakdown"]
+        "critical_instruction": "MUST use EXACT label from allowed list. Do not modify these labels.",
+        "values": ["Gender breakdown", "Ethnicity breakdown", "Work location breakdown"],
+        "strict_matching": "Labels must match exactly - including capitalization ('Gender breakdown' not 'gender breakdown')"
       },
       "type": {
         "requirement": "required",
-        "values": ["gender", "ethnicity", "location", "team"]
+        "values": ["gender", "ethnicity", "location"]
       },
       "items": {
         "requirement": "required",
         "structure": "Array of { category, percentage } objects",
         "rules": [
           "Each item must have 'category' (string) and 'percentage' (number 0-100)",
-          "All percentages must sum to 100 (allow 99-101 range for rounding)",
+          "⚠️ CRITICAL: All percentages must sum to 100 (allow 99-101 range for rounding). CALCULATE before returning.",
           "Percentages must be integers or one decimal place (e.g., 45, 45.5)",
           "Order items by percentage (descending) for readability"
-        ]
+        ],
+        "validation": "MANDATORY: Sum all percentage values for each breakdown. If sum is <99 or >101, adjust percentages proportionally."
       }
     }
   },
@@ -227,6 +211,37 @@
       "Use commas for clarity in full numbers (8,000 not 8000)",
       "For breakdowns, ensure percentages add up to 100% when possible"
     ]
+  },
+  "validation_and_enforcement": {
+    "critical_instruction": "⚠️ MANDATORY PRE-FLIGHT CHECKS: Validate ALL constraints before returning JSON.",
+    "validation_checklist": [
+      "✓ Step 1: Verify ONLY metrics from the 8 allowed metrics list are included",
+      "✓ Step 2: Check each basic_stats label matches EXACTLY one of the 5 allowed labels",
+      "✓ Step 3: Check each breakdown label matches EXACTLY one of the 3 allowed labels",
+      "✓ Step 4: For EACH breakdown:",
+      "  - Count word length of labels (must be exact match)",
+      "  - SUM all percentage values",
+      "  - Verify sum is between 99-101 (adjust if needed)",
+      "✓ Step 5: Verify each breakdown has correct 'type' field (gender|ethnicity|location)",
+      "✓ Step 6: Only construct final JSON when ALL validations pass"
+    ],
+    "absolute_rules": [
+      "🚫 NEVER include metrics not in the 8 allowed metrics list",
+      "🚫 NEVER modify or create alternative labels - use exact matches only",
+      "🚫 NEVER return breakdowns where percentages don't sum to 99-101 range",
+      "🚫 NEVER invent data without verified sources"
+    ],
+    "percentage_validation": {
+      "instruction": "For each breakdown, calculate: sum = item1.percentage + item2.percentage + item3.percentage + ...",
+      "requirement": "Sum must be ≥99 and ≤101",
+      "if_invalid": "Adjust percentages proportionally to reach exactly 100, or omit the breakdown if data is unreliable",
+      "example": "If items are [45, 45, 9], sum=99 ✓. If items are [45, 45, 15], sum=105 ✗ - adjust to [42, 42, 16] or similar"
+    },
+    "label_validation": {
+      "basic_stats_allowed": ["Employees", "Employee average age", "Creation year", "Turnover rate", "Annual Revenue"],
+      "breakdowns_allowed": ["Gender breakdown", "Ethnicity breakdown", "Work location breakdown"],
+      "strict_matching": "Must match exactly including capitalization, spacing, and punctuation"
+    }
   },
   "quality_standards": {
     "do": [
@@ -368,16 +383,6 @@
             { "category": "Hybrid", "percentage": 45 },
             { "category": "Remote", "percentage": 10 }
           ]
-        },
-        {
-          "label": "Team breakdown",
-          "type": "team",
-          "items": [
-            { "category": "Engineering", "percentage": 40 },
-            { "category": "Product & Design", "percentage": 20 },
-            { "category": "Sales & Marketing", "percentage": 25 },
-            { "category": "Operations & Support", "percentage": 15 }
-          ]
         }
       ],
       "sources": [
@@ -407,5 +412,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure with metrics from the 8 allowed metrics list (Ethnicity breakdown, Gender breakdown, Work location breakdown, Creation year, Annual revenue, Number of employees, Average age, Turnover rate). Include only metrics you can verify with credible sources. If fewer than 8 metrics are available, that is acceptable—never invent data or include metrics outside the allowed list. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "Research {COMPANY_NAME} and return ONLY the JSON structure with metrics from the 8 allowed metrics list (Ethnicity breakdown, Gender breakdown, Work location breakdown, Creation year, Annual revenue, Number of employees, Average age, Turnover rate). CRITICAL PRE-FLIGHT CHECKS: 1) Verify all labels match EXACTLY the allowed labels (case-sensitive), 2) For EACH breakdown: SUM all percentages - must equal 99-101, 3) Verify no metrics outside the allowed list are included. If validation fails, correct before returning. Include only metrics you can verify with credible sources. If fewer than 8 metrics are available, that is acceptable—never invent data or include metrics outside the allowed list. Only return JSON when all validations pass. No markdown, no explanations, no code blocks—pure JSON only."
 }

@@ -46,7 +46,7 @@
   },
   "content_guidelines": {
     "introduction": {
-      "length": "1-2 sentences",
+      "length": "1-2 sentences (⚠️ NON-NEGOTIABLE: MAXIMUM 250 characters including spaces)",
       "purpose": "Summarize the company's approach to benefits and compensation philosophy",
       "what_to_include": [
         "Overall benefits philosophy",
@@ -54,7 +54,8 @@
         "How they think about employee wellbeing",
         "How they evolve benefits (e.g., employee surveys)"
       ],
-      "example": "Stripe offers competitive total compensation including market-leading salaries, significant equity grants, and comprehensive benefits. The company regularly surveys employees to evolve benefits based on their needs, with a focus on flexibility and supporting employees' long-term financial and personal well-being."
+      "example": "Stripe offers competitive total compensation including market-leading salaries, significant equity grants, and comprehensive benefits. The company regularly surveys employees to evolve benefits based on their needs, with a focus on flexibility and supporting employees' long-term financial and personal well-being.",
+      "instruction": "⚠️ COUNT CHARACTERS BEFORE RETURNING. Must be ≤ 250 characters total."
     },
     "standout_benefits": {
       "count": "3-6 benefits",
@@ -85,7 +86,7 @@
         },
         "name": {
           "requirement": "required",
-          "length": "2-5 words",
+          "length": "2-5 words (⚠️ NON-NEGOTIABLE: MAXIMUM 50 characters including spaces)",
           "style": "Concise and descriptive",
           "examples": [
             "Unlimited PTO",
@@ -93,18 +94,20 @@
             "Learning Budget",
             "Remote Setup Budget",
             "Generous Equity Grants"
-          ]
+          ],
+          "instruction": "⚠️ COUNT CHARACTERS BEFORE RETURNING. Must be ≤ 50 characters total."
         },
         "description": {
           "requirement": "required",
-          "length": "2-3 sentences",
+          "length": "2-3 sentences (⚠️ NON-NEGOTIABLE: MAXIMUM 300 characters including spaces)",
           "what_to_include": [
             "What exactly is offered",
             "What makes it special or generous",
             "How employees can use it",
             "Specific amounts, timeframes, or limits when known"
           ],
-          "specificity": "Be concrete with numbers and details"
+          "specificity": "Be concrete with numbers and details",
+          "instruction": "⚠️ COUNT CHARACTERS BEFORE RETURNING. Must be ≤ 300 characters total."
         }
       }
     },
@@ -230,18 +233,20 @@
       "benefit_fields": {
         "name": {
           "requirement": "required",
-          "format": "Specific benefit name",
-          "style": "Clear and concise"
+          "format": "Specific benefit name (⚠️ NON-NEGOTIABLE: MAXIMUM 100 characters including spaces)",
+          "style": "Clear and concise",
+          "instruction": "⚠️ COUNT CHARACTERS BEFORE RETURNING. Must be ≤ 100 characters total."
         },
         "description": {
           "requirement": "required",
-          "length": "1-2 sentences",
+          "length": "1-2 sentences (⚠️ NON-NEGOTIABLE: MAXIMUM 250 characters including spaces)",
           "what_to_include": [
             "Explanation of the benefit",
             "Specifics (amounts, timeframes, eligibility)",
             "How it works or can be used"
           ],
-          "example": "16 weeks fully paid parental leave for all parents (birth or adoption), with option to extend with partial pay up to 6 months total"
+          "example": "16 weeks fully paid parental leave for all parents (birth or adoption), with option to extend with partial pay up to 6 months total",
+          "instruction": "⚠️ COUNT CHARACTERS BEFORE RETURNING. Must be ≤ 250 characters total."
         },
         "highlight": {
           "requirement": "optional",
@@ -458,5 +463,41 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure with comprehensive, verified benefits information. No markdown, no explanations, no code blocks—pure JSON only."
+  "character_limit_enforcement": {
+    "critical_reminder": "⚠️ CHARACTER LIMITS ARE NON-NEGOTIABLE. COUNT EVERY CHARACTER INCLUDING SPACES, PUNCTUATION, AND LINE BREAKS.",
+    "limits": {
+      "introduction": "250 characters maximum",
+      "standoutBenefits.name": "50 characters maximum per benefit name",
+      "standoutBenefits.description": "300 characters maximum per benefit description",
+      "categories.benefits.name": "100 characters maximum per benefit name",
+      "categories.benefits.description": "250 characters maximum per benefit description"
+    },
+    "how_to_count": {
+      "method": "Count every single character including spaces, punctuation, and line breaks",
+      "example_correct": "'Premium Health Coverage' = 23 characters (including spaces)",
+      "example_wrong": "NOT counting spaces or treating words as single units"
+    },
+    "verification_checklist": [
+      "✓ Count introduction characters (must be ≤ 250)",
+      "✓ Count each standoutBenefits.name (must be ≤ 50 each)",
+      "✓ Count each standoutBenefits.description (must be ≤ 300 each)",
+      "✓ Count each categories.benefits.name (must be ≤ 100 each)",
+      "✓ Count each categories.benefits.description (must be ≤ 250 each)",
+      "✓ Verify ALL fields before returning JSON"
+    ],
+    "if_over_limit": [
+      "Rewrite more concisely",
+      "Remove unnecessary words or details",
+      "Use shorter synonyms",
+      "Split information if multiple benefits can be described separately",
+      "Prioritize most important details"
+    ],
+    "absolute_rules": [
+      "🚫 NEVER return text exceeding character limits",
+      "🚫 NEVER assume character counts without counting",
+      "🚫 NEVER return JSON until all limits verified",
+      "🚫 NEVER use placeholder text or truncate mid-word"
+    ]
+  },
+  "final_instruction": "⚠️ CRITICAL PRE-FLIGHT CHECKS BEFORE RETURNING JSON:\n\n1. COUNT every character in introduction (≤ 250)\n2. COUNT every standoutBenefits.name (≤ 50 each)\n3. COUNT every standoutBenefits.description (≤ 300 each)\n4. COUNT every categories.benefits.name (≤ 100 each)\n5. COUNT every categories.benefits.description (≤ 250 each)\n\nReturn ONLY the JSON structure with comprehensive, verified benefits information. No markdown, no explanations, no code blocks—pure JSON only."
 }

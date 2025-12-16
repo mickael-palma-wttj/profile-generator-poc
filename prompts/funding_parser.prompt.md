@@ -6,60 +6,66 @@
     "structure": {
       "type": "funding_parser",
       "data": {
-        "totalRaised": "string (e.g., '$6.5B')",
+        "totalRaised": "string (e.g., '\$6.5B')",
         "latestRound": {
-          "amount": "string (e.g., '$6.5B')",
+          "amount": "string (e.g., '\$6.5B')",
           "date": "string (e.g., 'March 2023')"
         },
-        "valuation": "string (e.g., '$50B')",
-        "status": "string (e.g., 'Private (Series H)')",
+        "valuation": "string (e.g., '\$50B')",
+        "status": "string (e.g., 'Private (Series H)') - MAXIMUM 100 CHARACTERS",
         "rounds": [
           {
-            "series": "string",
+            "series": "string - MAXIMUM 100 CHARACTERS",
             "amount": "string",
             "date": "string",
             "valuation": "string (optional)",
-            "leadInvestors": ["string"],
-            "description": "string"
-          }
-        ],
-        "keyInvestors": [
-          {
-            "name": "string",
-            "type": "string",
-            "description": "string"
-          }
-        ],
-        "sources": [
-          {
-            "title": "string",
-            "url": "string",
-            "date": "YYYY-MM-DD",
-            "type": "press-release|article|database|sec-filing|investor-announcement"
+            "leadInvestors": ["string - MAXIMUM 100 CHARACTERS per investor name"],
+            "description": "string - MAXIMUM 250 CHARACTERS"
           }
         ]
+      },
+      "valuation": {
+        "requirement": "optional",
+        "description": "Most recent valuation if publicly disclosed",
+        "format": "\$XXM or \$XXB"
+      },
+      "status": {
+        "requirement": "required",
+        "character_limit": "MAXIMUM 100 CHARACTERS - NON-NEGOTIABLE",
+        "critical_instruction": "COUNT CHARACTERS. Typical formats are 15-40 chars. Should rarely exceed 100.",
+        "format": "Company stage (e.g., 'Private (Series H)', 'Public (NASDAQ)', 'Acquired by X')",
+        "examples": [
+          "Private (Series H)",
+          "Public (NASDAQ: STRP)",
+          "Private (Late Stage)",
+          "Acquired by Salesforce"
+        ],
+        "instruction": "Keep concise. Include key status info only. Should rarely exceed 100 characters given typical formats."
       }
     },
-    "constraints": [
-      "Return ONLY valid JSON",
-      "NO markdown code fences",
-      "NO explanatory text outside JSON",
-      "NO comments in JSON"
-    ]
-  },
-  "data_guidelines": {
-    "summary_metrics": {
-      "totalRaised": {
-        "requirement": "required",
-        "description": "Sum of all disclosed funding amounts",
-        "format": "$XXM or $XXB",
-        "example": "$6.5B"
-      },
-      "latestRound": {
-        "requirement": "required",
-        "fields": {
-          "amount": {
-            "description 'Undisclosed' if amount not public"
+    "funding_rounds": {
+      "order": "Chronological (earliest to most recent)",
+      "fields": {
+        "series": {
+          "requirement": "required",
+          "character_limit": "MAXIMUM 100 CHARACTERS - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS. Typical formats are 1-3 words (<20 chars). Should NEVER exceed 100.",
+          "format": "Round type (e.g., 'Seed', 'Series A', 'Series B', 'Growth Round')",
+          "examples": [
+            "Seed",
+            "Series A",
+            "Series B",
+            "Series C",
+            "Growth Round",
+            "Late Stage",
+            "IPO"
+          ],
+          "instruction": "Use standard round nomenclature. Should never exceed 100 characters given typical 1-3 word formats."
+        },
+        "amount": {
+          "requirement": "required",
+          "format": "\$XXM or \$XXB, or 'Undisclosed'",
+          "description": "Official disclosed amount. Use 'Undisclosed' if amount not public"
         },
         "date": {
           "requirement": "required",
@@ -68,24 +74,35 @@
         "valuation": {
           "requirement": "optional",
           "description": "Post-money valuation if publicly disclosed",
-          "format": "$XXM or $XXB"
+          "format": "\$XXM or \$XXB"
         },
         "leadInvestors": {
           "requirement": "required if known",
+          "character_limit": "MAXIMUM 100 CHARACTERS per individual investor name in array - NON-NEGOTIABLE",
+          "critical_instruction": "⚠️ COUNT CHARACTERS for EACH investor name separately. Each string in array must be ≤100 chars.",
           "format": "Array of lead investor names",
           "typical_count": "1-3 leads per round",
-          "if_unknown": "Use empty array []"
+          "if_unknown": "Use empty array []",
+          "examples": [
+            ["Sequoia Capital"],
+            ["Andreessen Horowitz", "Tiger Global"],
+            ["Sequoia Capital", "Accel Partners", "Index Ventures"]
+          ],
+          "instruction": "Each investor name in the array must be ≤ 100 characters. Use official firm names. If firm name exceeds 100 characters, use commonly recognized abbreviation."
         },
         "description": {
           "requirement": "required",
-          "length": "1-2 sentences",
+          "character_limit": "MAXIMUM 250 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. If >250, condense using techniques below.",
+          "length": "1-2 sentences (but character limit takes absolute priority)",
           "what_to_include": [
             "What the funds were used for",
             "Company stage at the time",
             "Significant context (e.g., 'during COVID-19', 'first institutional funding')",
             "Major achievements or milestones around this time"
           ],
-          "tone": "Match company's communication style from press releases"
+          "tone": "Match company's communication style from press releases",
+          "instruction": "Be concise and specific. If approaching 250 characters, prioritize fund usage and key context. Remove filler words and redundancy."
         }
       }
     },
@@ -97,35 +114,7 @@
         "Notable angel investors",
         "Board members or highly involved investors",
         "Investors with significant stakes"
-      ],
-      "fields": {
-        "name": {
-          "requirement": "required",
-          "description": "Official name of firm or individual"
-        },
-        "type": {
-          "requirement": "required",
-          "options": [
-            "Venture Capital",
-            "Corporate Investor",
-            "Angel Investor",
-            "Private Equity",
-            "Hedge Fund",
-            "Sovereign Wealth Fund",
-            "Accelerator"
-          ]
-        },
-        "description": {
-          "requirement": "required",
-          "length": "1-2 sentences",
-          "what_to_include": [
-            "Which rounds they participated in",
-            "Level of involvement (board seat, lead investor)",
-            "Why they're notable or strategic",
-            "Their expertise or portfolio relevance"
-          ]
-        }
-      }
+      ]
     },
     "sources": {
       "count": "3-10 citations",
@@ -172,29 +161,82 @@
       }
     }
   },
+  "character_limit_enforcement": {
+    "critical_instruction": "⚠️ MANDATORY PRE-FLIGHT CHECK: COUNT CHARACTERS for ALL constrained fields. DO NOT RETURN JSON until all limits are respected.",
+    "limits": {
+      "status": "100 characters maximum (ABSOLUTE HARD LIMIT)",
+      "rounds.series": "100 characters maximum per round (ABSOLUTE HARD LIMIT)",
+      "rounds.leadInvestors": "100 characters maximum per individual investor name in array (ABSOLUTE HARD LIMIT)",
+      "rounds.description": "250 characters maximum per round (ABSOLUTE HARD LIMIT)"
+    },
+    "how_to_count": {
+      "method": "Count every character including letters, numbers, spaces, punctuation, and symbols",
+      "leadInvestors_specific": "For leadInvestors: Check each array element individually. EACH name must be ≤100 chars.",
+      "example": "['Sequoia Capital'] = 16 chars ✓, ['Andreessen Horowitz'] = 19 chars ✓"
+    },
+    "management_strategies": {
+      "status": [
+        "Use standard formats: 'Private (Series X)', 'Public (EXCHANGE: TICKER)', 'Acquired by X'",
+        "Should rarely exceed limit given typical formats",
+        "If company name in acquisition is long, use recognized abbreviation"
+      ],
+      "series": [
+        "Use standard nomenclature: 'Seed', 'Series A/B/C/D/E/F/G/H/I', 'Growth Round', 'Late Stage', 'IPO'",
+        "Should never exceed 100 characters - typical formats are 1-3 words",
+        "Avoid verbose descriptions"
+      ],
+      "leadInvestors": [
+        "Each investor name in the array must be individually ≤ 100 characters",
+        "Use official firm names as they appear in press releases",
+        "If firm has long official name, use commonly recognized version",
+        "Examples: 'Sequoia Capital' (16 chars), 'Andreessen Horowitz' (19 chars), 'Tiger Global Management' (23 chars)"
+      ],
+      "description": [
+        "Prioritize fund usage (most important information)",
+        "Include key context or milestones if space permits",
+        "Use active voice and remove filler words",
+        "Use semicolons to separate ideas efficiently",
+        "Example: 'Funded API development and hired engineering team. First institutional round led by top VCs.' (104 chars)"
+      ]
+    },
+    "verification_checklist": [
+      "✓ Step 1: Count status field characters (must be ≤100)",
+      "✓ Step 2: For EACH funding round:",
+      "  - Count series characters (must be ≤100)",
+      "  - Count EACH leadInvestors array element individually (each must be ≤100)",
+      "  - Count description characters (must be ≤250)",
+      "✓ Step 3: If ANY field exceeds its limit, revise and recount",
+      "✓ Step 4: Only construct final JSON when ALL fields comply"
+    ],
+    "absolute_rule": "🚫 NEVER return JSON with ANY field exceeding its character limit. These are hard technical constraints.",
+    "common_violations": [
+      "⚠️ Description fields often exceed 250 chars - be extremely concise",
+      "⚠️ leadInvestors: Check EACH investor name separately, not the total array length"
+    ]
+  },
   "funding_round_types": {
     "early_stage": {
       "Seed": {
         "description": "Initial funding",
-        "typical_range": "$500K-$5M"
+        "typical_range": "\$500K-\$5M"
       },
       "Series A": {
         "description": "First institutional round",
-        "typical_range": "$2M-$15M"
+        "typical_range": "\$2M-\$15M"
       },
       "Series B": {
         "description": "Growth stage",
-        "typical_range": "$10M-$50M"
+        "typical_range": "\$10M-\$50M"
       }
     },
     "growth_stage": {
       "Series C+": {
         "description": "Expansion funding",
-        "typical_range": "$50M+"
+        "typical_range": "\$50M+"
       },
       "Growth/Late Stage": {
         "description": "Large rounds pre-IPO",
-        "typical_range": "$100M+"
+        "typical_range": "\$100M+"
       }
     },
     "other_types": {
@@ -218,7 +260,7 @@
       "growth_focused": "Example: 'Fueling rapid market expansion and customer acquisition'",
       "product_centric": "Example: 'Building next-generation features and platform capabilities'"
     },
-    "note": "Match tone in descriptions, but DO NOT include tone analysis in JSON output"
+    "note": "Match tone in descriptions, but DO NOT include tone analysis in JSON output. Character limits require extra conciseness."
   },
   "quality_standards": {
     "do": [
@@ -229,7 +271,9 @@
       "Verify amounts match across multiple sources",
       "Include both venture and strategic investors",
       "Distinguish between pre-money and post-money valuations",
-      "Note if valuations are estimated or confirmed"
+      "Note if valuations are estimated or confirmed",
+      "Respect ALL character limits - they are non-negotiable",
+      "Ensure each leadInvestors array item is individually under 100 characters"
     ],
     "dont": [
       "Speculate on undisclosed amounts",
@@ -239,7 +283,8 @@
       "Confuse pre-money and post-money valuations",
       "Include debt financing unless significant",
       "Make assumptions about fund usage without source",
-      "Include secondary sales unless notable"
+      "Include secondary sales unless notable",
+      "Exceed any character limits"
     ]
   },
   "research_sources": {
@@ -266,41 +311,29 @@
   "example": {
     "type": "funding_parser",
     "data": {
-      "totalRaised": "$6.5B",
+      "totalRaised": "\$6.5B",
       "latestRound": {
-        "amount": "$6.5B",
+        "amount": "\$6.5B",
         "date": "March 2023"
       },
-      "valuation": "$50B",
+      "valuation": "\$50B",
       "status": "Private (Series I)",
       "rounds": [
         {
           "series": "Seed",
-          "amount": "$2M",
+          "amount": "\$2M",
           "date": "March 2010",
-          "valuation": "$20M",
+          "valuation": "\$20M",
           "leadInvestors": ["Y Combinator", "Peter Thiel"],
           "description": "Initial seed funding from Y Combinator's S10 batch. Used to build initial payments API and sign first beta customers."
         },
         {
           "series": "Series A",
-          "amount": "$18M",
+          "amount": "\$18M",
           "date": "February 2012",
-          "valuation": "$100M",
+          "valuation": "\$100M",
           "leadInvestors": ["Sequoia Capital", "Andreessen Horowitz"],
           "description": "Led by Sequoia and a16z to expand engineering team and launch publicly after successful beta. First major institutional funding round."
-        }
-      ],
-      "keyInvestors": [
-        {
-          "name": "Sequoia Capital",
-          "type": "Venture Capital",
-          "description": "Early investor who led Series A and B rounds. Partner Michael Moritz joined the board and has been involved since 2012. One of Stripe's most significant backers."
-        },
-        {
-          "name": "Peter Thiel",
-          "type": "Angel Investor",
-          "description": "Early angel investor in the seed round. PayPal co-founder saw Stripe as next evolution of online payments."
         }
       ],
       "sources": [
@@ -324,5 +357,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure with comprehensive funding data. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "Research {COMPANY_NAME} and return ONLY the JSON structure with comprehensive funding data. CRITICAL PRE-FLIGHT CHECKS - COUNT CHARACTERS: 1) status ≤100 chars, 2) For EACH round: series ≤100, EACH leadInvestors name ≤100 individually, description ≤250. If ANY limit exceeded, revise using conciseness techniques and recount until compliant. Only return JSON when all checks pass. No markdown, no explanations, no code blocks—pure JSON only."
 }

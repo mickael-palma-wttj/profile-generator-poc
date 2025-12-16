@@ -6,25 +6,20 @@
     "structure": {
       "type": "their_story",
       "data": {
-        "foundingStory": "string (3-4 paragraphs)",
+        "foundingStory": "string (3-4 paragraphs of 1 sentence each) - MAXIMUM 1000 CHARACTERS",
         "founders": [
           {
-            "name": "string",
-            "role": "string",
+            "name": "string - MAXIMUM 100 CHARACTERS",
+            "role": "string - MAXIMUM 100 CHARACTERS",
             "background": "string (1-2 sentences)",
             "image": "string (URL, optional)"
           }
         ],
-        "ahaMoment": {
-          "icon": "emoji",
-          "title": "string (3-6 words)",
-          "description": "string (2-3 sentences)"
-        },
         "milestones": [
           {
-            "year": "string (YYYY)",
-            "title": "string (3-6 words)",
-            "description": "string (1-2 sentences)"
+            "year": "string (YYYY) - MAXIMUM 20 CHARACTERS",
+            "title": "string (3-6 words) - MAXIMUM 100 CHARACTERS",
+            "description": "string (1-2 sentences) - MAXIMUM 250 CHARACTERS"
           }
         ],
         "sources": [
@@ -41,17 +36,21 @@
       "Return ONLY valid JSON",
       "NO markdown code fences",
       "NO explanatory text outside JSON",
-      "NO comments in JSON"
+      "NO comments in JSON",
+      "CRITICAL: Enforce ALL character limits exactly - foundingStory max 1000, founders.name max 100, founders.role max 100, milestones.year max 20, milestones.title max 100, milestones.description max 250"
     ]
   },
   "content_guidelines": {
     "founding_story": {
       "requirement": "required",
-      "length": "3-4 paragraphs",
+      "length": "3-4 paragraphs of 1 sentence each (but character limit takes absolute priority)",
+      "character_limit": "MAXIMUM 1000 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+      "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. If >1000, condense by removing redundancy and filler.",
       "purpose": "Tell a compelling narrative that reads like a story, not a Wikipedia entry",
       "structure": {
         "paragraph_1_the_problem": {
           "focus": "The problem that motivated founding",
+          "length": "1 sentence",
           "what_to_include": [
             "What problem did the founders experience or observe?",
             "Why did existing solutions fall short?",
@@ -61,6 +60,7 @@
         },
         "paragraph_2_the_insight": {
           "focus": "The unique insight or approach",
+          "length": "1 sentence",
           "what_to_include": [
             "What unique insight did they have?",
             "What made them think they could solve it differently?",
@@ -70,6 +70,7 @@
         },
         "paragraph_3_the_beginning": {
           "focus": "How they actually got started",
+          "length": "1 sentence",
           "what_to_include": [
             "How did they actually get started?",
             "First product, first customer, early days",
@@ -79,6 +80,7 @@
         },
         "paragraph_4_the_evolution": {
           "focus": "Growth and transformation (optional)",
+          "length": "1 sentence",
           "what_to_include": [
             "How has the company evolved since founding?",
             "Major inflection points or transformations",
@@ -88,6 +90,7 @@
         }
       },
       "storytelling_principles": [
+        "Make it short but compelling",
         "Make it read like a compelling story",
         "Include specific details that make it memorable",
         "Show the human side - struggles, uncertainties, breakthroughs",
@@ -95,78 +98,49 @@
         "Use quotes from founders if publicly available",
         "Include interesting anecdotes or lesser-known facts",
         "Write in the company's authentic voice"
-      ]
+      ],
+      "length_management": "CRITICAL: If approaching 1000 character limit, prioritize the most compelling elements. Keep sentences concise, eliminate redundancy, focus on the most impactful details. The 1000 character limit is non-negotiable."
     },
     "founders": {
-      "count": "1-5 founders",
+      "count": "1-10 founders",
       "selection": "Focus on most prominent or active founders if there are many",
       "fields": {
         "name": {
           "requirement": "required",
-          "format": "Full name as professionally used"
+          "format": "Full name as professionally used",
+          "character_limit": "MAXIMUM 100 CHARACTERS - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS. Typical names are 15-40 chars. Should rarely exceed 100.",
+          "instruction": "Use official full name. If exceeds 100 characters, use commonly recognized shortened version."
         },
         "role": {
           "requirement": "required",
-          "format": "Current or founding role",
+          "format": "Current role or founding role if not part of the company anymore",
+          "character_limit": "MAXIMUM 100 CHARACTERS - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS. Typical roles are 15-40 chars. Use abbreviations if needed.",
           "examples": [
             "Co-Founder & CEO",
             "Co-Founder & CTO",
             "Founder & Chief Product Officer",
             "Co-Founder (Former CEO)"
-          ]
+          ],
+          "instruction": "Keep concise. If exceeds 100 characters, abbreviate or simplify while maintaining clarity."
         },
         "background": {
           "requirement": "required",
           "length": "1-2 sentences",
           "what_to_include": [
+            "Explanation of the current role (if still part of the company)",
             "Education (if notable)",
             "Previous companies or roles",
             "Relevant expertise or experience",
             "Notable achievements before founding"
           ],
-          "example": "Began programming at age 10, won Young Scientist of the Year award at 16, founded previous startup Auctomatic (acquired) at 17, attended MIT briefly before founding Stripe"
+          "example": "Steve is the co-founder and president of Qonto, Europe's leading business finance solution. Steve studied at the Swiss Federal Institute of Technology Lausanne (EPFL), the University of Tokyo, and INSEAD, and began his career at Deloitte and Groupon. In 2013, he co-founded Smok.io with Alexandre, a company acquired by a Fortune 500 firm, and experienced the frustrations of traditional investment banking firsthand. They decided to join forces again and launched Qonto in 2017 with one goal in mind: to simplify day-to-day banking for SMEs and freelancers through an online business account combined with invoicing, accounting, and expense management tools."
         },
         "image": {
           "requirement": "optional",
           "format": "URL to professional photo",
           "condition": "Include if publicly available, omit field if not"
-        }
-      }
-    },
-    "aha_moment": {
-      "requirement": "required",
-      "purpose": "Capture the pivotal insight or turning point",
-      "fields": {
-        "icon": {
-          "requirement": "required",
-          "format": "Single relevant emoji",
-          "options": [
-            "💡 (insight/idea)",
-            "🚀 (launch/breakthrough)",
-            "⚡ (spark/realization)",
-            "🎯 (focus/clarity)",
-            "💥 (impact/moment)",
-            "🔍 (discovery)",
-            "✨ (innovation)"
-          ]
-        },
-        "title": {
-          "requirement": "required",
-          "length": "3-6 words",
-          "style": "Short, punchy headline",
-          "examples": [
-            "Payments Should Be Simple",
-            "The API Epiphany",
-            "Seeing the Gap",
-            "A Better Way Forward"
-          ]
-        },
-        "description": {
-          "requirement": "required",
-          "length": "2-3 sentences",
-          "purpose": "Describe the pivotal insight or moment",
-          "style": "Should feel like a 'eureka' moment or turning point",
-          "example": "The Collison brothers realized that accepting payments online was unnecessarily complex. They saw that if they could handle all the banking relationships and compliance behind a simple API, they could remove this barrier for millions of developers and businesses trying to build online."
         }
       }
     },
@@ -188,11 +162,15 @@
         "year": {
           "requirement": "required",
           "format": "YYYY",
+          "character_limit": "MAXIMUM 20 CHARACTERS - NON-NEGOTIABLE",
+          "critical_instruction": "Standard YYYY format is 4 chars. Should NEVER exceed 20.",
           "example": "2023"
         },
         "title": {
           "requirement": "required",
           "length": "3-6 words",
+          "character_limit": "MAXIMUM 100 CHARACTERS - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS. Typical titles are 15-40 chars. Keep brief.",
           "style": "Concise description of milestone",
           "examples": [
             "Company Founded",
@@ -200,17 +178,21 @@
             "First Major Funding",
             "International Expansion",
             "Product Milestone"
-          ]
+          ],
+          "instruction": "Keep brief and impactful. If exceeds 100 characters, shorten while maintaining clarity."
         },
         "description": {
           "requirement": "required",
-          "length": "1-2 sentences",
+          "length": "1-2 sentences (but character limit takes absolute priority)",
+          "character_limit": "MAXIMUM 250 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. If >250, condense using techniques below.",
           "purpose": "Provide context about significance",
           "what_to_include": [
             "What happened",
             "Why it was significant",
             "Impact or scale if relevant"
-          ]
+          ],
+          "instruction": "Be concise. If approaching 250 characters, prioritize the most important information. Remove filler words."
         }
       }
     },
@@ -340,7 +322,8 @@
       "Include interesting anecdotes or lesser-known facts",
       "Write in the company's authentic voice and storytelling style",
       "Be selective about which milestones to include (quality over quantity)",
-      "Verify all facts and dates from multiple sources"
+      "Verify all facts and dates from multiple sources",
+      "Respect ALL character limits - they are non-negotiable"
     ],
     "dont": [
       "Make it dry or corporate-sounding",
@@ -351,7 +334,49 @@
       "Write in a generic voice that could apply to any company",
       "Copy press release language verbatim",
       "Include unverifiable anecdotes",
-      "Ignore the company's actual storytelling style"
+      "Ignore the company's actual storytelling style",
+      "Exceed any character limits"
+    ]
+  },
+  "character_limit_enforcement": {
+    "critical_instruction": "⚠️ MANDATORY PRE-FLIGHT CHECK: COUNT CHARACTERS for ALL fields. DO NOT RETURN JSON until all limits are respected.",
+    "limits": {
+      "foundingStory": "1000 characters maximum (ABSOLUTE HARD LIMIT)",
+      "founders.name": "100 characters maximum per founder (ABSOLUTE HARD LIMIT)",
+      "founders.role": "100 characters maximum per founder (ABSOLUTE HARD LIMIT)",
+      "milestones.year": "20 characters maximum per milestone (ABSOLUTE HARD LIMIT)",
+      "milestones.title": "100 characters maximum per milestone (ABSOLUTE HARD LIMIT)",
+      "milestones.description": "250 characters maximum per milestone (ABSOLUTE HARD LIMIT)"
+    },
+    "how_to_count": {
+      "method": "Count every character including letters, numbers, spaces, punctuation, paragraph breaks, and symbols",
+      "foundingStory_specific": "For foundingStory: Include paragraph separators (\\n) in character count",
+      "example": "'Founded in 2010.' = 16 characters"
+    },
+    "management_strategies": {
+      "foundingStory": "Prioritize compelling narrative elements, eliminate redundant words, keep sentences punchy. 1000 chars = ~150-200 words.",
+      "founders.name": "Use official name (typically 15-40 chars), shorten only if absolutely necessary",
+      "founders.role": "Use standard abbreviations (Co-Founder, CEO, CTO). Typical 15-40 chars.",
+      "milestones.year": "Standard YYYY format (4 chars) should never exceed 20 char limit",
+      "milestones.title": "Keep to 3-6 essential words, remove articles if needed. Typical 15-40 chars.",
+      "milestones.description": "Focus on what happened and why it mattered. 250 chars = ~35-40 words max."
+    },
+    "verification_checklist": [
+      "✓ Step 1: Draft foundingStory, count ALL characters including paragraph breaks. If >1000, condense.",
+      "✓ Step 2: For EACH founder:",
+      "  - Count name characters (must be ≤100)",
+      "  - Count role characters (must be ≤100)",
+      "✓ Step 3: For EACH milestone:",
+      "  - Count year characters (must be ≤20)",
+      "  - Count title characters (must be ≤100)",
+      "  - Count description characters (must be ≤250)",
+      "✓ Step 4: If ANY field exceeds its limit, revise and recount",
+      "✓ Step 5: Only construct final JSON when ALL fields comply"
+    ],
+    "absolute_rule": "🚫 NEVER return JSON with ANY field exceeding its character limit. These are hard technical constraints.",
+    "common_violations": [
+      "⚠️ foundingStory often exceeds 1000 chars - be ruthlessly concise while keeping compelling narrative",
+      "⚠️ milestones.description often exceeds 250 chars - focus on what and why, skip how"
     ]
   },
   "research_process": {
@@ -391,11 +416,6 @@
           "background": "Won Young Scientist of the Year award at 19, studied physics at Harvard, worked on Auctomatic before co-founding Stripe at age 20"
         }
       ],
-      "ahaMoment": {
-        "icon": "💡",
-        "title": "Payments Should Be Simple",
-        "description": "The Collison brothers realized that accepting payments online was unnecessarily complex. They saw that if they could handle all the banking relationships and compliance behind a simple API, they could remove this barrier for millions of developers and businesses trying to build online."
-      },
       "milestones": [
         {
           "year": "2010",
@@ -410,7 +430,7 @@
         {
           "year": "2012",
           "title": "First Major Funding",
-          "description": "Raised $20M Series A led by Sequoia Capital and Andreessen Horowitz"
+          "description": "Raised \$20M Series A led by Sequoia Capital and Andreessen Horowitz"
         },
         {
           "year": "2014",
@@ -450,5 +470,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure with a compelling, well-researched founding story written in the company's authentic voice. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "Research {COMPANY_NAME} and return ONLY the JSON structure with a compelling, well-researched founding story written in the company's authentic voice. CRITICAL PRE-FLIGHT CHECKS - COUNT CHARACTERS: 1) foundingStory ≤1000 chars (include paragraph breaks), 2) For EACH founder: name ≤100, role ≤100, 3) For EACH milestone: year ≤20, title ≤100, description ≤250. If ANY limit exceeded, revise using conciseness techniques and recount until compliant. Only return JSON when all checks pass. No markdown, no explanations, no code blocks—pure JSON only."
 }

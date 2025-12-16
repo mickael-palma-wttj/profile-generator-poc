@@ -7,7 +7,7 @@
       "type": "company_description",
       "data": {
         "title": "About us",
-        "content": "string (merged: tagline 10-20 words + overview 3 paragraphs + quickFacts 2-3 facts + keyProducts 2-3 products + targetMarket 1 sentence)",
+        "content": "string (merged: tagline 10-20 words + overview 3 paragraphs + quickFacts 2-3 facts + keyProducts 2-3 products + targetMarket 1 sentence) - MUST BE EXACTLY 2000-2400 CHARACTERS",
         "sources": [
           {
             "title": "string",
@@ -22,10 +22,11 @@
       "Return ONLY valid JSON",
       "NO markdown code fences",
       "NO explanatory text outside JSON",
-      "NO comments in JSON"
+      "NO comments in JSON",
+      "Content field MUST be between 2000-2400 characters (verify count before submitting)"
     ]
   },
-  "content": "TAGLINE: 10-20 words, specific and compelling, convey what company does.\nOVERVIEW: 3 paragraphs (3-5 sentences each): core business/value, problem/differentiation, mission/position. Substantive, no platitudes.\nQUICK FACTS: 2-3 facts (founded, headquarters, industry, size, type, funding, revenue, valuation) woven naturally into content as flowing paragraph.\nKEY PRODUCTS: 2-3 flagship products with 1 sentence descriptions, customer benefits, integrated as flowing paragraph.\nTARGET MARKET: 1 sentence covering segments, company sizes, industries, geographies, use cases, integrated as flowing paragraph.\nSOURCES: 3-10 citations (minimum 1 primary, 1 third-party, prefer last 12 months).\nTONE: Match company's authentic voice—research materials, identify style, apply consistently.\nQUALITY: Use concrete facts, current research, official names, quantifiable metrics, unique differentiators. Avoid vague corporate language, outdated info, unverifiable claims.",
+  "content": "TAGLINE: 10-20 words, specific and compelling, convey what company does.\nOVERVIEW: 3 paragraphs (3-5 sentences each): core business/value, problem/differentiation, mission/position. Substantive, no platitudes.\nQUICK FACTS: 2-3 facts (founded, headquarters, industry, size, type, funding, revenue, valuation) woven naturally into content as flowing paragraph.\nKEY PRODUCTS: 2-3 flagship products with 1 sentence descriptions, customer benefits, integrated as flowing paragraph.\nTARGET MARKET: 1 sentence covering segments, company sizes, industries, geographies, use cases, integrated as flowing paragraph.\nCHARACTER COUNT: Content field MUST be 2000-2400 characters. Count carefully before submitting. If too short, add more specific details about products, market position, or company achievements. If too long, trim less essential details while keeping core facts.\nSOURCES: 3-10 citations (minimum 1 primary, 1 third-party, prefer last 12 months).\nTONE: Match company's authentic voice—research materials, identify style, apply consistently.\nQUALITY: Use concrete facts, current research, official names, quantifiable metrics, unique differentiators. Avoid vague corporate language, outdated info, unverifiable claims.",
   "example": {
     "type": "company_description",
     "data": {
@@ -58,5 +59,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure following the exact format shown in the example. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "Return ONLY the JSON structure following the exact format shown in the example. No markdown, no explanations, no code blocks—pure JSON only. CRITICAL: Verify the content field is between 2000-2400 characters before submitting. If outside this range, adjust by adding specific details (if too short) or trimming less critical information (if too long)."
 }

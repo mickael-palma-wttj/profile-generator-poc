@@ -28,12 +28,12 @@
       "type": "company_values",
       "data": {
         "values_source_type": "stated|generated",
-        "introduction": "string (1-2 sentences)",
+        "introduction": "string (1-2 sentences) - MAXIMUM 100 CHARACTERS",
         "values": [
           {
-            "title": "string (2-4 words)",
-            "tagline": "string (one powerful sentence)",
-            "description": "string (2-3 sentences)"
+            "title": "string (2-4 words) - MAXIMUM 100 CHARACTERS",
+            "tagline": "string (one powerful sentence) - MAXIMUM 100 CHARACTERS",
+            "description": "string (2-3 sentences) - MAXIMUM 250 CHARACTERS"
           }
         ],
         "sources": [
@@ -51,29 +51,35 @@
       "NO markdown code fences",
       "NO explanatory text outside JSON",
       "NO comments in JSON",
-      "Include 'values_source_type' field to indicate if values are 'stated' or 'generated'"
+      "Include 'values_source_type' field to indicate if values are 'stated' or 'generated'",
+      "CRITICAL: Enforce ALL character limits exactly - introduction max 100, values.title max 100, values.tagline max 100, values.description max 250"
     ]
   },
   "content_guidelines": {
     "introduction": {
-      "length": "1-2 sentences",
+      "requirement": "required",
+      "character_limit": "MAXIMUM 100 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+      "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. If >100, you MUST condense to essential message only.",
+      "length": "1-2 sentences (but character limit takes absolute priority)",
       "purpose": "Set the tone for understanding the company's culture",
       "style": "Concise but meaningful",
       "for_stated_values": "Reference that these are the company's official stated values",
       "for_generated_values": "Acknowledge values are derived from observable culture patterns",
-      "example_stated": "Stripe has explicitly defined five operating principles that guide every decision, from product development to customer support.",
-      "example_generated": "While Airbnb hasn't published formal values recently, their culture consistently demonstrates these core principles across operations and communications."
+      "example_stated": "Stripe has five operating principles guiding every decision.",
+      "example_generated": "Notion's culture demonstrates these core principles consistently.",
+      "length_management": "CRITICAL: Must be brief and impactful. If exceeds 100 characters, condense to essential message only. Remove unnecessary adjectives and phrases."
     },
     "values": {
       "count": "Match company's stated count if values are stated; 4-6 values if generated",
       "purpose": "STATED: Accurately reproduce the company's published values. GENERATED: Write compelling values that match observable company culture",
       "for_stated_values": [
         "Use exact value titles as published by the company",
-        "Preserve the company's original language and key phrases",
-        "If company provides descriptions, adapt them into the required format",
+        "Preserve the company's original phrasing and key terminology",
+        "If company provides descriptions, adapt them into the required format while respecting character limits",
         "Maintain fidelity to the company's intended meaning",
         "Do not add values not stated by the company",
-        "Do not omit values that the company has stated"
+        "Do not omit values that the company has stated",
+        "Condense descriptions if company's original exceeds character limits, preserving core message"
       ],
       "for_generated_values": [
         "Distinctive: Unique to this company's culture",
@@ -85,8 +91,10 @@
         "title": {
           "requirement": "required",
           "length": "2-4 words",
+          "character_limit": "MAXIMUM 100 CHARACTERS - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS. Typical titles are 10-30 chars. Should rarely exceed 100.",
           "style": "Memorable and distinctive",
-          "for_stated": "Use EXACT title from company source",
+          "for_stated": "Use EXACT title from company source. If exceeds 100 characters, use the shortest official version available",
           "for_generated": "Create distinctive title based on observable culture",
           "examples": [
             "Customer Obsession",
@@ -95,23 +103,30 @@
             "Ownership Mindset",
             "Move Fast",
             "Quality First"
-          ]
+          ],
+          "instruction": "Keep concise. Should rarely exceed 100 characters given 2-4 word guideline, but verify count."
         },
         "tagline": {
           "requirement": "required",
           "format": "One powerful sentence",
+          "character_limit": "MAXIMUM 100 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. Be punchy. Every word must add value.",
           "style": "Actionable and specific to this company",
-          "for_stated": "Adapt from company's description while preserving core message",
+          "for_stated": "Adapt from company's description while preserving core message. Condense to fit limit if needed",
           "for_generated": "Create based on observable company behavior",
-          "example": "We don't just serve customers; we anticipate their needs before they know them"
+          "example": "We anticipate customer needs before they know them",
+          "instruction": "Be punchy and direct. Remove unnecessary words. Focus on the core action or belief. Every word must add value."
         },
         "description": {
           "requirement": "required",
-          "length": "2-3 sentences",
+          "length": "2-3 sentences (but character limit takes absolute priority)",
+          "character_limit": "MAXIMUM 250 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. If >250, condense using techniques below.",
           "style": "Specific, not generic; details the value",
-          "for_stated": "Incorporate company's own language and examples when available",
+          "for_stated": "Incorporate company's own language and examples when available. Condense if original exceeds limit while preserving meaning",
           "for_generated": "Base on specific observable behaviors and culture patterns",
-          "example": "Put yourself in our customers' shoes; aim at delivering both quality and speed: this what customers want and love; prioritize customers over processes"
+          "example": "Put yourself in customers' shoes; deliver quality and speed. Prioritize customers over processes.",
+          "instruction": "Be concise and specific. If approaching 250 characters, prioritize concrete actions and outcomes. Remove filler words, redundancy, and generic statements."
         }
       }
     },
@@ -141,6 +156,63 @@
         "Company handbook or culture deck (if public)"
       ]
     }
+  },
+  "character_limit_enforcement": {
+    "critical_instruction": "⚠️ MANDATORY PRE-FLIGHT CHECK: COUNT CHARACTERS for ALL fields. DO NOT RETURN JSON until all limits are respected.",
+    "limits": {
+      "introduction": "100 characters maximum (ABSOLUTE HARD LIMIT)",
+      "values.title": "100 characters maximum per value (ABSOLUTE HARD LIMIT)",
+      "values.tagline": "100 characters maximum per value (ABSOLUTE HARD LIMIT)",
+      "values.description": "250 characters maximum per value (ABSOLUTE HARD LIMIT)"
+    },
+    "how_to_count": {
+      "method": "Count every character including letters, numbers, spaces, punctuation, and symbols",
+      "example": "'Customer Obsession' = 18 characters (including space)"
+    },
+    "management_strategies": {
+      "introduction": [
+        "Focus on the single most important point",
+        "Use short, declarative sentences",
+        "Remove adjectives and adverbs that don't add critical meaning",
+        "Example: 'Amazon has 16 Leadership Principles guiding their culture.' (62 chars)"
+      ],
+      "title": [
+        "Typically 2-4 words should never exceed 100 characters",
+        "If company's stated title exceeds limit, use shortest official abbreviation",
+        "For generated: Keep to 2-3 impactful words"
+      ],
+      "tagline": [
+        "One sentence only - make every word count",
+        "Use active voice and strong verbs",
+        "Remove articles (a, an, the) if needed to fit",
+        "Focus on the core action or principle",
+        "Example: 'Leaders start with customers and work backwards' (52 chars)"
+      ],
+      "description": [
+        "Prioritize concrete actions over abstract concepts",
+        "Use semicolons to separate ideas efficiently",
+        "Remove transitional phrases ('In addition', 'Furthermore')",
+        "Eliminate redundancy between tagline and description",
+        "Focus on 'what' and 'how' over 'why'",
+        "Use active voice and direct language"
+      ]
+    },
+    "verification_checklist": [
+      "✓ Step 1: Draft introduction, count characters. If >100, condense to essential message.",
+      "✓ Step 2: For EACH value:",
+      "  - Count title characters (must be ≤100)",
+      "  - Count tagline characters (must be ≤100)",
+      "  - Count description characters (must be ≤250)",
+      "✓ Step 3: If ANY field exceeds its limit, revise and recount",
+      "✓ Step 4: Only construct final JSON when ALL fields comply"
+    ],
+    "absolute_rule": "🚫 NEVER return JSON with ANY field exceeding its character limit. These are hard technical constraints.",
+    "special_note_for_stated_values": "When reproducing stated values, if company's original content exceeds character limits, condense while preserving the authentic core message and key terminology. Document the source accurately.",
+    "common_violations": [
+      "⚠️ Introduction often exceeds 100 chars - be extremely concise",
+      "⚠️ Taglines often try to say too much - one focused sentence only",
+      "⚠️ Descriptions often exceed 250 chars - prioritize concrete actions over philosophy"
+    ]
   },
   "common_value_themes": {
     "note": "Use these ONLY for generated values when no stated values exist",
@@ -215,7 +287,7 @@
       "Adopt their action verbs (e.g., 'shipping' vs 'delivering')",
       "For stated values: Preserve company's exact terminology"
     ],
-    "note": "Match tone in content, but DO NOT include tone analysis in JSON output"
+    "note": "Match tone in content, but DO NOT include tone analysis in JSON output. Character limits require extra conciseness—prioritize company's authentic voice in shortened form."
   },
   "quality_standards": {
     "do": [
@@ -224,11 +296,13 @@
       "Use exact value titles when values are stated by the company",
       "Preserve the company's original language and messaging for stated values",
       "Include company-specific language and terminology",
-      "Make descriptions rich with detail and context",
+      "Make descriptions rich with detail and context within character limits",
       "Show how values interconnect and reinforce each other",
       "Include both aspirational and practical elements",
       "Write value descriptions in the company's authentic voice",
-      "Clearly indicate whether values are 'stated' or 'generated' in output"
+      "Clearly indicate whether values are 'stated' or 'generated' in output",
+      "Respect ALL character limits - they are non-negotiable",
+      "When condensing stated values to fit limits, preserve core message and key terminology"
     ],
     "dont": [
       "DO NOT invent or generate values when values are explicitly stated by the company",
@@ -239,24 +313,25 @@
       "Write surface-level descriptions without substance",
       "Contradict information from other sections",
       "Include more than 6 values (unless company states more)",
-      "Write in a generic voice that doesn't reflect the company's culture"
+      "Write in a generic voice that doesn't reflect the company's culture",
+      "Exceed any character limits"
     ]
   },
   "example_stated_values": {
     "type": "company_values",
     "data": {
       "values_source_type": "stated",
-      "introduction": "Amazon has explicitly defined 16 Leadership Principles that serve as the backbone of their culture and decision-making across all levels of the organization.",
+      "introduction": "Amazon has 16 Leadership Principles guiding their culture and decisions.",
       "values": [
         {
           "title": "Customer Obsession",
-          "tagline": "Leaders start with the customer and work backwards, earning and keeping customer trust",
-          "description": "At Amazon, customer obsession means starting with the customer and working backwards. Leaders work vigorously to earn and keep customer trust, and while they pay attention to competitors, they obsess over customers."
+          "tagline": "Leaders start with customers and work backwards, earning trust",
+          "description": "Start with the customer and work backwards. Leaders work vigorously to earn and keep customer trust. While they pay attention to competitors, they obsess over customers."
         },
         {
           "title": "Ownership",
-          "tagline": "Leaders are owners who think long term and never say 'that's not my job'",
-          "description": "Leaders are owners who act on behalf of the entire company, beyond just their own team. They never say 'that's not my job' and think long term, not sacrificing long-term value for short-term results."
+          "tagline": "Leaders are owners who think long term and act for the company",
+          "description": "Leaders are owners who act on behalf of the entire company, beyond just their team. They never say 'that's not my job' and think long term, not sacrificing long-term value for short-term results."
         }
       ],
       "sources": [
@@ -285,12 +360,12 @@
     "type": "company_values",
     "data": {
       "values_source_type": "generated",
-      "introduction": "While not formally published as a values list, Notion's culture consistently demonstrates these core principles across their product philosophy and company communications.",
+      "introduction": "Notion's culture demonstrates these core principles across operations.",
       "values": [
         {
           "title": "Craft and Quality",
-          "tagline": "Every pixel, every interaction, every detail matters in creating tools people love",
-          "description": "Notion's obsession with craft is evident in every aspect of their product. From the smooth animations to the thoughtful keyboard shortcuts, quality isn't just a goal—it's the standard. The team believes that software should feel delightful to use, not just functional."
+          "tagline": "Every pixel and interaction matters in creating tools people love",
+          "description": "Notion's obsession with craft is evident in every product aspect. From smooth animations to thoughtful shortcuts, quality isn't just a goal—it's the standard. Software should feel delightful, not just functional."
         }
       ],
       "sources": [
@@ -320,5 +395,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "CRITICAL: First, exhaustively search for stated company values on official sources. If found, reproduce them accurately with exact titles and core messaging. Only generate values if no stated values exist. Return ONLY the JSON structure following the exact format shown in the examples. No markdown, no explanations, no code blocks—pure JSON only."
+  "final_instruction": "Research {COMPANY_NAME}. CRITICAL PROCESS: 1) First, exhaustively search for stated company values on official sources. If found, reproduce them accurately with exact titles and core messaging, condensing to fit character limits while preserving authenticity. Only generate values if no stated values exist. 2) PRE-FLIGHT CHECKS - COUNT CHARACTERS: introduction ≤100 chars, For EACH value: title ≤100, tagline ≤100, description ≤250. If ANY limit exceeded, revise using conciseness techniques and recount until compliant. Only return JSON when all checks pass. No markdown, no explanations, no code blocks—pure JSON only."
 }

@@ -141,7 +141,15 @@
             "Why this city was chosen",
             "Team size if known"
           ],
-          "example": "The headquarters houses engineering, product, and executive teams in a renovated warehouse space in San Francisco's SOMA district. The location provides access to top technical talent and proximity to key partners."
+          "example": "The headquarters houses engineering, product, and executive teams in a renovated warehouse space in San Francisco's SOMA district. The location provides access to top technical talent and proximity to key partners.",
+          "character_count_note": "Above example is 241 characters - well within 500 limit",
+          "conciseness_techniques": [
+            "Focus on most important functions and features",
+            "Use active voice",
+            "Remove filler words and redundancy",
+            "Prioritize facts over adjectives",
+            "Use semicolons to combine related ideas efficiently"
+          ]
         }
       }
     },
@@ -209,7 +217,9 @@
         },
         "description": {
           "requirement": "required",
-          "length": "1-2 sentences",
+          "length": "1-2 sentences (but character limit takes absolute priority)",
+          "character_limit": "MAXIMUM 500 CHARACTERS (including spaces and punctuation) - NON-NEGOTIABLE",
+          "critical_instruction": "COUNT CHARACTERS BEFORE RETURNING. If >500, condense.",
           "what_to_include": [
             "Primary functions at this location",
             "Size of team (if known)",
@@ -266,6 +276,40 @@
       }
     }
   },
+  "validation_and_enforcement": {
+    "critical_instruction": "⚠️ MANDATORY PRE-FLIGHT CHECKS: Validate ALL constraints before returning JSON.",
+    "validation_checklist": [
+      "✓ Step 1: Verify headquarters has ALL required fields including latitude & longitude",
+      "✓ Step 2: Verify EACH office has ALL required fields including latitude & longitude",
+      "✓ Step 3: Validate ALL coordinates:",
+      "  - Each latitude is a decimal number between -90 and +90",
+      "  - Each longitude is a decimal number between -180 and +180",
+      "  - Coordinates are in decimal format (not degrees/minutes/seconds)",
+      "✓ Step 4: For headquarters description: count characters (must be ≤500)",
+      "✓ Step 5: For EACH office description: count characters (must be ≤500)",
+      "✓ Step 6: If ANY validation fails, correct before returning",
+      "✓ Step 7: Only construct final JSON when ALL validations pass"
+    ],
+    "absolute_rules": [
+      "🚫 NEVER include a location without latitude and longitude coordinates",
+      "🚫 NEVER use coordinates in degrees/minutes/seconds format",
+      "🚫 NEVER exceed 500 characters for any description field",
+      "🚫 NEVER include invalid coordinates (outside valid ranges)"
+    ],
+    "coordinate_validation": {
+      "latitude_check": "Must be decimal number: -90 ≤ latitude ≤ +90",
+      "longitude_check": "Must be decimal number: -180 ≤ longitude ≤ +180",
+      "format_check": "Must be decimal (37.7749) NOT degrees/minutes/seconds (37°46'29.6\"N)",
+      "verification": "Cross-check coordinates point to correct city using Google Maps",
+      "if_invalid": "Either find correct coordinates or omit the location entirely"
+    },
+    "description_validation": {
+      "character_limit": "500 characters maximum for each description (headquarters and all offices)",
+      "how_to_count": "Count ALL characters including letters, spaces, punctuation",
+      "if_over_limit": "Apply conciseness techniques: remove filler, use active voice, prioritize key facts",
+      "example_condensing": "Original (520 chars): 'The headquarters houses...' → Condensed (480 chars): 'Headquarters houses...'"
+    }
+  },
   "tone_matching": {
     "instruction": "Match company's style when describing office locations",
     "application": {
@@ -291,7 +335,9 @@
       "Include team size if publicly disclosed",
       "Use Google Maps to verify coordinates are correct",
       "Double-check coordinate format (decimal, not degrees/minutes/seconds)",
-      "Verify each coordinate points to the correct city/country"
+      "Verify each coordinate points to the correct city/country",
+      "COUNT CHARACTERS for each description field - must be ≤500",
+      "Validate coordinates are within valid ranges before returning"
     ],
     "dont": [
       "Include locations without coordinates - this breaks the maps feature",
@@ -389,5 +435,5 @@
     "website": "{WEBSITE}",
     "additional_context": "{CONTEXT}"
   },
-  "final_instruction": "Return ONLY the JSON structure with ALL locations including mandatory latitude and longitude coordinates. No markdown, no explanations, no code blocks—pure JSON only. CRITICAL: Every location MUST have coordinates or it should not be included."
+  "final_instruction": "Research {COMPANY_NAME} and return ONLY the JSON structure with ALL locations including mandatory latitude and longitude coordinates. CRITICAL PRE-FLIGHT CHECKS: 1) EVERY location (headquarters + all offices) MUST have valid latitude (-90 to +90) and longitude (-180 to +180) in decimal format, 2) Count characters for headquarters.description (must be ≤500 chars), 3) Count characters for EACH offices[].description (must be ≤500 chars). If ANY validation fails (missing/invalid coordinates, descriptions >500 chars), correct before returning. Locations without coordinates must be omitted entirely. Only return JSON when all validations pass. No markdown, no explanations, no code blocks—pure JSON only."
 }
