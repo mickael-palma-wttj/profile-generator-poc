@@ -43,6 +43,8 @@ loader.inflector.inflect(
   "openai_client" => "OpenAIClient",
   "html_generator" => "HTMLGenerator",
   "json_formatter" => "JSONFormatter",
-  "llm_client_factory" => "LLMClientFactory"
+  "llm_client_factory" => "LLMClientFactory",
+  "openai" => "OpenAI",
+  "anthropic" => "Anthropic"
 )
 loader.setup

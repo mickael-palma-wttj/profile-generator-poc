@@ -14,42 +14,32 @@ module ProfileGenerator
     # Uses Basic Auth with public/secret keys
     class LangfuseClient
       class APIError < StandardError; end
-      class ConfigurationError < StandardError; end
-      class PromptNotFoundError < StandardError; end
+      ConfigurationError = Langfuse::Configuration::ConfigurationError
+      PromptNotFoundError = Langfuse::ResponseParser::PromptNotFoundError
 
-      DEFAULT_BASE_URL = "https://cloud.langfuse.com"
-      DEFAULT_TIMEOUT = 30
+      attr_reader :config, :logger
 
-      attr_reader :base_url, :public_key, :secret_key, :timeout, :logger
+      def base_url
+        @config.base_url
+      end
+
+      def public_key
+        @config.public_key
+      end
+
+      def initialize(options = {})
+        @config = Langfuse::Configuration.new(options)
+        @config.validate!
+        @logger = @config.logger
+        @response_logger = Langfuse::ResponseLogger.new(logger: @logger)
+      end
 
       def response_parser
-        @response_parser ||= LangfuseResponseParser.new
+        @response_parser ||= Langfuse::ResponseParser.new
       end
 
       def request_helper
-        @request_helper ||= LangfuseRequest.new(
-          base_url: @base_url,
-          public_key: @public_key,
-          secret_key: @secret_key,
-          timeout: @timeout
-        )
-      end
-
-      def initialize(
-        base_url: nil,
-        public_key: nil,
-        secret_key: nil,
-        timeout: nil,
-        logger: nil
-      )
-        @base_url = base_url || ENV.fetch("LANGFUSE_BASE_URL", DEFAULT_BASE_URL)
-        @public_key = public_key || ENV.fetch("LANGFUSE_PUBLIC_KEY", nil)
-        @secret_key = secret_key || ENV.fetch("LANGFUSE_SECRET_KEY", nil)
-        @timeout = timeout || DEFAULT_TIMEOUT
-        @logger = logger || build_default_logger
-        @response_logger = LangfuseResponseLogger.new(logger: @logger)
-
-        validate_configuration!
+        @request_helper ||= Langfuse::Request.new(@config)
       end
 
       # Get a prompt by name and optional version/label
@@ -92,10 +82,6 @@ module ProfileGenerator
 
       private
 
-      def build_default_logger
-        LangfuseLoggerFactory.build_default_logger
-      end
-
       def execute_request_and_parse(uri, prompt_name: nil, version: nil, label: nil)
         @response_logger.log_request(prompt_name, version, label) if prompt_name
 
@@ -122,7 +108,7 @@ module ProfileGenerator
         raise APIError, "Request failed: #{e.message}"
       end
 
-      include LangfuseClientResponseHandlers
+      include Langfuse::ResponseHandlers
 
       def parse_and_log_response(prompt_name, response, duration)
         result = response_parser.parse_response(response)
@@ -131,31 +117,11 @@ module ProfileGenerator
         merge_duration(result, duration)
       rescue PromptNotFoundError => e
         handle_prompt_not_found(prompt_name, e)
-      rescue APIError => e
+      rescue Langfuse::ResponseParser::APIError => e
         handle_api_error(prompt_name, e)
       rescue JSON::ParserError => e
         handle_json_parse_error(e)
       end
-
-      def validate_configuration!
-        if @public_key.nil? || @public_key.empty?
-          raise ConfigurationError,
-                "Langfuse public key is required. Set LANGFUSE_PUBLIC_KEY environment variable."
-        end
-
-        if @secret_key.nil? || @secret_key.empty?
-          raise ConfigurationError,
-                "Langfuse secret key is required. Set LANGFUSE_SECRET_KEY environment variable."
-        end
-
-        return unless @base_url.nil? || @base_url.empty?
-
-        raise ConfigurationError, "Langfuse base URL is required"
-      end
-
-      # Request and auth helpers are delegated to LangfuseRequest
-
-      # Logging and response parsing are delegated to collaborators
     end
   end
 end
