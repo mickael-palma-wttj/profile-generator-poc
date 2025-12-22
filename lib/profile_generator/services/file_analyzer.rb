@@ -7,8 +7,8 @@ module ProfileGenerator
     # Analyzes uploaded files to extract brand insights
     # Delegates logging to a separate concern for testability
     class FileAnalyzer
-      def initialize(anthropic_client, prompt_manager: nil, logger: nil, company_name: nil)
-        @client = anthropic_client
+      def initialize(client, prompt_manager: nil, logger: nil, company_name: nil)
+        @client = client
         @prompt_manager = prompt_manager
         @company_name = company_name || "unknown"
         @logger = logger || FileAnalyzerLogger.new
@@ -52,11 +52,11 @@ module ProfileGenerator
 
       def send_analysis_request(file_sources)
         prompt_content = build_analysis_prompt(file_sources)
-        response = call_anthropic_api(prompt_content)
+        response = call_llm_api(prompt_content)
         @response_parser.parse(response)
       end
 
-      def call_anthropic_api(prompt_content)
+      def call_llm_api(prompt_content)
         @logger.start_api_call(prompt_content)
 
         start_time = Time.now
@@ -82,7 +82,8 @@ module ProfileGenerator
 
       def load_prompt_template
         if @prompt_manager
-          @prompt_manager.load("file_analysis")
+          prompt = @prompt_manager.load("file_analysis")
+          prompt.respond_to?(:content) ? prompt.content : prompt
         else
           load_prompt_from_file
         end

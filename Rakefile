@@ -66,7 +66,7 @@ namespace :profile do
       puts "📄 Markdown saved: #{markdown_file}"
 
       # Generate HTML
-      html_generator = ProfileGenerator::Services::HtmlGenerator.new
+      html_generator = ProfileGenerator::Services::HTMLGenerator.new
       html_file = File.join(output_dir, "#{company_name.downcase.gsub(/\s+/, '_')}_profile.html")
       html_generator.generate_and_save(profile, html_file)
 

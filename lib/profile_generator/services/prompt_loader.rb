@@ -15,7 +15,7 @@ module ProfileGenerator
 
       # Load a specific prompt file
       # @param filename [String] Name of the prompt file (with or without .md extension)
-      # @return [String] The prompt content
+      # @return [Models::Prompt] The prompt object
       def load(filename)
         file_path = build_file_path(filename)
 
@@ -24,7 +24,8 @@ module ProfileGenerator
                 "Prompt file not found: #{file_path}"
         end
 
-        File.read(file_path).strip
+        content = File.read(file_path).strip
+        Models::Prompt.new(content: content)
       end
 
       # Load all available prompt files

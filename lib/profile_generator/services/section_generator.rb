@@ -4,8 +4,8 @@ module ProfileGenerator
   module Services
     # Responsible for generating a single profile section using prompt builder and the AI client
     class SectionGenerator
-      def initialize(anthropic_client:, prompt_loader:, logger: nil, retryer: nil)
-        @anthropic_client = anthropic_client
+      def initialize(client_factory:, prompt_loader:, logger: nil, retryer: nil)
+        @client_factory = client_factory
         @prompt_loader = prompt_loader
         @logger = logger
         @retryer = retryer
@@ -15,18 +15,20 @@ module ProfileGenerator
       # Returns a Models::ProfileSection
       def call(company:, section_name:)
         @section_name = section_name
-        prompt_template = @prompt_loader.load(section_name)
-        system_prompt, user_prompt = build_prompts(company, prompt_template)
+        prompt_object = @prompt_loader.load(section_name)
+        client = @client_factory.client_for(prompt_object.config)
 
-        content = fetch_content(user_prompt, system_prompt, company, section_name)
+        system_prompt, user_prompt = build_prompts(company, prompt_object.content)
+
+        content = fetch_content(client, user_prompt, system_prompt, company, section_name)
 
         build_section(section_name, content)
       end
 
-      def fetch_content(user_prompt, system_prompt, company, section_name)
-        return @retryer.with_retries { call_anthropic(user_prompt, system_prompt, company, section_name) } if @retryer
+      def fetch_content(client, user_prompt, system_prompt, company, section_name)
+        return @retryer.with_retries { call_llm(client, user_prompt, system_prompt, company, section_name) } if @retryer
 
-        call_anthropic(user_prompt, system_prompt, company, section_name)
+        call_llm(client, user_prompt, system_prompt, company, section_name)
       end
 
       def build_section(section_name, content)
@@ -59,8 +61,8 @@ module ProfileGenerator
         [system_prompt, user_prompt]
       end
 
-      def call_anthropic(user_prompt, system_prompt, company, section_name)
-        @anthropic_client.generate(
+      def call_llm(client, user_prompt, system_prompt, company, section_name)
+        client.generate(
           prompt: user_prompt,
           system_prompt: system_prompt,
           context: { company: company.name, section: section_name }

@@ -10,7 +10,7 @@ module ProfileGenerator
     # Refactored to delegate to specialized services
     class GenerateProfile
       def initialize(
-        anthropic_client: nil,
+        client_factory: nil,
         prompt_loader: nil,
         prompt_manager: nil,
         generation_logger: nil,
@@ -18,7 +18,7 @@ module ProfileGenerator
         max_retries: 3,
         progress_callback: nil
       )
-        @anthropic_client = anthropic_client || build_anthropic_client(max_retries)
+        @client_factory = client_factory || Services::LLMClientFactory.new
         @prompt_loader = resolve_prompt_loader(prompt_manager, prompt_loader)
         @generation_logger = generation_logger || Services::GenerationLogger.new
         @max_threads = max_threads
@@ -64,7 +64,7 @@ module ProfileGenerator
 
         section = retryer.with_retries do
           Services::SectionGenerator.new(
-            anthropic_client: anthropic_client,
+            client_factory: client_factory,
             prompt_loader: prompt_loader,
             logger: generation_logger
           ).call(company: company, section_name: section_name)
@@ -86,7 +86,7 @@ module ProfileGenerator
 
       private
 
-      attr_reader :anthropic_client, :prompt_loader, :generation_logger
+      attr_reader :client_factory, :prompt_loader, :generation_logger
 
       # Resolve prompt loader with precedence: prompt_manager > prompt_loader > default
       def resolve_prompt_loader(prompt_manager, prompt_loader)
@@ -94,10 +94,6 @@ module ProfileGenerator
         return prompt_loader if prompt_loader
 
         build_default_prompt_loader
-      end
-
-      def build_anthropic_client(max_retries)
-        Services::AnthropicClient.new(max_retries: max_retries)
       end
 
       def build_default_prompt_loader
@@ -156,7 +152,7 @@ module ProfileGenerator
       # Sequential generation
       def generate_sections_sequential(company, section_names)
         section_generator = Services::SectionGenerator.new(
-          anthropic_client: anthropic_client,
+          client_factory: client_factory,
           prompt_loader: prompt_loader,
           logger: generation_logger,
           retryer: Services::Retryer.new(max_retries: @max_retries, logger: generation_logger)
@@ -181,7 +177,7 @@ module ProfileGenerator
       # Parallel generation using thread pool
       def generate_sections_parallel(company, section_names)
         section_generator = Services::SectionGenerator.new(
-          anthropic_client: anthropic_client,
+          client_factory: client_factory,
           prompt_loader: prompt_loader,
           logger: generation_logger
         )

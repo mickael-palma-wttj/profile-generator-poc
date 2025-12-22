@@ -2,7 +2,7 @@
 
 module ProfileGenerator
   module Services
-    # Builds the HTML for all profile sections. Extracted from HtmlGenerator to
+    # Builds the HTML for all profile sections. Extracted from HTMLGenerator to
     # reduce class size and complexity.
     class SectionBuilder
       include SectionHelpers

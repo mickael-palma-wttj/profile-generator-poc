@@ -39,4 +39,10 @@ end
 # Set up Zeitwerk autoloader AFTER the module is defined
 loader = Zeitwerk::Loader.new
 loader.push_dir(File.expand_path("profile_generator", __dir__), namespace: ProfileGenerator)
+loader.inflector.inflect(
+  "openai_client" => "OpenAIClient",
+  "html_generator" => "HTMLGenerator",
+  "json_formatter" => "JSONFormatter",
+  "llm_client_factory" => "LLMClientFactory"
+)
 loader.setup

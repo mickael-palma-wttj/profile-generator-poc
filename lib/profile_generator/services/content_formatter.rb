@@ -6,10 +6,10 @@ module ProfileGenerator
   module Services
     # Service for formatting LLM content (Markdown/JSON) to HTML
     # Handles both Markdown and JSON responses from Claude
-    # Delegates JSON formatting to JsonFormatter service
+    # Delegates JSON formatting to JSONFormatter service
     class ContentFormatter
       def initialize(json_formatter: nil)
-        @json_formatter = json_formatter || JsonFormatter.new
+        @json_formatter = json_formatter || JSONFormatter.new
         @post_processor = ContentPostProcessor.new(json_formatter: @json_formatter)
 
         @markdown = Redcarpet::Markdown.new(
@@ -47,10 +47,129 @@ module ProfileGenerator
         if detector.json_with_type?(content)
           format_as_component(content)
         elsif detector.json?(content)
+          # Check for legacy key numbers format (from LangFuse v11)
+          if legacy_key_numbers?(content)
+            transformed = transform_legacy_key_numbers(content)
+            return format_as_component(transformed)
+          end
           format_json(content)
         else
           format_markdown(content)
         end
+      end
+
+      # Check if content matches the legacy key numbers schema
+      def legacy_key_numbers?(content)
+        data = JSON.parse(content)
+        data.is_a?(Hash) && data.key?("figures") && data.key?("breakdown")
+      rescue JSON::ParserError
+        false
+      end
+
+      # Transform legacy key numbers schema to new component schema
+      def transform_legacy_key_numbers(content)
+        data = JSON.parse(content)
+
+        transformed = {
+          "type" => "key_numbers",
+          "basic_stats" => transform_figures(data["figures"]),
+          "breakdowns" => transform_breakdowns(data["breakdown"]),
+          "sources" => data["sources"] || []
+        }
+
+        JSON.generate(transformed)
+      end
+
+      def transform_figures(figures)
+        return [] unless figures
+
+        stats = []
+        mapping = {
+          "founding" => "Founding Year",
+          "revenue" => "Annual Revenue",
+          "employees" => "Employees",
+          "age" => "Average Age",
+          "turnover" => "Turnover Rate",
+          "equality" => "Equality Index"
+        }
+
+        mapping.each do |key, label|
+          next unless figures[key] && figures[key]["active"]
+
+          stats << {
+            "label" => label,
+            "value" => figures[key]["content"].to_s
+          }
+        end
+        stats
+      end
+
+      def transform_breakdowns(breakdown)
+        return [] unless breakdown
+
+        breakdowns = []
+
+        # Gender
+        if breakdown["gender"] && breakdown["gender"]["active"]
+          content = breakdown["gender"]["content"]
+          items = []
+          items << { "category" => "Men", "percentage" => content["men"] } if content["men"].to_i > 0
+          items << { "category" => "Women", "percentage" => content["women"] } if content["women"].to_i > 0
+
+          if content["custom"] && content["custom"]["value"].to_i > 0
+            items << { "category" => content["custom"]["name"], "percentage" => content["custom"]["value"] }
+          end
+
+          breakdowns << {
+            "label" => "Gender Distribution",
+            "type" => "gender",
+            "items" => items
+          }
+        end
+
+        # Ethnicity
+        if breakdown["ethnicity"] && breakdown["ethnicity"]["active"]
+          content = breakdown["ethnicity"]["content"]
+          items = []
+          content.each do |key, value|
+            items << { "category" => key.capitalize, "percentage" => value } if value.to_i > 0
+          end
+
+          breakdowns << {
+            "label" => "Ethnicity Breakdown",
+            "type" => "ethnicity",
+            "items" => items
+          }
+        end
+
+        # Workplace
+        if breakdown["workplace"] && breakdown["workplace"]["active"]
+          content = breakdown["workplace"]["content"]
+          items = []
+          content.each do |key, value|
+            items << { "category" => key.capitalize, "percentage" => value } if value.to_i > 0
+          end
+
+          breakdowns << {
+            "label" => "Workplace Arrangement",
+            "type" => "workplace",
+            "items" => items
+          }
+        end
+
+        # Teams
+        if breakdown["teams"] && breakdown["teams"]["active"]
+          content = breakdown["teams"]["content"]
+          items = content.map { |t| { "category" => t["name"], "percentage" => t["percentage"] } }
+
+          breakdowns << {
+            "label" => "Team Distribution",
+            "type" => "teams",
+            "items" => items
+          }
+        end
+
+        breakdowns
       end
 
       # Format JSON as a web component

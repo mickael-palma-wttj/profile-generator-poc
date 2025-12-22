@@ -8,7 +8,7 @@ module ProfileGenerator
     # Service for generating beautiful standalone HTML pages from company profiles
     # Follows SRP - single responsibility for HTML generation
     # Uses the same HTML structure as the manually created qonto_profile.html
-    class HtmlGenerator
+    class HTMLGenerator
       def initialize(template_path: nil)
         @template_path = template_path || default_template_path
         @content_formatter = ContentFormatter.new

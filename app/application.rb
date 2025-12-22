@@ -172,7 +172,7 @@ module ProfileGenerator
       notify_analysis_status(session_id, "in_progress")
 
       analyzer = Services::FileAnalyzer.new(
-        Services::AnthropicClient.new,
+        Services::OpenAIClient.new,
         prompt_manager: settings.prompt_manager,
         company_name: company&.name
       )
@@ -205,7 +205,7 @@ module ProfileGenerator
       return if files.empty?
 
       analyzer = Services::FileAnalyzer.new(
-        Services::AnthropicClient.new,
+        Services::OpenAIClient.new,
         prompt_manager: settings.prompt_manager
       )
 

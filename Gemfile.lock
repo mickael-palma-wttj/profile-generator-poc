@@ -89,6 +89,9 @@ GEM
     net-http (0.8.0)
       uri (>= 0.11.1)
     nio4r (2.7.5)
+    openai (0.42.0)
+      base64
+      connection_pool
     openssl (3.3.2)
     parallel (1.27.0)
     parser (3.3.10.0)
@@ -206,6 +209,7 @@ DEPENDENCIES
   faraday (~> 2.9)
   faraday-retry (~> 2.2)
   multi_json (~> 1.15)
+  openai
   openssl (~> 3.1)
   pry (~> 0.14)
   pry-byebug (~> 3.10)

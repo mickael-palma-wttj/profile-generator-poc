@@ -33,7 +33,7 @@ def generate_html_page(company_name, output_file = nil, website = nil)
 
   # Generate HTML
   puts "🎨 Creating beautiful HTML page..."
-  html_generator = ProfileGenerator::Services::HtmlGenerator.new
+  html_generator = ProfileGenerator::Services::HTMLGenerator.new
 
   # Default output file
   output_file ||= "public/#{company_name.downcase.gsub(/\s+/, '_')}_profile.html"

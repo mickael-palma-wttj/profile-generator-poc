@@ -20,7 +20,7 @@ markdown_content = <<~MD
   - Employees: 10,000
 MD
 
-generator = ProfileGenerator::Services::HtmlGenerator.new
+generator = ProfileGenerator::Services::HTMLGenerator.new
 
 puts "Testing HTML detection..."
 puts "HTML content starts with '<': #{html_content.strip.start_with?('<')}"

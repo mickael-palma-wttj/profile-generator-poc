@@ -7,7 +7,7 @@ module ProfileGenerator
   module Services
     # Service for formatting JSON to HTML
     # Follows SRP - only handles JSON formatting
-    class JsonFormatter
+    class JSONFormatter
       # Format valid JSON to HTML
       # @param json_content [String] Valid JSON string
       # @return [String, nil] HTML representation or nil if invalid

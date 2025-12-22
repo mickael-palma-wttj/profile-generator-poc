@@ -24,7 +24,7 @@ module ProfileGenerator
       # @param name [String] The prompt name (local file name like "company_values")
       # @param version [Integer, nil] Optional version (Langfuse only)
       # @param label [String, nil] Optional label (Langfuse only)
-      # @return [String] The prompt content
+      # @return [Models::Prompt] The prompt object
       # @note For Langfuse: The name is automatically mapped to PascalCase (e.g., "company_values" -> "CompanyValues")
       #       When version and label are both nil, fetches the latest version
       #       This is the recommended usage to always get the most up-to-date prompt
@@ -89,7 +89,9 @@ module ProfileGenerator
 
       def extract_prompt_content(response)
         extractor = content_extractor_for(response["type"])
-        extractor.call(response)
+        content = extractor.call(response)
+        config = response["config"] || {}
+        Models::Prompt.new(content: content, config: config)
       end
 
       def content_extractor_for(type)

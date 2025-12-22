@@ -29,7 +29,7 @@ module ProfileGenerator
 
       def start_api_call(content)
         block_count = content.length
-        puts "#{PREFIX} ⏳ Sending request to Anthropic API with #{block_count} content block(s)..."
+        puts "#{PREFIX} ⏳ Sending request to LLM API with #{block_count} content block(s)..."
       end
 
       def complete_api_call(elapsed)
