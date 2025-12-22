@@ -4,6 +4,12 @@
         "dockerfile": "Dockerfile",
         "context": "."
     },
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        },
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
     // Configure container
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
@@ -26,7 +32,7 @@
         "vscode": {
             "extensions": [
                 "Shopify.ruby-lsp",
-                "testdouble.vscode-standard-ruby"
+                "ms-playwright.playwright"
             ],
             "settings": {
                 "terminal.integrated.defaultProfile.linux": "bash",
@@ -45,7 +51,7 @@
         }
     },
     // Run commands after container is created
-    "postCreateCommand": "bundle install",
+    "postCreateCommand": "./bin/setup",
     // Keep container running
     "postStartCommand": "echo 'Container ready! Run tasks from the Command Palette (Cmd+Shift+P) or Terminal menu.'",
     // Use the non-root user
@@ -53,9 +59,5 @@
     // Mount additional volumes for better performance
     "mounts": [
         "source=profile-generator-gems,target=/usr/local/bundle,type=volume"
-    ],
-    // Features to add
-    "features": {
-        "ghcr.io/devcontainers/features/git:1": {}
-    }
+    ]
 }

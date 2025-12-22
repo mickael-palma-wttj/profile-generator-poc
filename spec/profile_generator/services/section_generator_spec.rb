@@ -1,20 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe ProfileGenerator::Services::SectionGenerator do
+  let(:client_factory) { instance_double(ProfileGenerator::Services::LLMClientFactory) }
   let(:anthropic_client) { instance_double(ProfileGenerator::Services::AnthropicClient) }
   let(:prompt_loader) { instance_double(ProfileGenerator::Services::PromptManager) }
   let(:logger) { instance_double(ProfileGenerator::Services::GenerationLogger, info: nil, debug: nil) }
 
   let(:company) { ProfileGenerator::Models::Company.new(name: "Acme", website: "https://acme.com") }
   let(:section_name) { "company_description" }
+  let(:prompt_config) { { provider: "anthropic" } }
+  let(:prompt_object) { instance_double(ProfileGenerator::Models::Prompt, config: prompt_config, content: "prompt template") }
 
   before do
-    allow(prompt_loader).to receive(:load).with(section_name).and_return("prompt template")
+    allow(prompt_loader).to receive(:load).with(section_name).and_return(prompt_object)
+    allow(client_factory).to receive(:client_for).with(prompt_config).and_return(anthropic_client)
   end
 
   def build_generator(retryer: nil)
     described_class.new(
-      anthropic_client: anthropic_client,
+      client_factory: client_factory,
       prompt_loader: prompt_loader,
       logger: logger,
       retryer: retryer

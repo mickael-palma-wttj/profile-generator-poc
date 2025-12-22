@@ -15,7 +15,7 @@ RSpec.describe ProfileGenerator::Interactors::GenerateProfile do
     )
 
     described_class.new(
-      anthropic_client: anthropic_client,
+      client_factory: client_factory,
       prompt_loader: prompt_loader,
       generation_logger: gen_logger,
       max_threads: 2,
@@ -25,14 +25,18 @@ RSpec.describe ProfileGenerator::Interactors::GenerateProfile do
 
   let(:company) { ProfileGenerator::Models::Company.new(name: "Acme", website: "https://acme.com") }
   let(:section_name) { "company_description" }
+  let(:client_factory) { instance_double(ProfileGenerator::Services::LLMClientFactory) }
   let(:anthropic_client) { instance_double(ProfileGenerator::Services::AnthropicClient) }
   let(:prompt_loader) { instance_double(ProfileGenerator::Services::PromptManager) }
+  let(:prompt_config) { { provider: "anthropic" } }
+  let(:prompt_object) { instance_double(ProfileGenerator::Models::Prompt, config: prompt_config, content: "prompt template") }
 
   describe "generate_section" do
     context "when generation succeeds" do
       before do
         allow(prompt_loader).to receive(:exist?).with(section_name).and_return(true)
-        allow(prompt_loader).to receive(:load).with(section_name).and_return("prompt template")
+        allow(prompt_loader).to receive(:load).with(section_name).and_return(prompt_object)
+        allow(client_factory).to receive(:client_for).with(prompt_config).and_return(anthropic_client)
 
         builder = instance_double(ProfileGenerator::Services::PromptBuilder)
         allow(ProfileGenerator::Services::PromptBuilder).to receive(:new).with(company).and_return(builder)
@@ -73,7 +77,8 @@ RSpec.describe ProfileGenerator::Interactors::GenerateProfile do
       let(:sections) { %w[company_description company_values] }
 
       before do
-        allow(prompt_loader).to receive_messages(exist?: true, load: "prompt template")
+        allow(prompt_loader).to receive_messages(exist?: true, load: prompt_object)
+        allow(client_factory).to receive(:client_for).and_return(anthropic_client)
 
         builder = instance_double(ProfileGenerator::Services::PromptBuilder)
         allow(ProfileGenerator::Services::PromptBuilder).to receive(:new).and_return(builder)

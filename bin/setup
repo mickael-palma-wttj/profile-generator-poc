@@ -9,7 +9,7 @@ echo ""
 # Check Ruby version
 echo "Checking Ruby version..."
 if ! command -v ruby &> /dev/null; then
-    echo "❌ Ruby is not installed. Please install Ruby 3.2 or higher."
+    echo "❌ Ruby is not installed. Please install Ruby 3.4 or higher."
     exit 1
 fi
 
@@ -27,9 +27,25 @@ echo "✓ Bundler found"
 
 # Install dependencies
 echo ""
+echo "Cleaning up problematic gem versions..."
+sudo rm -f /usr/local/bundle/specifications/{stringio-3.1.7,stringio-3.1.8,racc-1.8.1,prism-1.5.1,prism-1.5.2,prism-1.6.0,nio4r-2.7.4,json-2.15.0,json-2.16.0,io-console-0.8.1,date-3.4.1,date-3.5.0,cgi-0.5.0,bigdecimal-3.2.3}.gemspec 2>/dev/null || true
+
 echo "Installing dependencies..."
 bundle install
 echo "✓ Dependencies installed"
+
+# Install Node dependencies and Playwright
+echo ""
+echo "Checking for Node.js..."
+if command -v npm &> /dev/null; then
+    echo "Installing Node dependencies..."
+    npm install
+    echo "Installing Playwright browsers..."
+    npx playwright install --with-deps
+    echo "✓ Node dependencies and Playwright installed"
+else
+    echo "⚠️  Node.js/npm not found. Skipping Playwright installation."
+fi
 
 # Set up .env file
 echo ""

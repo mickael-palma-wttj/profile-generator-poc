@@ -16,7 +16,7 @@ A Ruby web application that generates comprehensive company profiles using Anthr
   - Perks & Benefits
   - Remote Work Policy
 - 🏗️ **Clean Architecture**: Follows SOLID principles, SRP, DRY, and KISS
-- ⚡ **Modern Ruby**: Built with Ruby 3.2+ and Zeitwerk autoloading
+- ⚡ **Modern Ruby**: Built with Ruby 3.3+ and Zeitwerk autoloading
 - 🎨 **Beautiful UI**: Clean, responsive web interface
 - 📄 **Multiple Outputs**: View in browser, print, or copy to clipboard
 - 📁 **File Analysis**: Upload PDFs, images, or text files for context-aware generation
@@ -63,7 +63,7 @@ lib/profile_generator/
 
 ## Prerequisites
 
-- Ruby 3.2 or higher
+- Ruby 3.3 or higher
 - Bundler
 - OpenAI API key or Anthropic API key
 

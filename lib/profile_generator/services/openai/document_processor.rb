@@ -21,7 +21,7 @@ module ProfileGenerator
           elsif text_type?(media_type)
             format_text_document(data)
           else
-            raise APIError, "Unsupported media type: #{media_type}"
+            raise OpenAIClient::APIError, "Unsupported media type: #{media_type}"
           end
         end
 
@@ -44,9 +44,23 @@ module ProfileGenerator
           Tempfile.create(["analysis", ".pdf"]) do |f|
             f.binmode
             f.write(decoded_data)
+            f.flush
             f.rewind
-            response = @client.files.create(file: f.path, purpose: "user_data")
-            file_id = response[:id]
+
+            # Use purpose: "assistants" for PDF analysis
+            # We pass the file object itself to ensure Faraday sets the correct MIME type
+            response = @client.files.upload(
+              parameters: {
+                file: f,
+                purpose: "assistants"
+              }
+            )
+
+            file_id = response["id"] || response[:id]
+            unless file_id
+              @logger&.error("OpenAI File Upload Failed", response)
+              raise OpenAIClient::APIError, "Failed to upload PDF to OpenAI: #{response}"
+            end
           end
 
           { type: "file", file: { file_id: file_id } }
