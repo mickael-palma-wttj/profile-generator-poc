@@ -26,6 +26,7 @@ module ProfileGenerator
         send_analysis_request(file_sources)
       rescue StandardError => e
         @logger.error("analyze_files", e)
+        @logger.error("analyze_files cause", e.cause) if e.cause
         {}
       end
 

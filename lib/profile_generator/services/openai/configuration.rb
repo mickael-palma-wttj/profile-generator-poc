@@ -10,9 +10,11 @@ module ProfileGenerator
         DEFAULT_TEMPERATURE = 0.7
         DEFAULT_MAX_RETRIES = 3
         DEFAULT_BASE_DELAY = 1.0
+        DEFAULT_REQUEST_TIMEOUT = 600
 
         attr_reader :api_key, :model, :max_tokens, :temperature,
-                    :max_retries, :base_delay, :debug_mode, :debug_dir
+                    :max_retries, :base_delay, :debug_mode, :debug_dir,
+                    :request_timeout
 
         def initialize(options = {})
           @api_key = options[:api_key] || ENV.fetch("OPENAI_API_KEY", nil)
@@ -21,6 +23,8 @@ module ProfileGenerator
           @temperature = (options[:temperature] || ENV.fetch("OPENAI_TEMPERATURE", DEFAULT_TEMPERATURE)).to_f
           @max_retries = (options[:max_retries] || ENV.fetch("OPENAI_MAX_RETRIES", DEFAULT_MAX_RETRIES)).to_i
           @base_delay = (options[:base_delay] || ENV.fetch("OPENAI_BASE_DELAY", DEFAULT_BASE_DELAY)).to_f
+          @request_timeout = (options[:request_timeout] || ENV.fetch("OPENAI_REQUEST_TIMEOUT",
+                                                                     DEFAULT_REQUEST_TIMEOUT)).to_i
           @debug_mode = options[:debug_mode] || ENV.fetch("OPENAI_DEBUG", "false") == "true"
           @debug_dir = options[:debug_dir] || ENV.fetch("OPENAI_DEBUG_DIR", "debug/api_responses")
         end

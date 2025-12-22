@@ -45,7 +45,7 @@ module ProfileGenerator
 
       def error(method, exception)
         puts "#{PREFIX} ❌ Error in #{method}: #{exception.class} - #{exception.message}"
-        puts exception.backtrace.first(3).join("\n")
+        puts exception.backtrace.first(3).join("\n") if exception.backtrace
       end
     end
   end

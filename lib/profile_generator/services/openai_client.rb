@@ -16,7 +16,10 @@ module ProfileGenerator
         @config = OpenAI::Configuration.new(options)
         @config.validate!
         @logger = OpenAI::DebugLogger.new(@config)
-        @client = ::OpenAI::Client.new(api_key: @config.api_key)
+        @client = ::OpenAI::Client.new(
+          api_key: @config.api_key,
+          timeout: @config.request_timeout
+        )
         @payload_builder = OpenAI::PayloadBuilder.new(@client)
       end
 

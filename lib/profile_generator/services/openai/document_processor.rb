@@ -14,6 +14,7 @@ module ProfileGenerator
         end
 
         def process(media_type, data)
+          puts "[DocumentProcessor] Processing media_type: #{media_type}"
           if media_type == "application/pdf"
             upload_pdf_document(data)
           elsif image_type?(media_type)
@@ -48,15 +49,12 @@ module ProfileGenerator
             f.rewind
 
             # Use purpose: "assistants" for PDF analysis
-            # We pass the file object itself to ensure Faraday sets the correct MIME type
             response = @client.files.create(
-              parameters: {
-                file: f,
-                purpose: "assistants"
-              }
+              file: Pathname.new(f.path),
+              purpose: "assistants"
             )
 
-            file_id = response["id"] || response[:id]
+            file_id = response[:id]
             unless file_id
               @logger&.error("OpenAI File Upload Failed", response)
               raise OpenAIClient::APIError, "Failed to upload PDF to OpenAI: #{response}"
@@ -77,6 +75,11 @@ module ProfileGenerator
 
         def format_text_document(data)
           content = Base64.decode64(data)
+          content.force_encoding("UTF-8")
+          unless content.valid_encoding?
+            content = content.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
+          end
+
           {
             type: "text",
             text: "--- File Content ---\n#{content}\n--- End File Content ---"
