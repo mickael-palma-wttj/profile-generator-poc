@@ -4,7 +4,7 @@ A Ruby web application that generates comprehensive company profiles using Anthr
 
 ## Features
 
-- 🤖 **AI-Powered**: Leverages Claude Sonnet 4 for intelligent content generation
+- 🤖 **AI-Powered**: Multi-provider support (OpenAI GPT-4o & Anthropic Claude 3.5 Sonnet) for intelligent content generation
 - 📋 **Comprehensive Profiles**: Generates 9 distinct sections for each company:
   - Their Story (origin and founding)
   - Company Values
@@ -19,6 +19,7 @@ A Ruby web application that generates comprehensive company profiles using Anthr
 - ⚡ **Modern Ruby**: Built with Ruby 3.2+ and Zeitwerk autoloading
 - 🎨 **Beautiful UI**: Clean, responsive web interface
 - 📄 **Multiple Outputs**: View in browser, print, or copy to clipboard
+- 📁 **File Analysis**: Upload PDFs, images, or text files for context-aware generation
 
 ## Architecture
 
@@ -31,7 +32,9 @@ lib/profile_generator/
 │   ├── profile.rb      # Profile aggregate
 │   └── profile_section.rb  # Section value object
 ├── services/           # Service objects (single responsibility)
-│   ├── anthropic_client.rb  # API communication
+│   ├── llm_client_factory.rb # Factory for LLM providers
+│   ├── openai_client.rb     # OpenAI API communication
+│   ├── anthropic_client.rb  # Anthropic API communication
 │   └── prompt_loader.rb     # Prompt file management
 └── interactors/        # Use cases/business logic
     ├── result.rb       # Result object pattern
@@ -40,8 +43,9 @@ lib/profile_generator/
 
 ### Design Patterns Used
 
+- **Factory Pattern**: `LLMClientFactory` for switching between AI providers
 - **Value Objects**: Immutable domain models (Company, ProfileSection, Profile)
-- **Service Objects**: Single-purpose services (AnthropicClient, PromptLoader)
+- **Service Objects**: Single-purpose services (OpenAIClient, PromptLoader)
 - **Interactors/Use Cases**: Business logic orchestration (GenerateProfile)
 - **Result Object**: Explicit success/failure handling
 - **Dependency Injection**: Services can be injected for testing
@@ -61,7 +65,7 @@ lib/profile_generator/
 
 - Ruby 3.2 or higher
 - Bundler
-- Anthropic API key (get one at [console.anthropic.com](https://console.anthropic.com))
+- OpenAI API key or Anthropic API key
 
 ## Installation
 
@@ -78,13 +82,21 @@ lib/profile_generator/
 3. **Set up environment variables**:
    Create a `.env` file from the example:
    ```bash
-   cp .env.example .env
+   cp .env.sample .env
    ```
    
    Edit `.env` and add your credentials:
    ```env
-   # Required
-   ANTHROPIC_API_KEY=your_api_key_here
+   # LLM Provider (openai or anthropic)
+   LLM_PROVIDER=openai
+
+   # OpenAI Configuration
+   OPENAI_API_KEY=sk-...
+   OPENAI_MODEL=gpt-4o
+
+   # Anthropic Configuration
+   ANTHROPIC_API_KEY=sk-ant-...
+   ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
    
    # Prompt source (langfuse or file)
    PROMPT_SOURCE=langfuse
@@ -94,7 +106,7 @@ lib/profile_generator/
    LANGFUSE_SECRET_KEY=your_langfuse_secret_key
    ```
    
-   See [`.env.example`](.env.example) for all available configuration options.
+   See [`.env.sample`](.env.sample) for all available configuration options.
 
 ## Usage
 
