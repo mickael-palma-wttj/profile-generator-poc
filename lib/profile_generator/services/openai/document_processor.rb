@@ -49,7 +49,7 @@ module ProfileGenerator
 
             # Use purpose: "assistants" for PDF analysis
             # We pass the file object itself to ensure Faraday sets the correct MIME type
-            response = @client.files.upload(
+            response = @client.files.create(
               parameters: {
                 file: f,
                 purpose: "assistants"
