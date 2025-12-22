@@ -229,9 +229,24 @@ module ProfileGenerator
         if stripped.start_with?("```json", "```\n{", "```\r\n{")
           stripped = stripped.sub(/^```(?:json)?\s*[\r\n]+/m, "")
           stripped = stripped.sub(/[\r\n\s]*```[\r\n\s]*$/m, "")
-          stripped.strip
-        else
-          content
+          stripped = stripped.strip
+        end
+
+        fix_unquoted_emojis(stripped)
+      end
+
+      def fix_unquoted_emojis(content)
+        # Fix unquoted emojis in JSON: "icon": 🏠 -> "icon": "🏠"
+        content.gsub(/"icon":\s*([^"\s,}\]]+)(\s*[,}])/) do
+          match = Regexp.last_match
+          val = match[1]
+          suffix = match[2]
+
+          if val == "null" || val == "true" || val == "false" || val.match?(/^-?\d+(\.\d+)?$/)
+            match[0]
+          else
+            %("icon": "#{val}"#{suffix})
+          end
         end
       end
 

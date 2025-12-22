@@ -9,14 +9,14 @@
         "introduction": "string (1-2 sentences)",
         "standoutBenefits": [
           {
-            "icon": "emoji",
+            "icon": "string (emoji) - MUST BE QUOTED e.g. \"🏠\"",
             "name": "string (2-5 words)",
             "description": "string (2-3 sentences)"
           }
         ],
         "categories": [
           {
-            "icon": "emoji",
+            "icon": "string (emoji) - MUST BE QUOTED e.g. \"💰\"",
             "category": "string",
             "benefits": [
               {

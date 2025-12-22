@@ -6,17 +6,21 @@
 }
 
 :root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
+    /* Welcome to the Jungle Brand Colors */
+    --primary-color: #FFCD00;
+    --primary-hover: #E6B800;
     --secondary-color: #64748b;
     --success-color: #10b981;
     --error-color: #ef4444;
     --warning-color: #f59e0b;
+
+    /* Light Theme */
     --background: #f8fafc;
     --card-background: #ffffff;
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --border-color: #e2e8f0;
+
     --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
@@ -94,6 +98,8 @@ header h1 {
     padding: 0.75rem 1rem;
     border: 2px solid var(--border-color);
     border-radius: 8px;
+    background-color: var(--card-background);
+    color: var(--text-primary);
     font-size: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -101,7 +107,7 @@ header h1 {
 .form-group input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 205, 0, 0.1);
 }
 
 /* Language selector polish */
@@ -111,14 +117,15 @@ header h1 {
     border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
-    background: linear-gradient(180deg, #fff, #fbfdff);
+    background: var(--card-background);
+    color: var(--text-primary);
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .language-select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 205, 0, 0.08);
 }
 
 .muted {
@@ -140,7 +147,7 @@ header h1 {
 #output_language_other:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 205, 0, 0.08);
 }
 
 /* Buttons */
@@ -159,7 +166,7 @@ header h1 {
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: white;
+    color: #000000;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -192,15 +199,15 @@ header h1 {
 }
 
 .alert-error {
-    background-color: #fef2f2;
+    background-color: rgba(239, 68, 68, 0.1);
     border-color: var(--error-color);
-    color: #991b1b;
+    color: #fca5a5;
 }
 
 .alert-warning {
-    background-color: #fffbeb;
+    background-color: rgba(245, 158, 11, 0.1);
     border-color: var(--warning-color);
-    color: #92400e;
+    color: #fcd34d;
 }
 
 /* Features Grid */
@@ -739,7 +746,7 @@ footer {
 
 .section-progress-item.in-progress {
     border-color: var(--primary-color);
-    background: rgba(37, 99, 235, 0.05);
+    background: rgba(255, 205, 0, 0.05);
     animation: pulse 2s infinite;
 }
 
@@ -747,11 +754,11 @@ footer {
 
     0%,
     100% {
-        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+        box-shadow: 0 0 0 0 rgba(255, 205, 0, 0.4);
     }
 
     50% {
-        box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+        box-shadow: 0 0 0 8px rgba(255, 205, 0, 0);
     }
 }
 
@@ -792,12 +799,12 @@ footer {
 }
 
 .analysis-content {
-    background-color: #1e293b;
-    color: #e2e8f0;
+    background-color: #f1f5f9;
+    color: var(--text-secondary);
     padding: 1rem;
     border-radius: 4px;
     overflow-x: auto;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid var(--primary-color);
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 0.9em;
     line-height: 1.5;
@@ -990,13 +997,13 @@ footer {
 }
 
 .sticky-nav-item:hover {
-    background: rgba(37, 99, 235, 0.05);
+    background: rgba(255, 205, 0, 0.05);
     border-color: var(--primary-color);
     transform: translateY(-1px);
 }
 
 .sticky-nav-item.active {
-    background: rgba(37, 99, 235, 0.1);
+    background: rgba(255, 205, 0, 0.1);
     border-color: var(--primary-color);
     font-weight: 500;
 }
@@ -1018,7 +1025,7 @@ footer {
 }
 
 .sticky-nav-item.in-progress {
-    background: rgba(37, 99, 235, 0.05);
+    background: rgba(255, 205, 0, 0.05);
     border-color: var(--primary-color);
 }
 
@@ -1367,7 +1374,7 @@ footer {
 
 /* Highlight Box */
 .highlight-box {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(29, 78, 216, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(255, 205, 0, 0.05) 0%, rgba(230, 184, 0, 0.05) 100%);
     padding: 1.5rem;
     border-radius: 8px;
     border-left: 4px solid var(--primary-color);

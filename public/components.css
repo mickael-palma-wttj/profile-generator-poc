@@ -217,9 +217,9 @@
     display: flex;
     gap: 1.5rem;
     padding: 1.5rem;
-    background: linear-gradient(135deg, #fff9e6, #fff4cc);
+    background: rgba(255, 205, 0, 0.1);
     border-radius: 8px;
-    border-left: 4px solid #f39c12;
+    border-left: 4px solid var(--primary-color);
 }
 
 .aha-icon {
@@ -490,10 +490,10 @@
 .breakdown-warning {
     margin-top: 1rem;
     padding: 0.75rem;
-    background: #fff3cd;
-    border: 1px solid #ffc107;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--warning-color);
     border-radius: 4px;
-    color: #856404;
+    color: #fcd34d;
     font-size: 0.85rem;
     text-align: center;
 }
@@ -689,7 +689,7 @@
     display: inline-flex;
     align-items: center;
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, var(--bg-secondary), #f8f9fa);
+    background: var(--card-background);
     border: 2px solid var(--border-color);
     border-radius: 50px;
     font-weight: 600;
