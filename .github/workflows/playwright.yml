@@ -34,10 +34,10 @@ jobs:
       run: npx playwright test
       env:
         # Add any necessary environment variables here
-        # ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # If needed for E2E
-        # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} # If needed for E2E
-        # LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
-        # LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }} # If needed for E2E
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} # If needed for E2E
+        LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+        LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
         RACK_ENV: test
 
     - uses: actions/upload-artifact@v4
