@@ -21,6 +21,9 @@ module ProfileGenerator
     end
 
     def self.validate_configuration!
+      # Skip validation in test environment (for E2E tests with mocked APIs)
+      return if ENV["RACK_ENV"] == "test"
+
       config = ProfileGenerator.configuration
 
       return unless config.anthropic_api_key.nil? || config.anthropic_api_key.strip.empty?
